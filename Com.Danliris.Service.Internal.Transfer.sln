@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2010
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Com.Danliris.Service.Internal.Transfer", "Com.Danliris.Service.Internal.Transfer\Com.Danliris.Service.Internal.Transfer.csproj", "{369AC2C5-0BFB-4FEA-862D-C9863B83510A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Com.Danliris.Service.Internal.Transfer.Lib", "Com.Danliris.Service.Internal.Transfer.Lib\Com.Danliris.Service.Internal.Transfer.Lib.csproj", "{F504E3E3-C6A5-4E41-90D1-4252B3FF720E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{369AC2C5-0BFB-4FEA-862D-C9863B83510A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{369AC2C5-0BFB-4FEA-862D-C9863B83510A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{369AC2C5-0BFB-4FEA-862D-C9863B83510A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{369AC2C5-0BFB-4FEA-862D-C9863B83510A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F504E3E3-C6A5-4E41-90D1-4252B3FF720E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F504E3E3-C6A5-4E41-90D1-4252B3FF720E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F504E3E3-C6A5-4E41-90D1-4252B3FF720E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F504E3E3-C6A5-4E41-90D1-4252B3FF720E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {45216EBD-ACE3-426B-B4F0-FE4382177B85}
+	EndGlobalSection
+EndGlobal
