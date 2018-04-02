@@ -1,0 +1,8 @@
+D:\DL Visual Studio\Com.Danliris.Service.Internal.Transfer\Com.Danliris.Service.Internal.Transfer\bin\Debug\netcoreapp2.0\Com.Danliris.Service.Internal.Transfer.WebApi.deps.json
+D:\DL Visual Studio\Com.Danliris.Service.Internal.Transfer\Com.Danliris.Service.Internal.Transfer\bin\Debug\netcoreapp2.0\Com.Danliris.Service.Internal.Transfer.WebApi.runtimeconfig.json
+D:\DL Visual Studio\Com.Danliris.Service.Internal.Transfer\Com.Danliris.Service.Internal.Transfer\bin\Debug\netcoreapp2.0\Com.Danliris.Service.Internal.Transfer.WebApi.runtimeconfig.dev.json
+D:\DL Visual Studio\Com.Danliris.Service.Internal.Transfer\Com.Danliris.Service.Internal.Transfer\bin\Debug\netcoreapp2.0\Com.Danliris.Service.Internal.Transfer.WebApi.dll
+D:\DL Visual Studio\Com.Danliris.Service.Internal.Transfer\Com.Danliris.Service.Internal.Transfer\obj\Debug\netcoreapp2.0\Com.Danliris.Service.Internal.Transfer.WebApi.csprojResolveAssemblyReference.cache
+D:\DL Visual Studio\Com.Danliris.Service.Internal.Transfer\Com.Danliris.Service.Internal.Transfer\obj\Debug\netcoreapp2.0\Com.Danliris.Service.Internal.Transfer.WebApi.csproj.CoreCompileInputs.cache
+D:\DL Visual Studio\Com.Danliris.Service.Internal.Transfer\Com.Danliris.Service.Internal.Transfer\obj\Debug\netcoreapp2.0\Com.Danliris.Service.Internal.Transfer.WebApi.AssemblyInfoInputs.cache
+D:\DL Visual Studio\Com.Danliris.Service.Internal.Transfer\Com.Danliris.Service.Internal.Transfer\obj\Debug\netcoreapp2.0\Com.Danliris.Service.Internal.Transfer.WebApi.AssemblyInfo.cs
