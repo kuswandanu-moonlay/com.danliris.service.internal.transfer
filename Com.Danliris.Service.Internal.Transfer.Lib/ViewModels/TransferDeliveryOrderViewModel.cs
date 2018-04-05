@@ -18,8 +18,8 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.ViewModels
         public class SupplierVM
         {
             public string _id { get; set; }
-            public string code { get; set; }
-            public string name { get; set; }
+            public string Code { get; set; }
+            public string Name { get; set; }
         }
 
         public string Remark { get; set; }

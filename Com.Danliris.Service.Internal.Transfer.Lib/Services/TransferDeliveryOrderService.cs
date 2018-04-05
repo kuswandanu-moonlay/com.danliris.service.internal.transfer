@@ -77,10 +77,12 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services
         {
             TransferDeliveryOrderViewModel viewModel = new TransferDeliveryOrderViewModel();
             PropertyCopier<TransferDeliveryOrder, TransferDeliveryOrderViewModel>.Copy(model, viewModel);
-            viewModel.Supplier = new TransferDeliveryOrderViewModel.SupplierVM();
-            viewModel.Supplier._id = model.SupplierId;
-            viewModel.Supplier.code = model.SupplierCode;
-            viewModel.Supplier.name = model.SupplierName;
+            viewModel.Supplier = new TransferDeliveryOrderViewModel.SupplierVM
+            {
+                _id = model.SupplierId,
+                Code = model.SupplierCode,
+                Name = model.SupplierName
+            };
             viewModel.DeliveryOrderDate = model.DeliveryOrderDate;
             return viewModel;
         }
@@ -91,9 +93,9 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services
 
             PropertyCopier<TransferDeliveryOrderViewModel, TransferDeliveryOrder>.Copy(viewModel, model);
 
-            model.SupplierId = viewModel.Supplier._id != null ? viewModel.Supplier._id : "";
-            model.SupplierCode = viewModel.Supplier.code;
-            model.SupplierName = viewModel.Supplier.name;
+            model.SupplierId = viewModel.Supplier._id ?? "";
+            model.SupplierCode = viewModel.Supplier.Code;
+            model.SupplierName = viewModel.Supplier.Name;
             model.DeliveryOrderDate = (DateTime)viewModel.DeliveryOrderDate;
             return model;
         }
