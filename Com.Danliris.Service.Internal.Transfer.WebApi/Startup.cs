@@ -10,6 +10,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Com.Danliris.Service.Internal.Transfer.Lib;
 using Com.Danliris.Service.Internal.Transfer.Lib.Helpers;
+using Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferRequestService;
 
 namespace Com.Danliris.Service.Internal.Transfer.WebApi
 {
@@ -40,6 +41,9 @@ namespace Com.Danliris.Service.Internal.Transfer.WebApi
                     options.AssumeDefaultVersionWhenUnspecified = true;
                     options.DefaultApiVersion = new ApiVersion(1, 0);
                 });
+            services
+               .AddTransient<TransferRequestService>()
+               .AddTransient<TransferRequestDetailService>();
 
             var Secret = Configuration.GetValue<string>("Secret") ?? Configuration["Secret"];
             var Key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Secret));
