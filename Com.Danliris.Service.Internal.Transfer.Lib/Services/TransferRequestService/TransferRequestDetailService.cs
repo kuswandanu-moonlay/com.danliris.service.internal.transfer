@@ -9,7 +9,7 @@ using System.Text;
 
 namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferRequestService
 {
-    class TransferRequestDetailService : BasicService<InternalTransferDbContext, TransferRequestDetail>
+    public class TransferRequestDetailService : BasicService<InternalTransferDbContext, TransferRequestDetail>
     {
         public TransferRequestDetailService(IServiceProvider serviceProvider) : base(serviceProvider)
         {
@@ -26,7 +26,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferRequestSer
 
             List<string> SelectedFields = new List<string>()
                 {
-                    "Id", "ProductCode"
+                     "ProductCode"
                 };
             Query = Query
                 .Select(b => new TransferRequestDetail

@@ -37,7 +37,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferRequestSer
 
             List<string> SelectedFields = new List<string>()
             {
-                "Id", "TRNo", "_CreatedUtc", "CategoryName", "RequestedArrivalDate", "TRDate", "UnitCode","IsPosted","IsCanceled"
+                "Id", "TRNo", "_CreatedUtc", "RequestedArrivalDate", "TRDate", "IsPosted","IsCanceled"
             };
 
             Query = Query
@@ -46,11 +46,11 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferRequestSer
                     Id = tr.Id,
                     TRNo = tr.TRNo,
                     _CreatedUtc = tr._CreatedUtc,
+                    TRDate=tr.TRDate,
                     CategoryName = tr.CategoryName,
                     RequestedArrivalDate = tr.RequestedArrivalDate,
-                    TRDate = tr.TRDate,
                     _LastModifiedUtc = tr._LastModifiedUtc,
-                    UnitCode= tr.UnitCode,
+                    UnitName= tr.UnitName,
                     IsPosted=tr.IsPosted,
                     IsCanceled=tr.IsCanceled
                 });
@@ -74,6 +74,8 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferRequestSer
 
             PropertyCopier<TransferRequestViewModel, TransferRequest>.Copy(viewModel, model);
 
+            model.TRDate = viewModel.trDate;
+            model.RequestedArrivalDate = viewModel.requestedArrivalDate;
             model.UnitId = viewModel.unit._id;
             model.UnitCode = viewModel.unit.code;
             model.UnitName = viewModel.unit.name;
@@ -95,7 +97,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferRequestSer
 
 
                 transferRequestDetail.ProductId = transferRequestDetailViewModel.product._id;
-                transferRequestDetail.ProductCode = transferRequestDetailViewModel.product.name;
+                transferRequestDetail.ProductCode = transferRequestDetailViewModel.product.code;
                 transferRequestDetail.ProductName = transferRequestDetailViewModel.product.name;
                 transferRequestDetail.Quantity = transferRequestDetailViewModel.quantity;
                 transferRequestDetail.UomId = transferRequestDetailViewModel.uom._id;
