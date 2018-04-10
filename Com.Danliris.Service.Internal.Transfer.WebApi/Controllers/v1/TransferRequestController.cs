@@ -9,8 +9,6 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Com.Danliris.Service.Internal.Transfer.WebApi.Controllers.v1
 {
@@ -21,16 +19,16 @@ namespace Com.Danliris.Service.Internal.Transfer.WebApi.Controllers.v1
     public class TransferRequestController : BasicController<InternalTransferDbContext, TransferRequestService, TransferRequestViewModel, TransferRequest>
     {
         private static readonly string ApiVersion = "1.0";
-        public TransferRequestController(TransferRequestService service) : base(service, ApiVersion)
+        public TransferRequestController(TransferRequestService Service) : base(Service, ApiVersion)
         {
         }
 
-        [HttpGet("pdf/{Id}")]
-        public async Task<IActionResult> GetPdfById([FromRoute] int Id)
+        [HttpGet("pdf/{id}")]
+        public IActionResult GetPDF([FromRoute]int Id)
         {
             try
             {
-                var model = await Service.ReadModelById(Id);
+                var model = Service.ReadModelById(Id).Result;
                 var viewModel = Service.MapToViewModel(model);
 
                 TransferRequestPDFTemplate PdfTemplate = new TransferRequestPDFTemplate();
@@ -38,7 +36,7 @@ namespace Com.Danliris.Service.Internal.Transfer.WebApi.Controllers.v1
 
                 return new FileStreamResult(stream, "application/pdf")
                 {
-                    FileDownloadName = $"Transfer Request {viewModel.trNo}.pdf"
+                    FileDownloadName = "Transfer Order.pdf"
                 };
             }
             catch (Exception e)
