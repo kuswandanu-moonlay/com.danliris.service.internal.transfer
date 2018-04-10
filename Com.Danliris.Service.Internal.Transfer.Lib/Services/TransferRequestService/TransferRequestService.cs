@@ -37,7 +37,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferRequestSer
 
             List<string> SelectedFields = new List<string>()
             {
-                "Id", "TRNo", "_CreatedUtc", "RequestedArrivalDate", "TRDate", "IsPosted","IsCanceled"
+                "Id", "TRNo", "_CreatedUtc", "RequestedArrivalDate", "TRDate", "IsPosted","IsCanceled","Unit","Category"
             };
 
             Query = Query
@@ -46,6 +46,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferRequestSer
                     Id = tr.Id,
                     TRNo = tr.TRNo,
                     _CreatedUtc = tr._CreatedUtc,
+                    DivisionName=tr.DivisionName,
                     TRDate=tr.TRDate,
                     CategoryName = tr.CategoryName,
                     RequestedArrivalDate = tr.RequestedArrivalDate,
@@ -152,7 +153,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferRequestSer
                         unit = transferRequestDetail.UomUnit
                     };
                     transferRequestDetailViewModel.uom = Uom;
-
+                    transferRequestDetailViewModel.quantity = transferRequestDetail.Quantity;
                     ProductViewModel Product = new ProductViewModel()
                     {
                         _id = transferRequestDetail.ProductId,
