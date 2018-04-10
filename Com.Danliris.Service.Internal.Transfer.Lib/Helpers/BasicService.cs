@@ -12,7 +12,7 @@ using System.Reflection;
 namespace Com.Danliris.Service.Internal.Transfer.Lib.Helpers
 {
     public abstract class BasicService<TDbContext, TModel> : StandardEntityService<TDbContext, TModel>
-         where TDbContext : DbContext
+        where TDbContext : DbContext
         where TModel : StandardEntity, IValidatableObject
     {
         public string Username { get; set; }
@@ -91,4 +91,3 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Helpers
         }
     }
 }
-
