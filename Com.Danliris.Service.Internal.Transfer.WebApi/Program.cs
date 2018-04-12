@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-namespace Com.Danliris.Service.Internal.Transfer
+namespace Com.Danliris.Service.Internal.Transfer.WebApi
 {
     public class Program
     {
