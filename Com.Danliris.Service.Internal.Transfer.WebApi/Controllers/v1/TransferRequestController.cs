@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace Com.Danliris.Service.Internal.Transfer.WebApi.Controllers.v1
 {
@@ -21,6 +22,28 @@ namespace Com.Danliris.Service.Internal.Transfer.WebApi.Controllers.v1
         private static readonly string ApiVersion = "1.0";
         public TransferRequestController(TransferRequestService Service) : base(Service, ApiVersion)
         {
+        }
+
+        [HttpPut("trpost")]
+        public IActionResult Put([FromBody]List<int> Ids)
+        {
+            try
+            {
+                Service.Username = User.Claims.Single(p => p.Type.Equals("username")).Value;
+
+                if (this.Service.TRPost(Ids))
+                {
+                    return NoContent();
+                }
+                else
+                {
+                    return StatusCode(General.INTERNAL_ERROR_STATUS_CODE);
+                }
+            }
+            catch (Exception e)
+            {
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE);
+            }
         }
 
         [HttpGet("pdf/{id}")]
@@ -36,7 +59,7 @@ namespace Com.Danliris.Service.Internal.Transfer.WebApi.Controllers.v1
 
                 return new FileStreamResult(stream, "application/pdf")
                 {
-                    FileDownloadName = "Transfer Order.pdf"
+                    FileDownloadName = $"Transfer Order {viewModel.trNo}.pdf"
                 };
             }
             catch (Exception e)
