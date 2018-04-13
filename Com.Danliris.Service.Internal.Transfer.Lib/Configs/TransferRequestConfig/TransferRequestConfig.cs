@@ -22,11 +22,11 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Configs.TransferRequestConf
             builder.Property(p => p.CategoryName).HasMaxLength(255);
             builder.Property(p => p.Remark).HasMaxLength(255);
 
-            //builder
-            //    .HasMany(h => h.TransferRequestDetail)
-            //    .WithOne(w => w.TransferRequest)
-            //    .HasForeignKey(f => f.TransferRequestId)
-            //    .IsRequired();
+            builder
+                .HasMany(h => h.TransferRequestDetails)
+                .WithOne(w => w.TransferRequest)
+                .HasForeignKey(f => f.TransferRequestId)
+                .IsRequired();
         }
     }
 }
