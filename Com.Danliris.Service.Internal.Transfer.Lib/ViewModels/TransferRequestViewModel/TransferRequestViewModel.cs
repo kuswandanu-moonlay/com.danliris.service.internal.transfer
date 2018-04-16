@@ -28,7 +28,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.ViewModels.TransferRequestV
             if (this.requestedArrivalDate == null || this.requestedArrivalDate == DateTime.MinValue)
                 yield return new ValidationResult("Tanggal diminta datang harus diisi", new List<string> { "requestedArrivalDate" });
             else if (this.trDate > this.requestedArrivalDate)
-                yield return new ValidationResult("Tanggal diminta datang tidak boleh lebih besar dari Tanggal TR", new List<string> { "requestedArrivalDate" });
+                yield return new ValidationResult("Tanggal diminta datang tidak boleh kurang dari Tanggal TR", new List<string> { "requestedArrivalDate" });
 
             if (this.unit == null || string.IsNullOrWhiteSpace(this.unit._id))
                 yield return new ValidationResult("Unit harus diisi", new List<string> { "unit" });

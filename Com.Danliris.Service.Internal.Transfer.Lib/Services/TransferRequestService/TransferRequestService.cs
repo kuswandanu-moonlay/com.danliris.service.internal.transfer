@@ -276,6 +276,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferRequestSer
         {
             TransferRequestDetailService transferRequestDetailService = this.ServiceProvider.GetService<TransferRequestDetailService>();
             transferRequestDetailService.Username = this.Username;
+            
 
             int Updated = 0;
             using (var transaction = this.DbContext.Database.BeginTransaction())
@@ -308,6 +309,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferRequestSer
                             await transferRequestDetailService.CreateModel(transferRequestDetail);
                         }
                     }
+
 
                     transaction.Commit();
                 }
@@ -345,11 +347,74 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferRequestSer
             return IsSuccessful;
         }
 
+        public bool TRUnpost(int Id)
+        {
+            bool IsSuccessful = false;
+
+            using (var Transaction = this.DbContext.Database.BeginTransaction())
+            {
+                try
+                {
+                    var transfer = this.DbSet.FirstOrDefault(tr => tr.Id == Id && tr._IsDeleted==false);
+                    transfer.IsPosted = false;
+                    transfer._LastModifiedUtc = DateTime.UtcNow;
+                    transfer._LastModifiedAgent = "Service";
+                    transfer._LastModifiedBy = this.Username;
+                    this.DbContext.SaveChanges();
+
+                    IsSuccessful = true;
+                    Transaction.Commit();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    Transaction.Rollback();
+                    throw;
+                }
+            }
+
+            return IsSuccessful;
+        }
+
         public override void OnDeleting(TransferRequest model)
         {
             base.OnDeleting(model);
             model._DeletedAgent = "Service";
             model._DeletedBy = this.Username;
+        }
+
+        public override async Task<int> DeleteModel(int Id)
+        {
+            TransferRequestDetailService transferRequestDetailService = this.ServiceProvider.GetService<TransferRequestDetailService>();
+
+            int Deleted = 0;
+            using (var transaction = this.DbContext.Database.BeginTransaction())
+            {
+                try
+                {
+                    TransferRequest Model = await this.ReadModelById(Id);
+                    Deleted = await this.DeleteAsync(Id);
+
+                    HashSet<int> transferRequestDetails = new HashSet<int>(transferRequestDetailService.DbSet
+                        .Where(p => p.TransferRequestId.Equals(Id))
+                        .Select(p => p.Id));
+
+                    transferRequestDetailService.Username = this.Username;
+
+                    foreach (int transferRequestDetail in transferRequestDetails)
+                    {
+                        await transferRequestDetailService.DeleteModel(transferRequestDetail);
+                    }
+
+                    
+                    transaction.Commit();
+                }
+                catch (Exception)
+                {
+                    transaction.Rollback();
+                }
+            }
+
+            return Deleted;
         }
     }
 }
