@@ -24,6 +24,50 @@ namespace Com.Danliris.Service.Internal.Transfer.WebApi.Controllers.v1
         {
         }
 
+        [HttpPut("trpost")]
+        public IActionResult TRPost([FromBody]List<int> Ids)
+        {
+            try
+            {
+                Service.Username = User.Claims.Single(p => p.Type.Equals("username")).Value;
+
+                if (this.Service.TRPost(Ids))
+                {
+                    return NoContent();
+                }
+                else
+                {
+                    return StatusCode(General.INTERNAL_ERROR_STATUS_CODE);
+                }
+            }
+            catch (Exception e)
+            {
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE);
+            }
+        }
+
+        [HttpPut("trunpost/{Id}")]
+        public IActionResult TRUnpost([FromRoute] int Id)
+        {
+            try
+            {
+                Service.Username = User.Claims.Single(p => p.Type.Equals("username")).Value;
+
+                if (this.Service.TRUnpost(Id))
+                {
+                    return NoContent();
+                }
+                else
+                {
+                    return StatusCode(General.INTERNAL_ERROR_STATUS_CODE);
+                }
+            }
+            catch (Exception e)
+            {
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE);
+            }
+        }
+
         [HttpGet("pdf/{id}")]
         public IActionResult GetPDF([FromRoute]int Id)
         {
@@ -37,7 +81,7 @@ namespace Com.Danliris.Service.Internal.Transfer.WebApi.Controllers.v1
 
                 return new FileStreamResult(stream, "application/pdf")
                 {
-                    FileDownloadName = "Transfer Order.pdf"
+                    FileDownloadName = $"Transfer Order {viewModel.trNo}.pdf"
                 };
             }
             catch (Exception e)

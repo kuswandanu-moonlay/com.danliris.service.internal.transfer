@@ -141,6 +141,9 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferRequestSer
             model.CategoryId = viewModel.category._id;
             model.CategoryName = viewModel.category.name;
             model.Remark = viewModel.remark;
+            model.TRNo = viewModel.trNo;
+            model.IsPosted = viewModel.isPosted;
+            model.IsCanceled = viewModel.isCanceled;
 
             model.TransferRequestDetails = new List<TransferRequestDetail>();
 
@@ -157,6 +160,8 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferRequestSer
                 transferRequestDetail.UomId = transferRequestDetailViewModel.uom._id;
                 transferRequestDetail.UomUnit = transferRequestDetailViewModel.uom.unit;
                 transferRequestDetail.ProductRemark = transferRequestDetailViewModel.productRemark;
+                transferRequestDetail.Grade = transferRequestDetailViewModel.grade;
+                transferRequestDetail.Status = transferRequestDetailViewModel.status;
 
                 model.TransferRequestDetails.Add(transferRequestDetail);
             }
@@ -203,6 +208,10 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferRequestSer
             viewModel.unit = Unit;
             viewModel.category = Category;
             viewModel.remark = model.Remark;
+            viewModel.trDate = model.TRDate;
+            viewModel.requestedArrivalDate = model.RequestedArrivalDate;
+            viewModel.isPosted = model.IsPosted;
+            viewModel.isCanceled = model.IsCanceled;
 
             viewModel.details = new List<TransferRequestDetailViewModel>();
             if (model.TransferRequestDetails != null)
@@ -219,16 +228,18 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferRequestSer
                     };
                     transferRequestDetailViewModel.uom = Uom;
                     transferRequestDetailViewModel.quantity = transferRequestDetail.Quantity;
+                    transferRequestDetailViewModel.grade = transferRequestDetail.Grade;
                     ProductViewModel Product = new ProductViewModel()
                     {
                         _id = transferRequestDetail.ProductId,
                         code = transferRequestDetail.ProductCode,
                         name = transferRequestDetail.ProductName
                     };
-                    transferRequestDetailViewModel.productRemark = transferRequestDetail.ProductRemark;
                     transferRequestDetailViewModel.product = Product;
-                    transferRequestDetailViewModel.grade = transferRequestDetail.Grade;
+                    transferRequestDetailViewModel.productRemark = transferRequestDetail.ProductRemark;
                     transferRequestDetailViewModel.status = transferRequestDetail.Status;
+                    transferRequestDetailViewModel.grade = transferRequestDetail.Grade;
+
                     viewModel.details.Add(transferRequestDetailViewModel);
                 }
             }
@@ -327,11 +338,149 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferRequestSer
             model._LastModifiedBy = this.Username;
         }
 
+        public override async Task<int> UpdateModel(int Id, TransferRequest Model)
+        {
+            TransferRequestDetailService transferRequestDetailService = this.ServiceProvider.GetService<TransferRequestDetailService>();
+            transferRequestDetailService.Username = this.Username;
+            
+
+            int Updated = 0;
+            using (var transaction = this.DbContext.Database.BeginTransaction())
+            {
+                try
+                {
+                    HashSet<int> transferRequestDetails = new HashSet<int>(transferRequestDetailService.DbSet
+                        .Where(w => w.TransferRequestId.Equals(Id))
+                        .Select(s => s.Id));
+                    Updated = await this.UpdateAsync(Id, Model);
+
+
+                    foreach (int transferRequestDetail in transferRequestDetails)
+                    {
+                        TransferRequestDetail model = Model.TransferRequestDetails.FirstOrDefault(prop => prop.Id.Equals(transferRequestDetail));
+                        if (model == null)
+                        {
+                            await transferRequestDetailService.DeleteModel(transferRequestDetail);
+                        }
+                        else
+                        {
+                            await transferRequestDetailService.UpdateModel(transferRequestDetail, model);
+                        }
+                    }
+
+                    foreach (TransferRequestDetail transferRequestDetail in Model.TransferRequestDetails)
+                    {
+                        if (transferRequestDetail.Id.Equals(0))
+                        {
+                            await transferRequestDetailService.CreateModel(transferRequestDetail);
+                        }
+                    }
+
+
+                    transaction.Commit();
+                }
+                catch (Exception e)
+                {
+                    transaction.Rollback();
+                }
+            }
+
+            return Updated;
+        }
+
+        public bool TRPost(List<int> Ids)
+        {
+            bool IsSuccessful = false;
+
+            using (var Transaction = this.DbContext.Database.BeginTransaction())
+            {
+                try
+                {
+                    var mdn = this.DbSet.Where(m => Ids.Contains(m.Id)).ToList();
+                    mdn.ForEach(m => { m.IsPosted = true; m._LastModifiedUtc = DateTime.UtcNow; m._LastModifiedAgent = "Service"; m._LastModifiedBy = this.Username; });
+                    this.DbContext.SaveChanges();
+
+                    IsSuccessful = true;
+                    Transaction.Commit();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    Transaction.Rollback();
+                    throw;
+                }
+            }
+
+            return IsSuccessful;
+        }
+
+        public bool TRUnpost(int Id)
+        {
+            bool IsSuccessful = false;
+
+            using (var Transaction = this.DbContext.Database.BeginTransaction())
+            {
+                try
+                {
+                    var transfer = this.DbSet.FirstOrDefault(tr => tr.Id == Id && tr._IsDeleted==false);
+                    transfer.IsPosted = false;
+                    transfer._LastModifiedUtc = DateTime.UtcNow;
+                    transfer._LastModifiedAgent = "Service";
+                    transfer._LastModifiedBy = this.Username;
+                    this.DbContext.SaveChanges();
+
+                    IsSuccessful = true;
+                    Transaction.Commit();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    Transaction.Rollback();
+                    throw;
+                }
+            }
+
+            return IsSuccessful;
+        }
+
         public override void OnDeleting(TransferRequest model)
         {
             base.OnDeleting(model);
             model._DeletedAgent = "Service";
             model._DeletedBy = this.Username;
+        }
+
+        public override async Task<int> DeleteModel(int Id)
+        {
+            TransferRequestDetailService transferRequestDetailService = this.ServiceProvider.GetService<TransferRequestDetailService>();
+
+            int Deleted = 0;
+            using (var transaction = this.DbContext.Database.BeginTransaction())
+            {
+                try
+                {
+                    TransferRequest Model = await this.ReadModelById(Id);
+                    Deleted = await this.DeleteAsync(Id);
+
+                    HashSet<int> transferRequestDetails = new HashSet<int>(transferRequestDetailService.DbSet
+                        .Where(p => p.TransferRequestId.Equals(Id))
+                        .Select(p => p.Id));
+
+                    transferRequestDetailService.Username = this.Username;
+
+                    foreach (int transferRequestDetail in transferRequestDetails)
+                    {
+                        await transferRequestDetailService.DeleteModel(transferRequestDetail);
+                    }
+
+                    
+                    transaction.Commit();
+                }
+                catch (Exception)
+                {
+                    transaction.Rollback();
+                }
+            }
+
+            return Deleted;
         }
     }
 }

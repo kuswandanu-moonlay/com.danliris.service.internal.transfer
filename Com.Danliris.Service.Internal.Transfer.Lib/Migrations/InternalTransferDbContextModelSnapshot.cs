@@ -20,7 +20,9 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Migrations
                 .HasAnnotation("ProductVersion", "2.0.1-rtm-125")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+
             modelBuilder.Entity("Com.Danliris.Service.Internal.Transfer.Lib.Models.InternalTransferOrderModel.InternalTransferOrder", b =>
+ 
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
@@ -34,6 +36,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Migrations
                     b.Property<string>("CategoryId");
 
                     b.Property<string>("CategoryName");
+
 
                     b.Property<string>("DivisionCode");
 
@@ -64,6 +67,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Migrations
                     b.Property<string>("UnitId");
 
                     b.Property<string>("UnitName");
+
 
                     b.Property<string>("_CreatedAgent")
                         .IsRequired()
@@ -103,6 +107,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Migrations
                 });
 
             modelBuilder.Entity("Com.Danliris.Service.Internal.Transfer.Lib.Models.InternalTransferOrderModel.InternalTransferOrderDetail", b =>
+ 
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
@@ -172,6 +177,163 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Migrations
                     b.ToTable("InternalTransferOrderDetails");
                 });
 
+            modelBuilder.Entity("Com.Danliris.Service.Internal.Transfer.Lib.Models.TransferRequestModel.TransferRequest", b =>
+            {
+                b.Property<int>("Id")
+                    .ValueGeneratedOnAdd();
+
+                b.Property<bool>("Active");
+
+                b.Property<int>("AutoIncrementNumber");
+
+                b.Property<string>("CategoryCode")
+                    .HasMaxLength(255);
+
+                b.Property<string>("CategoryId")
+                    .HasMaxLength(255);
+
+                b.Property<string>("CategoryName")
+                    .HasMaxLength(255);
+
+                b.Property<string>("DivisionCode");
+
+                b.Property<string>("DivisionId");
+
+                b.Property<string>("DivisionName");
+
+                b.Property<bool>("IsCanceled");
+
+                b.Property<bool>("IsPosted");
+
+                b.Property<string>("Remark")
+                    .HasMaxLength(255);
+
+                b.Property<DateTime>("RequestedArrivalDate")
+                    .HasMaxLength(255);
+
+                b.Property<DateTime>("TRDate")
+                    .HasMaxLength(255);
+
+                b.Property<string>("TRNo")
+                    .HasMaxLength(255);
+
+                b.Property<string>("UnitCode")
+                    .HasMaxLength(255);
+
+                b.Property<string>("UnitId")
+                    .HasMaxLength(255);
+
+                b.Property<string>("UnitName")
+                    .HasMaxLength(255);
+
+                b.Property<string>("_CreatedAgent")
+                    .IsRequired()
+                    .HasMaxLength(255);
+
+                b.Property<string>("_CreatedBy")
+                    .IsRequired()
+                    .HasMaxLength(255);
+
+                b.Property<DateTime>("_CreatedUtc");
+
+                b.Property<string>("_DeletedAgent")
+                    .IsRequired()
+                    .HasMaxLength(255);
+
+                b.Property<string>("_DeletedBy")
+                    .IsRequired()
+                    .HasMaxLength(255);
+
+                b.Property<DateTime>("_DeletedUtc");
+
+                b.Property<bool>("_IsDeleted");
+
+                b.Property<string>("_LastModifiedAgent")
+                    .IsRequired()
+                    .HasMaxLength(255);
+
+                b.Property<string>("_LastModifiedBy")
+                    .IsRequired()
+                    .HasMaxLength(255);
+
+                b.Property<DateTime>("_LastModifiedUtc");
+
+                b.HasKey("Id");
+
+                b.ToTable("TransferRequests");
+            });
+
+            modelBuilder.Entity("Com.Danliris.Service.Internal.Transfer.Lib.Models.TransferRequestModel.TransferRequestDetail", b =>
+            {
+                b.Property<int>("Id")
+                    .ValueGeneratedOnAdd();
+
+                b.Property<bool>("Active");
+
+                b.Property<string>("Grade");
+
+                b.Property<string>("ProductCode")
+                    .HasMaxLength(255);
+
+                b.Property<string>("ProductId")
+                    .HasMaxLength(255);
+
+                b.Property<string>("ProductName")
+                    .HasMaxLength(255);
+
+                b.Property<string>("ProductRemark")
+                    .HasMaxLength(255);
+
+                b.Property<double>("Quantity");
+
+                b.Property<string>("Status");
+
+                b.Property<int>("TransferRequestId");
+
+                b.Property<string>("UomId")
+                    .HasMaxLength(255);
+
+                b.Property<string>("UomUnit")
+                    .HasMaxLength(255);
+
+                b.Property<string>("_CreatedAgent")
+                    .IsRequired()
+                    .HasMaxLength(255);
+
+                b.Property<string>("_CreatedBy")
+                    .IsRequired()
+                    .HasMaxLength(255);
+
+                b.Property<DateTime>("_CreatedUtc");
+
+                b.Property<string>("_DeletedAgent")
+                    .IsRequired()
+                    .HasMaxLength(255);
+
+                b.Property<string>("_DeletedBy")
+                    .IsRequired()
+                    .HasMaxLength(255);
+
+                b.Property<DateTime>("_DeletedUtc");
+
+                b.Property<bool>("_IsDeleted");
+
+                b.Property<string>("_LastModifiedAgent")
+                    .IsRequired()
+                    .HasMaxLength(255);
+
+                b.Property<string>("_LastModifiedBy")
+                    .IsRequired()
+                    .HasMaxLength(255);
+
+                b.Property<DateTime>("_LastModifiedUtc");
+
+                b.HasKey("Id");
+
+                b.HasIndex("TransferRequestId");
+
+                b.ToTable("TransferRequestDetails");
+            });
             modelBuilder.Entity("Com.Danliris.Service.Internal.Transfer.Lib.Models.InternalTransferOrderModel.InternalTransferOrderDetail", b =>
                 {
                     b.HasOne("Com.Danliris.Service.Internal.Transfer.Lib.Models.InternalTransferOrderModel.InternalTransferOrder", "InternalTransferOrder")
@@ -179,8 +341,14 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Migrations
                         .HasForeignKey("ITOId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
+            modelBuilder.Entity("Com.Danliris.Service.Internal.Transfer.Lib.Models.TransferRequestModel.TransferRequestDetail", b =>
+            {
+                b.HasOne("Com.Danliris.Service.Internal.Transfer.Lib.Models.TransferRequestModel.TransferRequest", "TransferRequest")
+                    .WithMany("TransferRequestDetails")
+                    .HasForeignKey("TransferRequestId")
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
 
-         
 #pragma warning restore 612, 618
         }
     }

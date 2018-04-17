@@ -7,6 +7,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.ViewModels.TransferRequestV
 {
     public class TransferRequestDetailViewModel : BasicViewModel
     {
+        public int TransferRequestId { get; set; }
         public ProductViewModel product { get; set; }
         public string productId { get; set; }
         public string productCode { get; set; }
