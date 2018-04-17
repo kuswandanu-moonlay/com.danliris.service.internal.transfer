@@ -15,7 +15,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Models.InternalTransferOrde
 
         public string TRNo { get; set; }
 
-        public DateTime PRDate { get; set; }
+        public DateTime TRDate { get; set; }
 
         public DateTime RequestedArrivalDate { get; set; }
 
@@ -31,11 +31,11 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Models.InternalTransferOrde
 
         public string CategoryName { get; set; }
 
-        public string DivisonId { get; set; }
+        public string DivisionId { get; set; }
 
-        public string DivisonCode { get; set; }
+        public string DivisionCode { get; set; }
 
-        public string DivisonName { get; set; }
+        public string DivisionName { get; set; }
 
         public string Remarks { get; set; }
 
@@ -49,7 +49,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Models.InternalTransferOrde
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
-            throw new NotImplementedException();
+            return new List<ValidationResult>();
         }
     }
 }

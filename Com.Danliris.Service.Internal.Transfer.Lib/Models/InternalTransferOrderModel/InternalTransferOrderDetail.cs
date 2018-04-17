@@ -9,7 +9,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Models.InternalTransferOrde
     public class InternalTransferOrderDetail : StandardEntity, IValidatableObject
     {
         
-
+        
         public string ProductId { get; set; }
 
         public string ProductCode { get; set; }
@@ -29,12 +29,13 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Models.InternalTransferOrde
         public string ProductRemark { get; set; }
 
         public string Grade { get; set; }
+        public string Status { get; set; }
 
         public virtual InternalTransferOrder InternalTransferOrder { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
-            throw new NotImplementedException();
+            return new List<ValidationResult>();
         }
     }
 }
