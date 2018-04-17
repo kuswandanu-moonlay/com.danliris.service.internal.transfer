@@ -53,9 +53,21 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.InternalTransferOr
             model._CreatedBy = this.Username;
             model._LastModifiedAgent = "Service";
             model._LastModifiedBy = this.Username;
- 
+        }
+        public override void OnUpdating(int id, InternalTransferOrderDetail model)
+        {
+            base.OnUpdating(id, model);
+            model._LastModifiedAgent = "Service";
+            model._LastModifiedBy = this.Username;
         }
 
-     
+        public override void OnDeleting(InternalTransferOrderDetail model)
+        {
+            base.OnDeleting(model);
+            model._DeletedAgent = "Service";
+            model._DeletedBy = this.Username;
+        }
+
+
     }
 }

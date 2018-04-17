@@ -16,6 +16,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Com.Danliris.Service.Internal.Transfer.Lib.Models.TransferRequestModel;
 
 namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.InternalTransferOrderServices
 {
@@ -73,9 +74,18 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.InternalTransferOr
             {
                 try
                 {
+                    
                     Model = await this.CustomCodeGenerator(Model);
                     Created = await this.CreateAsync(Model);
+                    foreach (var detail in Model.InternalTransferOrderDetails)
+                    {
+
+                        TransferRequestDetail trd = this.DbContext.TransferRequestDetails.FirstOrDefault(s => s.Id == detail.TRDetailId);
+                        trd.Status = "Sudah diterima Pembelian";
+                    }
+                    this.DbContext.SaveChanges();
                     transaction.Commit();
+
                 }
                 catch (ServiceValidationExeption e)
                 {
@@ -88,55 +98,6 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.InternalTransferOr
             }
             return Created;
         }
-
-        public override async Task<int> UpdateModel(int Id, InternalTransferOrder Model)
-        {
-            InternalTransferOrderDetailService internalTransferOrderDetailService = this.ServiceProvider.GetService<InternalTransferOrderDetailService>();
-            internalTransferOrderDetailService.Username = this.Username;
-
-            int Updated = 0;
-            using (var transaction = this.DbContext.Database.BeginTransaction())
-            {
-                try
-                {
-                    HashSet<int> internalTransferOrderDetail = new HashSet<int>(internalTransferOrderDetailService.DbSet
-                        .Where(w => w.ITOId.Equals(Id))
-                        .Select(s => s.Id));
-                    Updated = await this.UpdateAsync(Id, Model);
-
-
-                    foreach (int detail in internalTransferOrderDetail)
-                    {
-                        InternalTransferOrderDetail model = Model.InternalTransferOrderDetails.FirstOrDefault(prop => prop.Id.Equals(internalTransferOrderDetail));
-                        if (model == null)
-                        {
-                            await internalTransferOrderDetailService.DeleteModel(detail);
-                        }
-                        else
-                        {
-                            await internalTransferOrderDetailService.UpdateModel(detail, model);
-                        }
-                    }
-
-                    foreach (InternalTransferOrderDetail detail in Model.InternalTransferOrderDetails)
-                    {
-                        if (detail.Id.Equals(0))
-                        {
-                            await internalTransferOrderDetailService.CreateModel(detail);
-                        }
-                    }
-
-                    transaction.Commit();
-                }
-                catch (Exception e)
-                {
-                    transaction.Rollback();
-                }
-            }
-
-            return Updated;
-        }
-
         public override async Task<int> DeleteModel(int Id)
         {
             InternalTransferOrderDetailService internalTransferOrderDetailService = this.ServiceProvider.GetService<InternalTransferOrderDetailService>();
@@ -160,7 +121,13 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.InternalTransferOr
                         await internalTransferOrderDetailService.DeleteModel(detail);
                     }
 
+                    foreach (var detail in Model.InternalTransferOrderDetails)
+                    {
 
+                        TransferRequestDetail trd = this.DbContext.TransferRequestDetails.FirstOrDefault(s => s.Id == detail.TRDetailId);
+                        trd.Status = "Belum diterima Pembelian";
+                    }
+                    this.DbContext.SaveChanges();
                     transaction.Commit();
                 }
                 catch (Exception)
@@ -171,73 +138,36 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.InternalTransferOr
 
             return Deleted;
         }
-
-        public Tuple<List<InternalTransferOrder>, int, Dictionary<string, string>, List<string>> ReadModelPosted(int Page = 1, int Size = 25, string Order = "{}", List<string> Select = null, string Keyword = null, string Filter = "{}")
-        {
-            IQueryable<InternalTransferOrder> Query = this.DbContext.InternalTransferOrders;
-
-            List<string> SearchAttributes = new List<string>()
-            {
-                "IsPosted"
-            };
-
-            Query = ConfigureSearch(Query, SearchAttributes, Keyword);
-
-            List<string> SelectedFields = new List<string>()
-            {
-                "Id", "TRNo", "TRDate", "UnitId", "UnitCode", "UnitName", "Remark", "DivisionId", "DivisionCode", "DivisionName","CategoryId","CategoryCode","CategoryName"
-            };
-
-            Query = Query
-                .Select(stn => new InternalTransferOrder
-                {
-                    Id = stn.Id,
-                    TRId = stn.TRId,
-                    _CreatedUtc = stn._CreatedUtc,
-                    TRNo = stn.TRNo,
-                    _LastModifiedUtc = stn._LastModifiedUtc,
-                    _CreatedBy = stn._CreatedBy
-                }).Where(w => !string.Equals(w._CreatedBy, Username));
-
-            Dictionary<string, string> FilterDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(Filter);
-            Query = ConfigureFilter(Query, FilterDictionary);
-
-            Dictionary<string, string> OrderDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(Order);
-            Query = ConfigureOrder(Query, OrderDictionary);
-
-            Pageable<InternalTransferOrder> pageable = new Pageable<InternalTransferOrder>(Query, Page - 1, Size);
-            List<InternalTransferOrder> Data = pageable.Data.ToList();
-            int TotalData = pageable.TotalCount;
-
-            return Tuple.Create(Data, TotalData, OrderDictionary, SelectedFields);
-        }
-
         public override Tuple<List<InternalTransferOrder>, int, Dictionary<string, string>, List<string>> ReadModel(int Page = 1, int Size = 25, string Order = "{}", List<string> Select = null, string Keyword = null, string Filter = "{}")
         {
             IQueryable<InternalTransferOrder> Query = this.DbContext.InternalTransferOrders;
 
             List<string> SearchAttributes = new List<string>()
             {
-                "InternalTransferOrderNo"
+                "TRNo"
             };
 
             Query = ConfigureSearch(Query, SearchAttributes, Keyword);
 
             List<string> SelectedFields = new List<string>()
             {
-                "Id", "InternalTransferOrderNo","Active", "_CreatedUtc", "TransferRequestNo" };
+                "Id", "ITONo","TRDate","Active", "_CreatedBy", "TRNo" ,"RequestedArrivalDate","CategoryName","DivisionName","UnitName","IsPost"};
 
             Query = Query
                 .Select(mdn => new InternalTransferOrder
                 {
                     Id = mdn.Id,
                     ITONo = mdn.ITONo,
-                    Active = true,
-
+                    TRDate=mdn.TRDate,
+                    RequestedArrivalDate=mdn.RequestedArrivalDate,
+                    CategoryName=mdn.CategoryName,
+                    UnitName=mdn.UnitName,
+                    DivisionName=mdn.DivisionName,
+                    _CreatedBy =mdn._CreatedBy,
                     TRNo = mdn.TRNo,
                     _CreatedUtc = mdn._CreatedUtc,
                     _LastModifiedUtc = mdn._LastModifiedUtc
-                });
+                }).Where(s=>s._IsDeleted == false);
 
             Dictionary<string, string> FilterDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(Filter);
             Query = ConfigureFilter(Query, FilterDictionary);
@@ -256,9 +186,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.InternalTransferOr
         {
             if (model.InternalTransferOrderDetails.Count > 0)
             {
-
                 InternalTransferOrderDetailService internalTransferOrderDetailService = this.ServiceProvider.GetService<InternalTransferOrderDetailService>();
-
                 internalTransferOrderDetailService.Username = this.Username;
                 foreach (InternalTransferOrderDetail detail in model.InternalTransferOrderDetails)
                 {
@@ -290,6 +218,21 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.InternalTransferOr
         public InternalTransferOrder MapToModel(InternalTransferOrderViewModel viewModel)
         {
             InternalTransferOrder model = new InternalTransferOrder();
+            model.ITONo = viewModel.ITONo;
+            model.TRNo = viewModel.TRNo;
+            model.TRId = viewModel.TRId;
+            model.RequestedArrivalDate = viewModel.RequestedArrivalDate;
+            model.Remarks = viewModel.Remarks;
+            model.TRDate = viewModel.TRDate;
+            model.UnitId = viewModel.UnitId;
+            model.UnitCode = viewModel.UnitCode;
+            model.UnitName = viewModel.UnitName;
+            model.CategoryId = viewModel.CategoryId;
+            model.CategoryCode = viewModel.CategoryCode;
+            model.CategoryName = viewModel.CategoryName;
+            model.DivisionId = viewModel.DivisionId;
+            model.DivisionCode = viewModel.DivisionCode;
+            model.DivisionName = viewModel.DivisionName;
             PropertyCopier<InternalTransferOrderViewModel, InternalTransferOrder>.Copy(viewModel, model);
 
             model.InternalTransferOrderDetails = new List<InternalTransferOrderDetail>();
@@ -298,7 +241,9 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.InternalTransferOr
                 InternalTransferOrderDetail internalTransferOrderDetail = new InternalTransferOrderDetail();
                 PropertyCopier<InternalTransferOrderDetailViewModel, InternalTransferOrderDetail>.Copy(detail, internalTransferOrderDetail);
                 internalTransferOrderDetail.Quantity = (double)detail.Quantity;
+                internalTransferOrderDetail.Status = "TO Internal belum diorder";
                 model.InternalTransferOrderDetails.Add(internalTransferOrderDetail);
+                
             }
 
             return model;
@@ -326,5 +271,38 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.InternalTransferOr
             return viewModel;
         }
 
+        public async Task<int> SplitUpdate(int Id,InternalTransferOrderViewModel viewModel, InternalTransferOrder Model)
+        {
+            InternalTransferOrderDetailService internalTransferOrderDetailService = this.ServiceProvider.GetService<InternalTransferOrderDetailService>();
+            internalTransferOrderDetailService.Username = this.Username;
+
+            int Updated = 0;
+            using (var transaction = this.DbContext.Database.BeginTransaction())
+            {
+                try
+                {   
+                    foreach (InternalTransferOrderDetailViewModel detail in viewModel.InternalTransferOrderDetails)
+                    {
+                        InternalTransferOrderDetail internalTransferOrderDetail = this.DbContext.InternalTransferOrderDetails.FirstOrDefault(s=>s.Id== detail.Id);
+                        if (internalTransferOrderDetail != null)
+                        {
+                            if(internalTransferOrderDetail.Quantity != detail.Quantity)
+                            internalTransferOrderDetail.Quantity -= detail.Quantity;
+                            internalTransferOrderDetail._LastModifiedBy = this.Username;
+                            internalTransferOrderDetail._LastModifiedUtc = DateTime.UtcNow;
+                            this.DbContext.SaveChanges();
+                        }
+                    }
+
+                    transaction.Commit();
+                }
+                catch (Exception e)
+                {
+                    transaction.Rollback();
+                }
+            }
+
+            return Updated;
+        }
     }
 }
