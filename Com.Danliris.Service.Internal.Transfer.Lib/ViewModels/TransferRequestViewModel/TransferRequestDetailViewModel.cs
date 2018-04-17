@@ -8,8 +8,13 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.ViewModels.TransferRequestV
     public class TransferRequestDetailViewModel : BasicViewModel
     {
         public ProductViewModel product { get; set; }
+        public string productId { get; set; }
+        public string productCode { get; set; }
+        public string productName { get; set; }
         public double quantity { get; set; }
         public UomViewModel uom { get; set; }
         public string productRemark { get; set; }
+        public string grade { get; set; }
+        public string status { get; set; }
     }
 }

@@ -15,6 +15,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using Com.Danliris.Service.Internal.Transfer.Lib.Models.InternalTransferOrderModel;
 
 namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferRequestService
 {
@@ -69,6 +70,59 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferRequestSer
             return Tuple.Create(Data, TotalData, OrderDictionary, SelectedFields);
         }
 
+        public  Tuple<List<TransferRequest>, int, Dictionary<string, string>, List<string>> ReadModelPosted(int Page = 1, int Size = 25, string Order = "{}", List<string> Select = null, string Keyword = null, string Filter = "{}")
+        {
+            IQueryable<TransferRequest> Query = this.DbContext.TransferRequests;
+
+            List<string> SearchAttributes = new List<string>()
+            {
+                "TRNo"
+            };
+
+            
+            Query = ConfigureSearch(Query, SearchAttributes, Keyword);
+
+            List<string> SelectedFields = new List<string>()
+            {
+                "Id", "trNo","_CreatedUtc", "requestedArrivalDate","remark", "trDate", "IsPosted","IsCanceled","unitId","unitCode","unitName","divisionId","divisionCode","divisionName","categoryId","categoryCode","categoryName","details"
+            };
+
+            Query = Query
+                .Select(tr => new TransferRequest
+                {
+                    Id = tr.Id,
+                    TRNo = tr.TRNo,
+                    _CreatedUtc = tr._CreatedUtc,
+                    DivisionId=tr.DivisionId,
+                    DivisionCode=tr.DivisionCode,
+                    DivisionName = tr.DivisionName,
+                    TRDate = tr.TRDate,
+                    Remark=tr.Remark,
+                    CategoryId=tr.CategoryId,
+                    CategoryCode=tr.CategoryCode,
+                    CategoryName = tr.CategoryName,
+                    RequestedArrivalDate = tr.RequestedArrivalDate,
+                    _LastModifiedUtc = tr._LastModifiedUtc,
+                    UnitId=tr.UnitId,
+                    UnitCode=tr.UnitCode,
+                    UnitName = tr.UnitName,
+                    IsPosted = tr.IsPosted,
+                    IsCanceled = tr.IsCanceled,
+                    TransferRequestDetails=tr.TransferRequestDetails
+                }).Where(s=>s.IsPosted== true && !(from data in this.DbContext.InternalTransferOrders select data.TRId).Contains(s.Id));
+
+            Dictionary<string, string> FilterDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(Filter);
+            Query = ConfigureFilter(Query, FilterDictionary);
+
+            Dictionary<string, string> OrderDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(Order);
+            Query = ConfigureOrder(Query, OrderDictionary);
+
+            Pageable<TransferRequest> pageable = new Pageable<TransferRequest>(Query, Page - 1, Size);
+            List<TransferRequest> Data = pageable.Data.ToList<TransferRequest>();
+            int TotalData = pageable.TotalCount;
+
+            return Tuple.Create(Data, TotalData, OrderDictionary, SelectedFields);
+        }
         public TransferRequest MapToModel(TransferRequestViewModel viewModel)
         {
             TransferRequest model = new TransferRequest();
@@ -95,8 +149,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferRequestSer
                 TransferRequestDetail transferRequestDetail = new TransferRequestDetail();
 
                 PropertyCopier<TransferRequestDetailViewModel, TransferRequestDetail>.Copy(transferRequestDetailViewModel, transferRequestDetail);
-
-
+                
                 transferRequestDetail.ProductId = transferRequestDetailViewModel.product._id;
                 transferRequestDetail.ProductCode = transferRequestDetailViewModel.product.code;
                 transferRequestDetail.ProductName = transferRequestDetailViewModel.product.name;
@@ -114,6 +167,18 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferRequestSer
         public TransferRequestViewModel MapToViewModel(TransferRequest model)
         {
             TransferRequestViewModel viewModel = new TransferRequestViewModel();
+            viewModel.trDate = model.TRDate;
+            viewModel.remark = model.Remark;
+            viewModel.unitId = model.UnitId;
+            viewModel.unitName = model.UnitName;
+            viewModel.unitCode = model.UnitCode;
+            viewModel.categoryId = model.CategoryId;
+            viewModel.categoryCode = model.CategoryCode;
+            viewModel.categoryName = model.CategoryName;
+            viewModel.divisionId = model.DivisionId;
+            viewModel.divisionCode = model.DivisionCode;
+            viewModel.divisionName = model.DivisionName;
+            viewModel.requestedArrivalDate = model.RequestedArrivalDate;
 
             PropertyCopier<TransferRequest, TransferRequestViewModel>.Copy(model, viewModel);
 
@@ -160,8 +225,10 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferRequestSer
                         code = transferRequestDetail.ProductCode,
                         name = transferRequestDetail.ProductName
                     };
+                    transferRequestDetailViewModel.productRemark = transferRequestDetail.ProductRemark;
                     transferRequestDetailViewModel.product = Product;
-
+                    transferRequestDetailViewModel.grade = transferRequestDetail.Grade;
+                    transferRequestDetailViewModel.status = transferRequestDetail.Status;
                     viewModel.details.Add(transferRequestDetailViewModel);
                 }
             }

@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace Com.Danliris.Service.Internal.Transfer.WebApi.Controllers.v1
 {
@@ -38,6 +39,28 @@ namespace Com.Danliris.Service.Internal.Transfer.WebApi.Controllers.v1
                 {
                     FileDownloadName = "Transfer Order.pdf"
                 };
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
+        [HttpGet("posted")]
+        public IActionResult GetPostedTransferRequest(int Page = 1, int Size = 25, string Order = "{}", [Bind(Prefix = "Select[]")]List<string> Select = null, string Keyword = null, string Filter = "{}")
+        {
+            try
+            {
+                Service.Username = User.Claims.Single(p => p.Type.Equals("username")).Value;
+                Tuple<List<TransferRequest>, int, Dictionary<string, string>, List<string>> Data = Service.ReadModelPosted(Page, Size, Order, Select, Keyword, Filter);
+
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.OK_STATUS_CODE, General.OK_MESSAGE)
+                    .Ok(Data.Item1, Service.MapToViewModel, Page, Size, Data.Item2, Data.Item1.Count, Data.Item3, Data.Item4);
+
+                return Ok(Result);
             }
             catch (Exception e)
             {
