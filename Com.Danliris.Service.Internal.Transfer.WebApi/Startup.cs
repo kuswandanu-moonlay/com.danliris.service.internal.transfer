@@ -11,6 +11,7 @@ using System.Text;
 using Com.Danliris.Service.Internal.Transfer.Lib;
 using Com.Danliris.Service.Internal.Transfer.Lib.Helpers;
 using Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferRequestService;
+using Com.Danliris.Service.Internal.Transfer.Lib.Services.InternalTransferOrderServices;
 
 namespace Com.Danliris.Service.Internal.Transfer.WebApi
 {
@@ -43,7 +44,9 @@ namespace Com.Danliris.Service.Internal.Transfer.WebApi
                 });
             services
                .AddTransient<TransferRequestService>()
-               .AddTransient<TransferRequestDetailService>();
+               .AddTransient<TransferRequestDetailService>()
+               .AddTransient<InternalTransferOrderService>()
+               .AddTransient<InternalTransferOrderDetailService>();
 
             var Secret = Configuration.GetValue<string>("Secret") ?? Configuration["Secret"];
             var Key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Secret));
