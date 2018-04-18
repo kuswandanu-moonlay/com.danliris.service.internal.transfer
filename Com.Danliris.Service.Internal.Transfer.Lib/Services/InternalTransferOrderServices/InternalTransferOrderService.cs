@@ -144,14 +144,14 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.InternalTransferOr
 
             List<string> SearchAttributes = new List<string>()
             {
-                "TRNo"
+                "ITONo", "TRNo"
             };
 
             Query = ConfigureSearch(Query, SearchAttributes, Keyword);
 
             List<string> SelectedFields = new List<string>()
             {
-                "Id", "ITONo","TRDate","Active", "_CreatedBy", "TRNo" ,"RequestedArrivalDate","CategoryName","DivisionName","UnitName","IsPost"};
+                "Id", "ITONo","TRDate","Active", "_CreatedBy", "TRId", "TRNo" ,"RequestedArrivalDate","CategoryName","DivisionName","UnitName","IsPost"};
 
             Query = Query
                 .Select(mdn => new InternalTransferOrder
@@ -164,6 +164,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.InternalTransferOr
                     UnitName=mdn.UnitName,
                     DivisionName=mdn.DivisionName,
                     _CreatedBy =mdn._CreatedBy,
+                    TRId = mdn.TRId,
                     TRNo = mdn.TRNo,
                     _CreatedUtc = mdn._CreatedUtc,
                     _LastModifiedUtc = mdn._LastModifiedUtc
