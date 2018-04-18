@@ -15,12 +15,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Net.Http;
 using System.Net.Http.Headers;
-<<<<<<< HEAD
 using System.IO;
 using System.Data;
-=======
 using Com.Danliris.Service.Internal.Transfer.Lib.Models.InternalTransferOrderModel;
->>>>>>> upstream/dev
 
 namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferRequestService
 {

@@ -1,8 +1,12 @@
-﻿
+
 using Com.Danliris.Service.Internal.Transfer.Lib.Configs.InternalTransferOrderConfigs;
 using Com.Danliris.Service.Internal.Transfer.Lib.Configs.TransferRequestConfig;
 using Com.Danliris.Service.Internal.Transfer.Lib.Models.InternalTransferOrderModel;
 using Com.Danliris.Service.Internal.Transfer.Lib.Models.TransferRequestModel;
+using Com.Danliris.Service.Internal.Transfer.Lib.Configs;
+using Com.Danliris.Service.Internal.Transfer.Lib.Configs.ExternalTransferOrderConfigs;
+using Com.Danliris.Service.Internal.Transfer.Lib.Models;
+using Com.Danliris.Service.Internal.Transfer.Lib.Models.ExternalTransferOrderModel;
 using Com.Moonlay.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -20,6 +24,10 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib
         public DbSet<InternalTransferOrder> InternalTransferOrders { get; set; }
         public DbSet<InternalTransferOrderDetail> InternalTransferOrderDetails { get; set; }
 
+        public DbSet<ExternalTransferOrder> ExternalTransferOrders { get; set; }
+        public DbSet<ExternalTransferOrderItem> ExternalTransferOrderItems { get; set; }
+        public DbSet<ExternalTransferOrderDetail> ExternalTransferOrderDetails { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -29,6 +37,10 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib
 
             modelBuilder.ApplyConfiguration(new InternalTransferOrderConfig());
             modelBuilder.ApplyConfiguration(new InternalTransferOrderDetailConfig());
+
+            modelBuilder.ApplyConfiguration(new ExternalTransferOrderConfig());
+            modelBuilder.ApplyConfiguration(new ExternalTransferOrderItemConfig());
+            modelBuilder.ApplyConfiguration(new ExternalTransferOrderDetailConfig());
         }
     }
 }
