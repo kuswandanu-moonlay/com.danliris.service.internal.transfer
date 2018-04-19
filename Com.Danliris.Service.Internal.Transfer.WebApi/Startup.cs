@@ -4,13 +4,14 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using IdentityServer4.AccessTokenValidation;
-using IdentityModel;
 using Newtonsoft.Json.Serialization;
-using Com.Danliris.Service.Internal.Transfer.Lib;
-using Com.Danliris.Service.Internal.Transfer.Lib.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Com.Danliris.Service.Internal.Transfer.Lib;
+using Com.Danliris.Service.Internal.Transfer.Lib.Helpers;
+using Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferDeliveryOrderService;
+using Com.Danliris.Service.Internal.Transfer.Lib.Services.ExternalTransferOrderService;
 
 namespace Com.Danliris.Service.Internal.Transfer.WebApi
 {
@@ -22,6 +23,11 @@ namespace Com.Danliris.Service.Internal.Transfer.WebApi
         }
 
         public IConfiguration Configuration { get; }
+
+        public void RegisterEndpoint()
+        {
+            APIEndpoint.Core = Configuration.GetValue<string>("CoreEndpoint") ?? Configuration["CoreEndpoint"];
+        }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -38,8 +44,13 @@ namespace Com.Danliris.Service.Internal.Transfer.WebApi
                 });
 
             services
-                .AddTransient<TransferDeliveryOrderService>();
+                .AddTransient<TransferDeliveryOrderService>()
+                .AddTransient<TransferDeliveryOrderItemService>()
+                .AddTransient<TransferDeliveryOrderDetailService>()
 
+                .AddTransient<TransferDeliveryOrderService>()
+                .AddTransient<TransferDeliveryOrderItemService>()
+                .AddTransient<ExternalTransferOrderDetailService>();
             var Secret = Configuration.GetValue<string>("Secret") ?? Configuration["Secret"];
             var Key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Secret));
 
@@ -68,6 +79,8 @@ namespace Com.Danliris.Service.Internal.Transfer.WebApi
                        .AllowAnyHeader()
                        .WithExposedHeaders("Content-Disposition", "api-version", "content-length", "content-md5", "content-type", "date", "request-id", "response-time");
             }));
+
+            RegisterEndpoint();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -77,11 +90,13 @@ namespace Com.Danliris.Service.Internal.Transfer.WebApi
             {
                 app.UseDeveloperExceptionPage();
             }
+
             using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
             {
                 var context = serviceScope.ServiceProvider.GetService<InternalTransferDbContext>();
                 context.Database.Migrate();
             }
+
             app.UseAuthentication();
             app.UseCors("InternalTransferPolicy");
             app.UseMvc();

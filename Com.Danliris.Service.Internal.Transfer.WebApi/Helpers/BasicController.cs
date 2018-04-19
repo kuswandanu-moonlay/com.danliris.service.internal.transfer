@@ -90,6 +90,8 @@ namespace Com.Danliris.Service.Internal.Transfer.WebApi.Helpers
             {
                 this.Validate(ViewModel);
                 Service.Username = User.Claims.Single(p => p.Type.Equals("username")).Value;
+                Service.Token = Request.Headers["Authorization"].First().Replace("Bearer ", "");
+
                 TModel model = Service.MapToModel(ViewModel);
 
                 if (!ModelState.IsValid)
@@ -147,8 +149,11 @@ namespace Com.Danliris.Service.Internal.Transfer.WebApi.Helpers
         {
             try
             {
+                Service.Token = Request.Headers["Authorization"].First().Replace("Bearer ", "");
                 this.Validate(ViewModel);
+                
                 Service.Username = User.Claims.Single(p => p.Type.Equals("username")).Value;
+
                 TModel model = Service.MapToModel(ViewModel);
 
                 await Service.CreateModel(model);
@@ -185,6 +190,8 @@ namespace Com.Danliris.Service.Internal.Transfer.WebApi.Helpers
             try
             {
                 Service.Username = User.Claims.Single(p => p.Type.Equals("username")).Value;
+                Service.Token = Request.Headers["Authorization"].First().Replace("Bearer ", "");
+
                 await Service.DeleteModel(Id);
 
                 return NoContent();

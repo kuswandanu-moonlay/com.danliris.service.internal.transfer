@@ -111,8 +111,15 @@ namespace Com.Danliris.Service.Internal.Transfer.WebApi.Helpers
             return Result;
         }
 
+        public Dictionary<string, object> Fail(string Error)
+        {
+            Result.Add("error", Error);
+            return Result;
+        }
+
         public Dictionary<string, object> Fail()
         {
+            Result.Add("error", "Internal Server Error");
             return Result;
         }
 

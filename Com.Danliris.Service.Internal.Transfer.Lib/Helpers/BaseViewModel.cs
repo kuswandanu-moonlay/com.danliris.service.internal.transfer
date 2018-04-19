@@ -1,10 +1,13 @@
-﻿using System;
+﻿using Com.Danliris.Service.Internal.Transfer.Lib.Interfaces;
+using Com.Moonlay.NetCore.Lib.Service;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Text;
 
 namespace Com.Danliris.Service.Internal.Transfer.Lib.Helpers
 {
-    public class BasicViewModel
+    public abstract class BaseViewModel<TModel> : IToModelable<TModel>
     {
         public int Id { get; set; }
         public bool _IsDeleted { get; set; }
@@ -15,5 +18,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Helpers
         public DateTime _LastModifiedUtc { get; set; }
         public string _LastModifiedBy { get; set; }
         public string _LastModifiedAgent { get; set; }
+
+        public abstract TModel ToModel();
     }
 }

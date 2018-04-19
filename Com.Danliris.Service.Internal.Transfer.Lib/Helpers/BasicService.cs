@@ -15,11 +15,12 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Helpers
         where TDbContext : DbContext
         where TModel : StandardEntity, IValidatableObject
     {
+        public string Username { get; set; }
+        public string Token { get; set; }
+
         public BasicService(IServiceProvider serviceProvider) : base(serviceProvider)
         {
         }
-
-        public string Username { get; set; }
 
         public abstract Tuple<List<TModel>, int, Dictionary<string, string>, List<string>> ReadModel(int Page = 1, int Size = 25, string Order = "{}", List<string> Select = null, string Keyword = null, string Filter = "{}");
 
@@ -60,23 +61,10 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Helpers
                 foreach (var f in FilterDictionary)
                 {
                     string Key = f.Key;
-                    string Value = f.Value;
-                    BindingFlags IgnoreCase = BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance;
-                    PropertyInfo propInfo = typeof(TModel).GetProperty(Key, IgnoreCase);
-                    Object propValue = new Object();
-                    if (propInfo == null || String.IsNullOrEmpty(Value))
-                        propValue = null;
-                    if (propInfo.PropertyType.IsEnum)
-                    {
-                        Type enumType = propInfo.PropertyType;
-                        if (Enum.IsDefined(enumType, Value))
-                            propValue = Enum.Parse(enumType, Value);
-                    }
-                    if (propInfo.PropertyType == typeof(Uri))
-                        propValue = new Uri(Convert.ToString(Value));
-                    else
-                        propValue = Convert.ChangeType(Value, propInfo.PropertyType);
-                    Query = Query.Where(m => propInfo.GetValue(m).Equals(propValue));
+                    object Value = f.Value;
+                    string filterQuery = string.Concat(string.Empty, Key, " == @0");
+
+                    Query = Query.Where(filterQuery, Value);
                 }
             }
             return Query;
@@ -96,13 +84,8 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Helpers
             {
                 string Key = OrderDictionary.Keys.First();
                 string OrderType = OrderDictionary[Key];
-                string TransformKey = General.TransformOrderBy(Key);
 
-                BindingFlags IgnoreCase = BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance;
-
-                Query = OrderType.Equals(General.ASCENDING) ?
-                    Query.OrderBy(b => b.GetType().GetProperty(TransformKey, IgnoreCase).GetValue(b)) :
-                    Query.OrderByDescending(b => b.GetType().GetProperty(TransformKey, IgnoreCase).GetValue(b));
+                Query = Query.OrderBy(string.Concat(Key, " ", OrderType));
             }
             return Query;
         }
