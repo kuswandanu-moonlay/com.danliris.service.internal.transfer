@@ -10,14 +10,10 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Com.Danliris.Service.Internal.Transfer.Lib;
 using Com.Danliris.Service.Internal.Transfer.Lib.Helpers;
-<<<<<<< HEAD
 using Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferDeliveryOrderService;
 using Com.Danliris.Service.Internal.Transfer.Lib.Services.ExternalTransferOrderService;
-=======
 using Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferRequestService;
 using Com.Danliris.Service.Internal.Transfer.Lib.Services.InternalTransferOrderServices;
-using Com.Danliris.Service.Internal.Transfer.Lib.Services.ExternalTransferOrderServices;
->>>>>>> upstream/dev
 
 namespace Com.Danliris.Service.Internal.Transfer.WebApi
 {
@@ -48,7 +44,6 @@ namespace Com.Danliris.Service.Internal.Transfer.WebApi
                     options.AssumeDefaultVersionWhenUnspecified = true;
                     options.DefaultApiVersion = new ApiVersion(1, 0);
                 });
-<<<<<<< HEAD
 
             services
                 .AddTransient<TransferDeliveryOrderService>()
@@ -58,7 +53,6 @@ namespace Com.Danliris.Service.Internal.Transfer.WebApi
                 .AddTransient<TransferDeliveryOrderService>()
                 .AddTransient<TransferDeliveryOrderItemService>()
                 .AddTransient<ExternalTransferOrderDetailService>();
-=======
             services
                 .AddTransient<TransferRequestService>()
                 .AddTransient<TransferRequestDetailService>()
@@ -68,7 +62,6 @@ namespace Com.Danliris.Service.Internal.Transfer.WebApi
                 .AddTransient<ExternalTransferOrderItemService>()
                 .AddTransient<ExternalTransferOrderDetailService>();
 
->>>>>>> upstream/dev
             var Secret = Configuration.GetValue<string>("Secret") ?? Configuration["Secret"];
             var Key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Secret));
 
