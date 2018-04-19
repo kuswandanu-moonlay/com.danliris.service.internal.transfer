@@ -73,7 +73,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferRequestSer
         public  Tuple<List<TransferRequest>, int, Dictionary<string, string>, List<string>> ReadModelPosted(int Page = 1, int Size = 25, string Order = "{}", List<string> Select = null, string Keyword = null, string Filter = "{}")
         {
             IQueryable<TransferRequest> Query = this.DbContext.TransferRequests;
-
+            
             List<string> SearchAttributes = new List<string>()
             {
                 "TRNo"

@@ -20,6 +20,7 @@ namespace Com.Danliris.Service.Internal.Transfer.WebApi.Controllers.v1
     public class InternalTransferOrderController : BasicController<InternalTransferDbContext, InternalTransferOrderService, InternalTransferOrderViewModel, InternalTransferOrder>
     {
         private static readonly string ApiVersion = "1.0";
+        private InternalTransferOrderService internalTransferOrderService { get; }
         // GET: api/InternalTransferOrder
         public InternalTransferOrderController(InternalTransferOrderService Service) : base(Service, ApiVersion)
         {
@@ -35,17 +36,45 @@ namespace Com.Danliris.Service.Internal.Transfer.WebApi.Controllers.v1
                 Service.Username = User.Claims.Single(p => p.Type.Equals("username")).Value;
                 Service.Token = Request.Headers["Authorization"].First().Replace("Bearer ", "");
 
-               InternalTransferOrder model = Service.MapToModel(data);
-                foreach (var detail in model.InternalTransferOrderDetails)
-                {
-                    detail.Id = 0;
-                }
-                await Service.CreateModel(model);
-                await Service.SplitUpdate(model.Id,data,model);
+                InternalTransferOrder model = Service.MapToModel(data);
+                int ID = (from a in data.InternalTransferOrderDetails
+                          select a.ITOId).FirstOrDefault();
+
+                await Service.SplitUpdate(ID, data, model);
+ 
                 Dictionary<string, object> Result =
                    new ResultFormatter(ApiVersion, General.CREATED_STATUS_CODE, General.OK_MESSAGE)
                    .Ok();
                 return Created(String.Concat(HttpContext.Request.Path, "/", model.Id), Result);
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
+
+        [HttpGet("report")]
+        public IActionResult Get(string TRNo, string unitRequest, string unit, DateTime startDate, DateTime endDate, int page, int size, string Order = "{}")
+        {
+            int offset = Convert.ToInt32(Request.Headers["x-timezone-offset"]);
+            string accept = Request.Headers["Accept"];
+            string pdf = "application/pdf";
+
+            try
+            {
+                 var data = internalTransferOrderService.GetReport(TRNo/*, unitRequest, unit, startDate, endDate*/, page, size, Order, offset);
+                { 
+                    return Ok(new
+                    {
+                        apiVersion = ApiVersion,
+                        data = data,
+                        info = new { total = data, page = page, size = size }
+                    });
+                }
+               
             }
             catch (Exception e)
             {
