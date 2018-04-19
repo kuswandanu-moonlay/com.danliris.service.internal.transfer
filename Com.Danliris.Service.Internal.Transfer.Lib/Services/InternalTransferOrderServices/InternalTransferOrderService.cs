@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Com.Danliris.Service.Internal.Transfer.Lib.Models.TransferRequestModel;
+using Com.Danliris.Service.Internal.Transfer.Lib.Services.ExternalTransferOrderServices;
 
 namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.InternalTransferOrderServices
 {
@@ -144,14 +145,16 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.InternalTransferOr
 
             List<string> SearchAttributes = new List<string>()
             {
-                "TRNo","UnitName","DivisionName","CategoryName","_CreatedBy"
+
+                "TRNo","UnitName","DivisionName","CategoryName","_CreatedBy", "ITONo"
+
             };
 
             Query = ConfigureSearch(Query, SearchAttributes, Keyword);
 
             List<string> SelectedFields = new List<string>()
             {
-                "Id", "ITONo","TRDate","Active", "_CreatedBy", "TRNo" ,"RequestedArrivalDate","CategoryName","DivisionName","UnitName","IsPost"};
+                "Id", "ITONo","TRDate","Active", "_CreatedBy", "TRId", "TRNo" ,"RequestedArrivalDate","CategoryName","DivisionName","UnitName","IsPost"};
 
             Query = Query
                 .Select(mdn => new InternalTransferOrder
@@ -164,6 +167,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.InternalTransferOr
                     UnitName=mdn.UnitName,
                     DivisionName=mdn.DivisionName,
                     _CreatedBy =mdn._CreatedBy,
+                    TRId = mdn.TRId,
                     TRNo = mdn.TRNo,
                     _CreatedUtc = mdn._CreatedUtc,
                     _LastModifiedUtc = mdn._LastModifiedUtc,
@@ -335,16 +339,54 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.InternalTransferOr
 
             return Updated;
         }
-        public IQueryable GetReport(string TRNo/*, string unitRequest, string unit, DateTime startDate, DateTime endDate*/, int page, int size, string Order, int offset)
+        public List<InternalTransferOrder> ReadModelUnused(string Order = "{}", List<string> Select = null, string Keyword = null, string Filter = "{}", List<int> CurrentUsed = null)
         {
-            //var Query = (from a in DbContext.ViewInternalTransferOrderReports
-            //             //where a.TOInternalReceiptDate.AddHours(offset).Date <= startDate.Date && a.TOInternalReceiptDate.AddHours(offset).Date >= endDate.Date
-            //             select a
-            //             );
-            var Query = from a in DbContext.InternalTransferOrders
-                        select a;
-                    
-            return Query;
+            IQueryable<InternalTransferOrder> Query = this.DbContext.InternalTransferOrders;
+
+            List<string> SearchAttributes = new List<string>()
+            {
+                "ITONo", "TRNo"
+            };
+
+            Query = ConfigureSearch(Query, SearchAttributes, Keyword);
+
+            List<string> SelectedFields = Select ?? new List<string>()
+            {
+                "Id", "ITONo", "TRDate", "Active", "_CreatedBy", "TRId", "TRNo", "RequestedArrivalDate", "CategoryName", "DivisionName", "UnitName", "IsPost"
+            };
+
+            ExternalTransferOrderItemService externalTransferOrderItemService = this.ServiceProvider.GetService<ExternalTransferOrderItemService>();
+            HashSet<int> externalTransferOrderItems = new HashSet<int>(externalTransferOrderItemService.DbSet.Select(p => p.InternalTransferOrderId));
+
+            Query = Query
+                .Select(mdn => new InternalTransferOrder
+                {
+                    Id = mdn.Id,
+                    ITONo = mdn.ITONo,
+                    TRDate = mdn.TRDate,
+                    RequestedArrivalDate = mdn.RequestedArrivalDate,
+                    CategoryName = mdn.CategoryName,
+                    UnitName = mdn.UnitName,
+                    DivisionName = mdn.DivisionName,
+                    TRId = mdn.TRId,
+                    TRNo = mdn.TRNo,
+                    _CreatedBy = mdn._CreatedBy,
+                    _CreatedUtc = mdn._CreatedUtc,
+                    _LastModifiedUtc = mdn._LastModifiedUtc
+                })
+                .Where(s => s._IsDeleted == false)
+                .Where(s => !externalTransferOrderItems.Contains(s.Id));
+
+            Dictionary<string, string> FilterDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(Filter);
+            Query = ConfigureFilter(Query, FilterDictionary);
+
+            Dictionary<string, string> OrderDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(Order);
+            Query = ConfigureOrder(Query, OrderDictionary);
+
+            List<InternalTransferOrder> Data = Query.ToList<InternalTransferOrder>();
+
+            return Data;
+
         }
     }
 }
