@@ -19,9 +19,15 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Models.ExternalTransferOrde
         public string CurrencySymbol { get; set; }
         public string CurrencyRate { get; set; }
         public string Remark { get; set; }
+<<<<<<< HEAD
         public bool isPosted { get; set; }
         public bool isCanceled { get; set; }
         public bool isClosed { get; set; }
+=======
+        public bool IsPosted { get; set; }
+        public bool IsCanceled { get; set; }
+        public bool IsClosed { get; set; }
+>>>>>>> upstream/dev
 
         public virtual ICollection<ExternalTransferOrderItem> ExternalTransferOrderItems { get; set; }
 

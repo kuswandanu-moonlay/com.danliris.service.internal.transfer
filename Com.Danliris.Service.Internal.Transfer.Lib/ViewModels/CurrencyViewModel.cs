@@ -10,4 +10,8 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.ViewModels
         public string rate { get; set; }
         public string description { get; set; }
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> upstream/dev

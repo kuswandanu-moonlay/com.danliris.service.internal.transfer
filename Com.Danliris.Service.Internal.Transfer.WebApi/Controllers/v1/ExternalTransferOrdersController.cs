@@ -1,8 +1,13 @@
 ﻿using Com.Danliris.Service.Internal.Transfer.Lib;
 using Com.Danliris.Service.Internal.Transfer.Lib.Models.ExternalTransferOrderModel;
 using Com.Danliris.Service.Internal.Transfer.Lib.PDFTemplates;
+<<<<<<< HEAD
 using Com.Danliris.Service.Internal.Transfer.Lib.Services.ExternalTransferOrderService;
 using Com.Danliris.Service.Internal.Transfer.Lib.ViewModels.ExternalTransferOrderViewModel;
+=======
+using Com.Danliris.Service.Internal.Transfer.Lib.Services.ExternalTransferOrderServices;
+using Com.Danliris.Service.Internal.Transfer.Lib.ViewModels.ExternalTransferOrderViewModels;
+>>>>>>> upstream/dev
 using Com.Danliris.Service.Internal.Transfer.WebApi.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -16,7 +21,11 @@ namespace Com.Danliris.Service.Internal.Transfer.WebApi.Controllers.v1
     [Produces("application/json")]
     [ApiVersion("1.0")]
     [Route("v{version:apiVersion}/external-transfer-orders")]
+<<<<<<< HEAD
     //[Authorize]
+=======
+    [Authorize]
+>>>>>>> upstream/dev
     public class ExternalTransferOrdersController : BasicController<InternalTransferDbContext, ExternalTransferOrderService, ExternalTransferOrderViewModel, ExternalTransferOrder>
     {
         private static readonly string ApiVersion = "1.0";
@@ -49,12 +58,18 @@ namespace Com.Danliris.Service.Internal.Transfer.WebApi.Controllers.v1
             }
         }
 
+<<<<<<< HEAD
         [HttpGet("posted")]
         public IActionResult GetPostedExternalTransferOrderRequest(int Page = 1, int Size = 25, string Order = "{}", [Bind(Prefix = "Select[]")]List<string> Select = null, string Keyword = null, string Filter = "{}")
+=======
+        [HttpPut("eto-post")]
+        public IActionResult ETOPost([FromBody]List<int> Ids)
+>>>>>>> upstream/dev
         {
             try
             {
                 Service.Username = User.Claims.Single(p => p.Type.Equals("username")).Value;
+<<<<<<< HEAD
                 Tuple<List<ExternalTransferOrder>, int, Dictionary<string, string>, List<string>> Data = Service.ReadModel(Page, Size, Order, Select, Keyword, Filter);
 
                 Dictionary<string, object> Result =
@@ -69,6 +84,87 @@ namespace Com.Danliris.Service.Internal.Transfer.WebApi.Controllers.v1
                     new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
                     .Fail();
                 return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+=======
+
+                if (this.Service.ETOPost(Ids))
+                {
+                    return NoContent();
+                }
+                else
+                {
+                    return StatusCode(General.INTERNAL_ERROR_STATUS_CODE);
+                }
+            }
+            catch (Exception)
+            {
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE);
+            }
+        }
+
+        [HttpPut("eto-unpost/{Id}")]
+        public IActionResult TRUnpost([FromRoute] int Id)
+        {
+            try
+            {
+                Service.Username = User.Claims.Single(p => p.Type.Equals("username")).Value;
+
+                if (this.Service.ETOUnpost(Id))
+                {
+                    return NoContent();
+                }
+                else
+                {
+                    return StatusCode(General.INTERNAL_ERROR_STATUS_CODE);
+                }
+            }
+            catch (Exception)
+            {
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE);
+            }
+        }
+
+        [HttpPut("close/{Id}")]
+        public IActionResult Close([FromRoute] int Id)
+        {
+            try
+            {
+                Service.Username = User.Claims.Single(p => p.Type.Equals("username")).Value;
+
+                if (this.Service.Close(Id))
+                {
+                    return NoContent();
+                }
+                else
+                {
+                    return StatusCode(General.INTERNAL_ERROR_STATUS_CODE);
+                }
+            }
+            catch (Exception)
+            {
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE);
+            }
+        }
+
+        [HttpPut("cancel/{Id}")]
+        public IActionResult Cancel([FromRoute] int Id)
+        {
+            try
+            {
+                Service.Username = User.Claims.Single(p => p.Type.Equals("username")).Value;
+
+                if (this.Service.Cancel(Id))
+                {
+                    return NoContent();
+                }
+                else
+                {
+                    return StatusCode(General.INTERNAL_ERROR_STATUS_CODE);
+                }
+            }
+            catch (Exception)
+            {
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE);
+>>>>>>> upstream/dev
             }
         }
     }
