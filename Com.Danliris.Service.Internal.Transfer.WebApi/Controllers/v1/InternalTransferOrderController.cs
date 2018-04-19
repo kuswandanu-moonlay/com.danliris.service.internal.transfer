@@ -56,25 +56,20 @@ namespace Com.Danliris.Service.Internal.Transfer.WebApi.Controllers.v1
             }
         }
 
-        [HttpGet("report")]
-        public IActionResult Get(string TRNo, string unitRequest, string unit, DateTime startDate, DateTime endDate, int page, int size, string Order = "{}")
-        {
-            int offset = Convert.ToInt32(Request.Headers["x-timezone-offset"]);
-            string accept = Request.Headers["Accept"];
-            string pdf = "application/pdf";
 
+        [HttpGet("unused")]
+        public IActionResult GetPostedTransferRequest(string Order = "{}", [Bind(Prefix = "Select[]")]List<string> Select = null, string Keyword = null, string Filter = "{}", [Bind(Prefix = "CurrentUsed[]")]List<int> CurrentUsed = null)
+        {
             try
             {
-                 var data = internalTransferOrderService.GetReport(TRNo/*, unitRequest, unit, startDate, endDate*/, page, size, Order, offset);
-                { 
-                    return Ok(new
-                    {
-                        apiVersion = ApiVersion,
-                        data = data,
-                        info = new { total = data, page = page, size = size }
-                    });
-                }
-               
+                Service.Username = User.Claims.Single(p => p.Type.Equals("username")).Value;
+                List<InternalTransferOrder> Data = Service.ReadModelUnused(Order, Select, Keyword, Filter, CurrentUsed);
+
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.OK_STATUS_CODE, General.OK_MESSAGE)
+                    .Ok(Data, Service.MapToViewModel);
+
+                return Ok(Result);
             }
             catch (Exception e)
             {
