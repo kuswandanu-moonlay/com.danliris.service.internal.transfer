@@ -20,6 +20,7 @@ namespace Com.Danliris.Service.Internal.Transfer.WebApi.Controllers.v1
     public class InternalTransferOrderController : BasicController<InternalTransferDbContext, InternalTransferOrderService, InternalTransferOrderViewModel, InternalTransferOrder>
     {
         private static readonly string ApiVersion = "1.0";
+        private InternalTransferOrderService internalTransferOrderService { get; }
         // GET: api/InternalTransferOrder
         public InternalTransferOrderController(InternalTransferOrderService Service) : base(Service, ApiVersion)
         {
@@ -35,13 +36,12 @@ namespace Com.Danliris.Service.Internal.Transfer.WebApi.Controllers.v1
                 Service.Username = User.Claims.Single(p => p.Type.Equals("username")).Value;
                 Service.Token = Request.Headers["Authorization"].First().Replace("Bearer ", "");
 
-               InternalTransferOrder model = Service.MapToModel(data);
-                foreach (var detail in model.InternalTransferOrderDetails)
-                {
-                    detail.Id = 0;
-                }
-                await Service.CreateModel(model);
-                await Service.SplitUpdate(model.Id,data,model);
+                InternalTransferOrder model = Service.MapToModel(data);
+                int ID = (from a in data.InternalTransferOrderDetails
+                          select a.ITOId).FirstOrDefault();
+
+                await Service.SplitUpdate(ID, data, model);
+ 
                 Dictionary<string, object> Result =
                    new ResultFormatter(ApiVersion, General.CREATED_STATUS_CODE, General.OK_MESSAGE)
                    .Ok();
@@ -55,6 +55,7 @@ namespace Com.Danliris.Service.Internal.Transfer.WebApi.Controllers.v1
                 return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
             }
         }
+
 
         [HttpGet("unused")]
         public IActionResult GetPostedTransferRequest(string Order = "{}", [Bind(Prefix = "Select[]")]List<string> Select = null, string Keyword = null, string Filter = "{}", [Bind(Prefix = "CurrentUsed[]")]List<int> CurrentUsed = null)
