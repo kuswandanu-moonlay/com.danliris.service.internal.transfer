@@ -549,7 +549,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferRequestSer
             result.Columns.Add(new DataColumn() { ColumnName = "Tanggal diminta datang TO Eksternal", DataType = typeof(String) });
             result.Columns.Add(new DataColumn() { ColumnName = "Status", DataType = typeof(String) });
             if (Query.ToArray().Count() == 0)
-                result.Rows.Add("", "", "", "", "", "", "", "", "", "", ""); // to allow column name to be generated properly for empty data as template
+                result.Rows.Add("", "", "", "", "", "", 0, "", "", "", ""); // to allow column name to be generated properly for empty data as template
             else
                 foreach (var item in Query)
                     result.Rows.Add((item.trNo), item.trDate, item.unitName, item.categoryName, item.productCode, item.productName, item.quantity, item.uom, item.requestedArrivalDate, item.status);
