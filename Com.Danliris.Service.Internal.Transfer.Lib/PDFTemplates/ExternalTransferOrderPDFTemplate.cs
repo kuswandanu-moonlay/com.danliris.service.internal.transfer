@@ -1,6 +1,9 @@
-﻿using Com.Danliris.Service.Internal.Transfer.Lib.ViewModels.ExternalTransferOrderViewModels;
+﻿using Com.Danliris.Service.Internal.Transfer.Lib.Services.ExternalTransferOrderServices;
+using Com.Danliris.Service.Internal.Transfer.Lib.ViewModels;
+using Com.Danliris.Service.Internal.Transfer.Lib.ViewModels.ExternalTransferOrderViewModels;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
+using iTextSharp.text.pdf.draw;
 using System;
 using System.Globalization;
 using System.IO;
@@ -9,20 +12,22 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.PDFTemplates
 {
     public class ExternalTransferOrderPDFTemplate
     {
-        public MemoryStream GeneratePdfTemplate(ExternalTransferOrderViewModel viewModel)
+        public MemoryStream GeneratePdfTemplate(ExternalTransferOrderViewModel viewModel, ExternalTransferOrderService externalTransferOrderService)
         {
+            UnitViewModel unit = externalTransferOrderService.GetUnitFromInternalTransferOrderByInternalTransferOrderId(viewModel.ExternalTransferOrderItems[0].InternalTransferOrderId);
+
             BaseFont bf = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.CP1250, BaseFont.NOT_EMBEDDED);
             BaseFont bf_bold = BaseFont.CreateFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, BaseFont.NOT_EMBEDDED);
             var normal_font = FontFactory.GetFont(BaseFont.HELVETICA, BaseFont.CP1250, BaseFont.NOT_EMBEDDED, 10);
             var bold_font = FontFactory.GetFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, BaseFont.NOT_EMBEDDED, 10);
 
-            int margin = 30;
+            int margin = 40;
             int width = 600;
 
-            Document document = new Document(PageSize.A4, 25, 25, 30, 30);
+            Document document = new Document(PageSize.A4, 40, 40, 40, 40);
             MemoryStream stream = new MemoryStream();
             PdfWriter writer = PdfWriter.GetInstance(document, stream);
-            writer.CloseStream = false;
+            //writer.CloseStream = false;
             document.Open();
 
             PdfContentByte cb = writer.DirectContent;
@@ -60,35 +65,27 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.PDFTemplates
 
             cb.EndText();
 
-            PdfPTable content = new PdfPTable(1);
-            PdfPCell cellContent;
-            content.TotalWidth = width - 2 * margin;
-            cellContent = new PdfPCell() { Border = Rectangle.NO_BORDER, HorizontalAlignment = Element.ALIGN_JUSTIFIED };
-            string par = $"Dengan hormat, Yang bertanda tangan di bawah ini, Unit Finishing (selanjutnya disebut sebagai pihak Pemesan) dan Unit {viewModel.Supplier.name} (selanjutnya disebut sebagai pihak Pengirim) saling menyetujui untuk mengadakan transfer dengan ketentuan sebagai berikut:";
-            cellContent.Phrase = new Phrase(1.5f, par, normal_font);
-            content.AddCell(cellContent);
-            content.WriteSelectedRows(0, -1, margin, 660, cb);
-
-            PdfPTable table = new PdfPTable(4);
-            table.TotalWidth = width - 2 * margin;
-            float[] widths = new float[] { 2f, 1f, 1f, 1f };
-            table.SetWidths(widths);
+            string paragraphContent = $"Dengan hormat, Yang bertanda tangan di bawah ini, Unit {unit.name} (selanjutnya disebut sebagai pihak Pemesan) dan Unit {viewModel.Supplier.name} (selanjutnya disebut sebagai pihak Pengirim) saling menyetujui untuk mengadakan transfer dengan ketentuan sebagai berikut:";
+            Paragraph paragraph = new Paragraph(paragraphContent, normal_font) { Alignment = Element.ALIGN_JUSTIFIED };
 
             PdfPCell cellCenter = new PdfPCell() { Border = Rectangle.TOP_BORDER | Rectangle.LEFT_BORDER | Rectangle.BOTTOM_BORDER | Rectangle.RIGHT_BORDER, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_MIDDLE, Padding = 5 };
             PdfPCell cellRight = new PdfPCell() { Border = Rectangle.TOP_BORDER | Rectangle.LEFT_BORDER | Rectangle.BOTTOM_BORDER | Rectangle.RIGHT_BORDER, HorizontalAlignment = Element.ALIGN_RIGHT, VerticalAlignment = Element.ALIGN_MIDDLE, Padding = 5 };
             PdfPCell cellLeft = new PdfPCell() { Border = Rectangle.TOP_BORDER | Rectangle.LEFT_BORDER | Rectangle.BOTTOM_BORDER | Rectangle.RIGHT_BORDER, HorizontalAlignment = Element.ALIGN_LEFT, VerticalAlignment = Element.ALIGN_MIDDLE, Padding = 5 };
 
+            PdfPTable tableContent = new PdfPTable(4);
+            tableContent.SetWidths(new float[] { 2f, 1f, 1f, 1f });
+
             cellCenter.Phrase = new Phrase("NAMA DAN JENIS BARANG", bold_font);
-            table.AddCell(cellCenter);
+            tableContent.AddCell(cellCenter);
             cellCenter.Phrase = new Phrase("JUMLAH", bold_font);
-            table.AddCell(cellCenter);
+            tableContent.AddCell(cellCenter);
             cellCenter.Phrase = new Phrase("HARGA SATUAN", bold_font);
-            table.AddCell(cellCenter);
+            tableContent.AddCell(cellCenter);
             cellCenter.Phrase = new Phrase("SUB TOTAL", bold_font);
-            table.AddCell(cellCenter);
+            tableContent.AddCell(cellCenter);
 
             double total = 0;
-            //for (int a = 0; a < 50; a++) // coba kalau banyak baris ^_^
+            //for (int a = 0; a < 3; a++) // coba kalau banyak baris ^_^
             for (int indexItem = 0; indexItem < viewModel.ExternalTransferOrderItems.Count; indexItem++)
             {
                 ExternalTransferOrderItemViewModel externalTransferOrderItem = viewModel.ExternalTransferOrderItems[indexItem];
@@ -96,41 +93,77 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.PDFTemplates
                 {
                     ExternalTransferOrderDetailViewModel externalTransferOrderDetail = externalTransferOrderItem.ExternalTransferOrderDetails[indexDetail];
                     cellLeft.Phrase = new Phrase($"{externalTransferOrderDetail.Product.code}\n{externalTransferOrderItem.TransferRequestNo}", normal_font);
-                    table.AddCell(cellLeft);
+                    tableContent.AddCell(cellLeft);
                     cellRight.Phrase = new Phrase($"{externalTransferOrderDetail.DealQuantity} {externalTransferOrderDetail.DealUom.unit}", normal_font);
-                    table.AddCell(cellRight);
+                    tableContent.AddCell(cellRight);
                     cellRight.Phrase = new Phrase($"{externalTransferOrderDetail.Price.ToString("N", new CultureInfo("id-ID"))}", normal_font);
-                    table.AddCell(cellRight);
+                    tableContent.AddCell(cellRight);
                     cellRight.Phrase = new Phrase($"{(externalTransferOrderDetail.DealQuantity * externalTransferOrderDetail.Price).ToString("N", new CultureInfo("id-ID"))}", normal_font);
-                    table.AddCell(cellRight);
+                    tableContent.AddCell(cellRight);
                     total += externalTransferOrderDetail.DealQuantity * externalTransferOrderDetail.Price;
                 }
             }
 
             cellRight.Colspan = 3;
             cellRight.Phrase = new Phrase("Total", bold_font);
-            table.AddCell(cellRight);
+            tableContent.AddCell(cellRight);
             cellRight.Colspan = 1;
             cellRight.Phrase = new Phrase($"{total.ToString("N", new CultureInfo("id-ID"))}", normal_font);
-            table.AddCell(cellRight);
+            tableContent.AddCell(cellRight);
 
-            PdfPCell cellFooter = new PdfPCell() { Border = Rectangle.NO_BORDER, HorizontalAlignment = Element.ALIGN_LEFT };
-            cellFooter.Colspan = 4;
-            cellFooter.Phrase = new Phrase($"Diminta Datang : {viewModel.DeliveryDate.ToString("dd MMMM yyyy", new CultureInfo("id-ID"))}", normal_font);
-            table.AddCell(cellFooter);
-            cellFooter.Phrase = new Phrase($"Keterangan : {viewModel.Remark}", normal_font);
-            table.AddCell(cellFooter);
+            PdfPTable tableFooter = new PdfPTable(3);
+            tableFooter.SetWidths(new float[] { 8f, 1f, 45f });
 
-            table.WriteSelectedRows(0, -1, margin, 620, cb);
+            PdfPCell cellFooterContent = new PdfPCell() { Border = Rectangle.NO_BORDER, HorizontalAlignment = Element.ALIGN_LEFT };
+            cellFooterContent.Phrase = new Phrase("Diminta Datang", normal_font);
+            tableFooter.AddCell(cellFooterContent);
+            cellFooterContent.Phrase = new Phrase(":", normal_font);
+            tableFooter.AddCell(cellFooterContent);
+            cellFooterContent.Phrase = new Phrase($"{viewModel.DeliveryDate.ToString("dd MMMM yyyy", new CultureInfo("id-ID"))}", normal_font);
+            tableFooter.AddCell(cellFooterContent);
+            cellFooterContent.Phrase = new Phrase("Keterangan", normal_font);
+            tableFooter.AddCell(cellFooterContent);
+            cellFooterContent.Phrase = new Phrase(":", normal_font);
+            tableFooter.AddCell(cellFooterContent);
+            cellFooterContent.Phrase = new Phrase($"{viewModel.Remark}", normal_font);
+            tableFooter.AddCell(cellFooterContent);
 
-            cb.BeginText();
-            cb.SetTextMatrix(15, 23);
-            cb.SetFontAndSize(bf_bold, 10);
-            cb.ShowTextAligned(PdfContentByte.ALIGN_CENTER, "Pemesan,", 130, 95, 0);
-            cb.ShowTextAligned(PdfContentByte.ALIGN_CENTER, "Unit", 130, 30, 0);
-            cb.ShowTextAligned(PdfContentByte.ALIGN_CENTER, "Pengirim,", 460, 95, 0);
-            cb.ShowTextAligned(PdfContentByte.ALIGN_CENTER, viewModel.Supplier.name, 460, 30, 0);
-            cb.EndText();
+            PdfPTable tableSignature = new PdfPTable(2);
+
+            PdfPCell cellSignatureContent = new PdfPCell() { Border = Rectangle.NO_BORDER, HorizontalAlignment = Element.ALIGN_CENTER };
+            cellSignatureContent.Phrase = new Phrase("Pemesan", bold_font);
+            tableSignature.AddCell(cellSignatureContent);
+            cellSignatureContent.Phrase = new Phrase("Pengirim", bold_font);
+            tableSignature.AddCell(cellSignatureContent);
+            cellSignatureContent.PaddingTop = 50f;
+            cellSignatureContent.Phrase = new Phrase(unit.name, bold_font);
+            tableSignature.AddCell(cellSignatureContent);
+            cellSignatureContent.Phrase = new Phrase($"{viewModel.Supplier.name}", bold_font);
+            tableSignature.AddCell(cellSignatureContent);
+
+            // --------- kalo dihapus tabel malah jadi ada margin kanan dan kiri
+            PdfPCell cellContent = new PdfPCell(tableContent);
+            PdfPCell cellFooter = new PdfPCell(tableFooter);
+            PdfPCell cellSignature = new PdfPCell(tableSignature);
+            // --------- kalo dihapus tabel malah jadi ada margin kanan dan kiri
+
+            LineSeparator lineSeparator = new LineSeparator(1f, 100f, BaseColor.White, Element.ALIGN_LEFT, 1);
+            document.Add(lineSeparator);
+
+            paragraph.SpacingBefore = 150f;
+            paragraph.SpacingAfter = 10f;
+            document.Add(paragraph);
+
+            tableContent.ExtendLastRow = false;
+            document.Add(tableContent);
+
+            tableFooter.SpacingBefore = 10f;
+            tableFooter.ExtendLastRow = false;
+            document.Add(tableFooter);
+
+            tableSignature.SpacingBefore = 50f;
+            tableSignature.ExtendLastRow = false;
+            document.Add(tableSignature);
 
             document.Close();
             byte[] byteInfo = stream.ToArray();
