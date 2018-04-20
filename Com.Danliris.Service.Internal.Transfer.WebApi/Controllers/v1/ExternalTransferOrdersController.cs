@@ -33,7 +33,7 @@ namespace Com.Danliris.Service.Internal.Transfer.WebApi.Controllers.v1
                 var viewModel = Service.MapToViewModel(model);
 
                 ExternalTransferOrderPDFTemplate PdfTemplate = new ExternalTransferOrderPDFTemplate();
-                MemoryStream stream = PdfTemplate.GeneratePdfTemplate(viewModel);
+                MemoryStream stream = PdfTemplate.GeneratePdfTemplate(viewModel, Service);
 
                 return new FileStreamResult(stream, "application/pdf")
                 {
