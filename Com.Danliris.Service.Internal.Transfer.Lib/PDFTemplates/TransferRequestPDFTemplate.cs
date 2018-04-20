@@ -62,6 +62,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.PDFTemplates
             PdfPTable table = new PdfPTable(5);
             PdfPCell cell;
             table.TotalWidth = 360f;
+            int rowsPerPage = 10;
 
             float[] widths = new float[] { 2f, 4f, 10f, 4f, 4f };
             table.SetWidths(widths);
@@ -89,6 +90,8 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.PDFTemplates
 
             int index = 1;
 
+            int TotalRows = viewModel.details.Count;
+
             foreach (var detail in viewModel.details)
             {
                 cell = new PdfPCell() { Border = Rectangle.TOP_BORDER | Rectangle.LEFT_BORDER | Rectangle.BOTTOM_BORDER | Rectangle.RIGHT_BORDER, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_MIDDLE, Padding = 5 };
@@ -108,8 +111,36 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.PDFTemplates
                 cell.Phrase = new Phrase("", normal_font);
                 table.AddCell(cell);
 
+                //if(index )
+
+                if (index % rowsPerPage == 0)
+                {
+                    if(index == TotalRows)
+                    {
+                        continue;
+                    }
+                    else if (index == rowsPerPage)
+                    {
+                        table.WriteSelectedRows(0, -1, 15, 470, cb);
+                    }
+                    else
+                    {
+                        table.WriteSelectedRows(0, -1, 15, 500, cb);
+                    }
+
+                    for (var i = 0; i < rowsPerPage; i++)
+                    {
+                        table.DeleteLastRow();
+                    }
+
+                    if (index != TotalRows)
+                        document.NewPage();
+                }
+
                 index++;
             }
+
+            
 
             var footerCell = new PdfPCell(new Phrase    ("Kategori              : " + viewModel.category.name, normal_font));
             footerCell.Colspan = 5;
@@ -130,7 +161,14 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.PDFTemplates
             footerCell2.HorizontalAlignment = Element.ALIGN_LEFT;
             table.AddCell(footerCell2);
 
-            table.WriteSelectedRows(0, -1, 20, 470, cb);
+            index--;
+            if (index % rowsPerPage != 0)
+            {
+                if (index < rowsPerPage)
+                    table.WriteSelectedRows(0, -1, 15, 470, cb);
+                else
+                    table.WriteSelectedRows(0, -1, 15, 500, cb);
+            }
             #endregion
 
             #region CreateTable2

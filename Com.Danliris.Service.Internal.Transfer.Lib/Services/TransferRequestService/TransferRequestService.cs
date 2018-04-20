@@ -202,7 +202,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferRequestSer
             CategoryViewModel Category = new CategoryViewModel()
             {
                 _id = model.CategoryId,
-                code = model.CategoryName,
+                code = model.CategoryCode,
                 name = model.CategoryName,
             };
 
@@ -485,6 +485,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferRequestSer
                          join d in DbContext.ExternalTransferOrders on e.ExternalTransferOrderId equals d.Id into etoI
                          from g in etoI.DefaultIfEmpty()
                          where a._IsDeleted == false
+                             && g._IsDeleted == false
                              && a.TRNo == (string.IsNullOrWhiteSpace(trNo) ? a.TRNo : trNo)
                              && a.UnitId == (string.IsNullOrWhiteSpace(unitId) ? a.UnitId : unitId)
                              && b.Status == (string.IsNullOrWhiteSpace(status) ? b.Status : status)
