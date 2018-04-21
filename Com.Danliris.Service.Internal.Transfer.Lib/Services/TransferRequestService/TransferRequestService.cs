@@ -501,6 +501,12 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferRequestSer
         {
             DateTime DateFrom = dateFrom == null ? new DateTime(1970, 1, 1) : (DateTime)dateFrom;
             DateTime DateTo = dateTo == null ? DateTime.Now : (DateTime)dateTo;
+            bool isCancel = false;
+            if (status == "Dibatalkan")
+            {
+                isCancel = true;
+                status = "";
+            }
 
             var Query = (from a in DbContext.TransferRequests
                          join b in DbContext.TransferRequestDetails on a.Id equals b.TransferRequestId
@@ -515,6 +521,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferRequestSer
                              && b.Status == (string.IsNullOrWhiteSpace(status) ? b.Status : status)
                              && a.TRDate.AddHours(offset).Date >= DateFrom.Date
                              && a.TRDate.AddHours(offset).Date <= DateTo.Date
+                             && a.IsCanceled==isCancel
                          select new TransferRequestReportViewModel
                          {
                              trNo = a.TRNo,
