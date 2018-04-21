@@ -486,6 +486,12 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.ExternalTransferOr
 
                         foreach (var item in data.ExternalTransferOrderItems)
                         {
+                            InternalTransferOrder internalTransferOrder = this.DbContext.InternalTransferOrders.FirstOrDefault(s => s.Id == item.InternalTransferOrderId);
+                            internalTransferOrder.IsPost = true;
+                            internalTransferOrder._LastModifiedUtc = DateTime.UtcNow;
+                            internalTransferOrder._LastModifiedAgent = "Service";
+                            internalTransferOrder._LastModifiedBy = this.Username;
+
                             foreach (var detail in item.ExternalTransferOrderDetails)
                             {
                                 InternalTransferOrderDetail internalTransferOrderDetail = this.DbContext.InternalTransferOrderDetails.FirstOrDefault(s => s.Id == detail.InternalTransferOrderDetailId);
@@ -531,6 +537,12 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.ExternalTransferOr
 
                     foreach (var item in data.ExternalTransferOrderItems)
                     {
+                        InternalTransferOrder internalTransferOrder = this.DbContext.InternalTransferOrders.FirstOrDefault(s => s.Id == item.InternalTransferOrderId);
+                        internalTransferOrder.IsPost = false;
+                        internalTransferOrder._LastModifiedUtc = DateTime.UtcNow;
+                        internalTransferOrder._LastModifiedAgent = "Service";
+                        internalTransferOrder._LastModifiedBy = this.Username;
+
                         foreach (var detail in item.ExternalTransferOrderDetails)
                         {
                             InternalTransferOrderDetail internalTransferOrderDetail = this.DbContext.InternalTransferOrderDetails.FirstOrDefault(s => s.Id == detail.InternalTransferOrderDetailId);
