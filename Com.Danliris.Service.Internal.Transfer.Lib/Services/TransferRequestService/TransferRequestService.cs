@@ -386,8 +386,23 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferRequestSer
             {
                 try
                 {
-                    var mdn = this.DbSet.Where(m => Ids.Contains(m.Id)).ToList();
-                    mdn.ForEach(m => { m.IsPosted = true; m._LastModifiedUtc = DateTime.UtcNow; m._LastModifiedAgent = "Service"; m._LastModifiedBy = this.Username; });
+                    var transfer = this.DbSet.Where(m => Ids.Contains(m.Id)).Include(d => d.TransferRequestDetails).ToList();
+                    transfer.ForEach(tr => {
+                        tr.IsPosted = true;
+                        tr._LastModifiedUtc = DateTime.UtcNow;
+                        tr._LastModifiedAgent = "Service";
+                        tr._LastModifiedBy = this.Username;
+
+                        foreach(var data in tr.TransferRequestDetails)
+                        {
+                            TransferRequestDetail trDetail = this.DbContext.TransferRequestDetails.FirstOrDefault(s => s.Id == data.Id);
+                            trDetail._LastModifiedUtc = DateTime.UtcNow;
+                            trDetail._LastModifiedAgent = "Service";
+                            trDetail._LastModifiedBy = this.Username;
+                        }
+                    });
+
+
                     this.DbContext.SaveChanges();
 
                     IsSuccessful = true;
@@ -411,11 +426,20 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferRequestSer
             {
                 try
                 {
-                    var transfer = this.DbSet.FirstOrDefault(tr => tr.Id == Id && tr._IsDeleted==false);
+                    var transfer = this.DbSet.Include(d => d.TransferRequestDetails).FirstOrDefault(tr => tr.Id == Id && tr._IsDeleted==false);
                     transfer.IsPosted = false;
                     transfer._LastModifiedUtc = DateTime.UtcNow;
                     transfer._LastModifiedAgent = "Service";
                     transfer._LastModifiedBy = this.Username;
+
+                    foreach (var data in transfer.TransferRequestDetails)
+                    {
+                        TransferRequestDetail trDetail = this.DbContext.TransferRequestDetails.FirstOrDefault(s => s.Id == data.Id);
+                        trDetail._LastModifiedUtc = DateTime.UtcNow;
+                        trDetail._LastModifiedAgent = "Service";
+                        trDetail._LastModifiedBy = this.Username;
+                    }
+
                     this.DbContext.SaveChanges();
 
                     IsSuccessful = true;
