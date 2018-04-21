@@ -654,6 +654,15 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.ExternalTransferOr
                 name = internalTransferOrder.UnitName,
             };
         }
+
+        public bool CheckIdIsUsedByDeliveryOrder(int Id)
+        {
+            //DeliveryOrderItemService deliveryOrderItemService = this.ServiceProvider.GetService<DeliveryOrderItemService>();
+            //HashSet<int> deliveryOrderItemIds = new HashSet<int>(deliveryOrderItemService.DbSet.Select(p => p.ExternalTransferOrderId));
+
+            List<int> ITOinDO= new List<int> { 1, 2, 3 };
+            return ITOinDO.Contains(Id);
+        }
     }
 }
 
