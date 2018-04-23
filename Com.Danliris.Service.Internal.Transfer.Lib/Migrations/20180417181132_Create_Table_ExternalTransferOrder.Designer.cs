@@ -11,9 +11,10 @@ using System;
 namespace Com.Danliris.Service.Internal.Transfer.Lib.Migrations
 {
     [DbContext(typeof(InternalTransferDbContext))]
-    partial class InternalTransferDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180417181132_Create_Table_ExternalTransferOrder")]
+    partial class Create_Table_ExternalTransferOrder
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -43,16 +44,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Migrations
 
                     b.Property<DateTime>("DeliveryDate");
 
-                    b.Property<string>("DivisionCode")
-                        .HasMaxLength(255);
-
-                    b.Property<string>("DivisionId")
-                        .HasMaxLength(255);
-
-                    b.Property<string>("DivisionName")
-                        .HasMaxLength(255);
-
-                    b.Property<string>("ETONo");
+                    b.Property<string>("ExternalTransferOrderNo");
 
                     b.Property<bool>("IsCanceled");
 
@@ -64,6 +56,15 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Migrations
 
                     b.Property<string>("Remark")
                         .HasMaxLength(1000);
+
+                    b.Property<string>("SupplierCode")
+                        .HasMaxLength(255);
+
+                    b.Property<string>("SupplierId")
+                        .HasMaxLength(255);
+
+                    b.Property<string>("SupplierName")
+                        .HasMaxLength(255);
 
                     b.Property<string>("_CreatedAgent")
                         .IsRequired()
@@ -111,8 +112,6 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Migrations
 
                     b.Property<double>("Convertion");
 
-                    b.Property<double>("DOQuantity");
-
                     b.Property<double>("DealQuantity");
 
                     b.Property<string>("DealUomId")
@@ -129,12 +128,12 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Migrations
                     b.Property<string>("DefaultUomUnit")
                         .HasMaxLength(255);
 
-                    b.Property<int>("ETOItemId");
+                    b.Property<int>("ExternalTransferOrderItemId");
 
                     b.Property<string>("Grade")
                         .HasMaxLength(255);
 
-                    b.Property<int>("ITODetailId");
+                    b.Property<int>("InternalTransferOrderDetailId");
 
                     b.Property<double>("Price");
 
@@ -150,9 +149,11 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Migrations
                     b.Property<string>("ProductRemark")
                         .HasMaxLength(1000);
 
+                    b.Property<double>("ReceivedQuantity");
+
                     b.Property<double>("RemainingQuantity");
 
-                    b.Property<int>("TRDetailId");
+                    b.Property<int>("TransferRequestDetailId");
 
                     b.Property<string>("_CreatedAgent")
                         .IsRequired()
@@ -188,7 +189,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ETOItemId");
+                    b.HasIndex("ExternalTransferOrderItemId");
 
                     b.ToTable("ExternalTransferOrderDetails");
                 });
@@ -200,16 +201,16 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Migrations
 
                     b.Property<bool>("Active");
 
-                    b.Property<int>("ETOId");
+                    b.Property<int>("ExternalTransferOrderId");
 
-                    b.Property<int>("ITOId");
+                    b.Property<int>("InternalTransferOrderId");
 
-                    b.Property<string>("ITONo")
+                    b.Property<string>("InternalTransferOrderNo")
                         .HasMaxLength(255);
 
-                    b.Property<int>("TRId");
+                    b.Property<int>("TransferRequestId");
 
-                    b.Property<string>("TRNo")
+                    b.Property<string>("TransferRequestNo")
                         .HasMaxLength(255);
 
                     b.Property<string>("_CreatedAgent")
@@ -246,7 +247,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ETOId");
+                    b.HasIndex("ExternalTransferOrderId");
 
                     b.ToTable("ExternalTransferOrderItems");
                 });
@@ -565,7 +566,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Migrations
                 {
                     b.HasOne("Com.Danliris.Service.Internal.Transfer.Lib.Models.ExternalTransferOrderModel.ExternalTransferOrderItem", "ExternalTransferOrderItem")
                         .WithMany("ExternalTransferOrderDetails")
-                        .HasForeignKey("ETOItemId")
+                        .HasForeignKey("ExternalTransferOrderItemId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
@@ -573,7 +574,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Migrations
                 {
                     b.HasOne("Com.Danliris.Service.Internal.Transfer.Lib.Models.ExternalTransferOrderModel.ExternalTransferOrder", "ExternalTransferOrder")
                         .WithMany("ExternalTransferOrderItems")
-                        .HasForeignKey("ETOId")
+                        .HasForeignKey("ExternalTransferOrderId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
