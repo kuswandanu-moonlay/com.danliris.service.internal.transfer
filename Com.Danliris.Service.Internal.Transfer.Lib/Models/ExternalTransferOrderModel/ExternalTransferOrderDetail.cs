@@ -8,9 +8,9 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Models.ExternalTransferOrde
 {
     public class ExternalTransferOrderDetail : StandardEntity, IValidatableObject
     {
-        public int ExternalTransferOrderItemId { get; set; }
-        public int InternalTransferOrderDetailId { get; set; }
-        public int TransferRequestDetailId { get; set; }
+        public int ETOItemId { get; set; }
+        public int ITODetailId { get; set; }
+        public int TRDetailId { get; set; }
 
         public string ProductId { get; set; }
         public string ProductCode { get; set; }

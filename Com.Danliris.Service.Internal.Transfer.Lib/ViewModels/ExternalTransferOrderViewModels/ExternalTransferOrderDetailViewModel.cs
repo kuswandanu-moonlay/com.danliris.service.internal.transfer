@@ -7,9 +7,9 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.ViewModels.ExternalTransfer
 {
     public class ExternalTransferOrderDetailViewModel : BasicViewModel
     {
-        public int ExternalTransferOrderItemId { get; set; }
-        public int InternalTransferOrderDetailId { get; set; }
-        public int TransferRequestDetailId { get; set; }
+        public int ETOItemId { get; set; }
+        public int ITODetailId { get; set; }
+        public int TRDetailId { get; set; }
 
         public ProductViewModel Product { get; set; }
 

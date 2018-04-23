@@ -7,7 +7,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Models.ExternalTransferOrde
 {
     public class ExternalTransferOrder : StandardEntity, IValidatableObject
     {
-        public string ExternalTransferOrderNo { get; set; }
+        public string ETONo { get; set; }
         public string DivisionId { get; set; }
         public string DivisionCode { get; set; }
         public string DivisionName { get; set; }

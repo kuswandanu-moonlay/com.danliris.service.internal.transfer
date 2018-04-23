@@ -14,7 +14,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.PDFTemplates
     {
         public MemoryStream GeneratePdfTemplate(ExternalTransferOrderViewModel viewModel, ExternalTransferOrderService externalTransferOrderService)
         {
-            UnitViewModel unit = externalTransferOrderService.GetUnitFromInternalTransferOrderByInternalTransferOrderId(viewModel.ExternalTransferOrderItems[0].InternalTransferOrderId);
+            UnitViewModel unit = externalTransferOrderService.GetUnitFromInternalTransferOrderByInternalTransferOrderId(viewModel.ExternalTransferOrderItems[0].ITOId);
 
             BaseFont bf = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.CP1250, BaseFont.NOT_EMBEDDED);
             BaseFont bf_bold = BaseFont.CreateFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, BaseFont.NOT_EMBEDDED);
@@ -51,7 +51,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.PDFTemplates
             }
 
             cb.SetFontAndSize(bf_bold, 9);
-            cb.ShowTextAligned(PdfContentByte.ALIGN_RIGHT, "Nomor : " + viewModel.ExternalTransferOrderNo, width - margin, 800, 0);
+            cb.ShowTextAligned(PdfContentByte.ALIGN_RIGHT, "Nomor : " + viewModel.ETONo, width - margin, 800, 0);
 
             cb.SetFontAndSize(bf_bold, 12);
             cb.ShowTextAligned(PdfContentByte.ALIGN_CENTER, "TRANSFER ORDER", 300, 725, 0);
@@ -92,7 +92,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.PDFTemplates
                 for (int indexDetail = 0; indexDetail < externalTransferOrderItem.ExternalTransferOrderDetails.Count; indexDetail++)
                 {
                     ExternalTransferOrderDetailViewModel externalTransferOrderDetail = externalTransferOrderItem.ExternalTransferOrderDetails[indexDetail];
-                    cellLeft.Phrase = new Phrase($"{externalTransferOrderDetail.Product.code}\n{externalTransferOrderItem.TransferRequestNo}", normal_font);
+                    cellLeft.Phrase = new Phrase($"{externalTransferOrderDetail.Product.code}\n{externalTransferOrderItem.TRNo}", normal_font);
                     tableContent.AddCell(cellLeft);
                     cellRight.Phrase = new Phrase($"{externalTransferOrderDetail.DealQuantity} {externalTransferOrderDetail.DealUom.unit}", normal_font);
                     tableContent.AddCell(cellRight);

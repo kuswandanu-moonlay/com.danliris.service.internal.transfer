@@ -37,7 +37,7 @@ namespace Com.Danliris.Service.Internal.Transfer.WebApi.Controllers.v1
 
                 return new FileStreamResult(stream, "application/pdf")
                 {
-                    FileDownloadName = $"TransferOrderEksternal-{viewModel.ExternalTransferOrderNo}.pdf"
+                    FileDownloadName = $"TransferOrderEksternal-{viewModel.ETONo}.pdf"
                 };
             }
             catch (Exception e)

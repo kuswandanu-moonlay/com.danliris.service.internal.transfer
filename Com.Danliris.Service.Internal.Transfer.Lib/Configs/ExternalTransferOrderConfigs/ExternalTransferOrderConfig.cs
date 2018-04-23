@@ -20,7 +20,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Configs.ExternalTransferOrd
             builder
                 .HasMany(h => h.ExternalTransferOrderItems)
                 .WithOne(w => w.ExternalTransferOrder)
-                .HasForeignKey(f => f.ExternalTransferOrderId)
+                .HasForeignKey(f => f.ETOId)
                 .IsRequired();
         }
     }
