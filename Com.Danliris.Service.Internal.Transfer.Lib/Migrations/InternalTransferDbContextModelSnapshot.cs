@@ -20,35 +20,216 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Migrations
                 .HasAnnotation("ProductVersion", "2.0.1-rtm-125")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-<<<<<<< HEAD
+
             modelBuilder.Entity("Com.Danliris.Service.Internal.Transfer.Lib.Models.TransferDeliveryOrderModel.TransferDeliveryOrder", b =>
-=======
+             {
+                b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                b.Property<bool>("Active");
+                b.Property<DateTime>("ArrivalDate");
+
+                b.Property<string>("DONo")
+                        .HasMaxLength(255);
+
+                b.Property<DateTime>("DOdate");
+
+                b.Property<string>("Remark")
+                        .HasMaxLength(500);
+
+                b.Property<string>("SupplierCode");
+
+                b.Property<string>("SupplierId");
+
+                b.Property<string>("SupplierName")
+                        .HasMaxLength(500);
+                b.Property<string>("_CreatedAgent")
+                        .IsRequired()
+                        .HasMaxLength(255);
+
+                b.Property<string>("_CreatedBy")
+                        .IsRequired()
+                    .HasMaxLength(255);
+
+                b.Property<DateTime>("_CreatedUtc");
+
+                b.Property<string>("_DeletedAgent")
+                        .IsRequired()
+                        .HasMaxLength(255);
+
+                b.Property<string>("_DeletedBy")
+                        .IsRequired()
+                        .HasMaxLength(255);
+
+                b.Property<DateTime>("_DeletedUtc");
+
+                b.Property<bool>("_IsDeleted");
+
+                b.Property<string>("_LastModifiedAgent")
+                        .IsRequired()
+                        .HasMaxLength(255);
+
+                b.Property<string>("_LastModifiedBy")
+                        .IsRequired()
+                        .HasMaxLength(255);
+
+                b.Property<DateTime>("_LastModifiedUtc");
+
+                b.HasKey("Id");
+
+                b.ToTable("TransferDeliveryOrders");
+        });
+
+            modelBuilder.Entity("Com.Danliris.Service.Internal.Transfer.Lib.Models.TransferDeliveryOrderModel.TransferDeliveryOrderDetail", b =>
+		    
+		     {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<bool>("Active");
+		                b.Property<int>("DOItemId");
+
+                                b.Property<string>("ETODetailId");
+
+                                b.Property<string>("Grade")
+                                    .HasMaxLength(100);
+
+                    b.Property<string>("ITODetailId");
+
+                                b.Property<string>("Note")
+                                    .HasMaxLength(500);
+
+                    b.Property<string>("ProductCode");
+
+                                b.Property<string>("ProductId");
+
+                                b.Property<string>("ProductName");
+
+                                b.Property<string>("ProductRemark");
+
+                                b.Property<int>("ReceivedQuantity");
+
+                                b.Property<int>("RemainingQuantity");
+
+                                b.Property<int>("RequestedQuantity");
+
+                                b.Property<string>("TRDetailId");
+
+                                b.Property<int>("UnitReceivedQuantity")
+                                    .ValueGeneratedOnAdd()
+                                    .HasDefaultValue(0);
+
+                    b.Property<string>("UomId");
+
+                                b.Property<string>("UomUnit");
+
+                                b.Property<string>("_CreatedAgent")
+                                    .IsRequired()
+                                    .HasMaxLength(255);
+
+                    b.Property<string>("_CreatedBy")
+                                    .IsRequired()
+                                    .HasMaxLength(255);
+
+                    b.Property<DateTime>("_CreatedUtc");
+
+                                b.Property<string>("_DeletedAgent")
+                                    .IsRequired()
+                                    .HasMaxLength(255);
+
+                    b.Property<string>("_DeletedBy")
+                                    .IsRequired()
+                                    .HasMaxLength(255);
+
+                    b.Property<DateTime>("_DeletedUtc");
+
+                                b.Property<bool>("_IsDeleted");
+
+                                b.Property<string>("_LastModifiedAgent")
+                                    .IsRequired()
+                                    .HasMaxLength(255);
+
+                    b.Property<string>("_LastModifiedBy")
+                                    .IsRequired()
+                                    .HasMaxLength(255);
+
+                    b.Property<DateTime>("_LastModifiedUtc");
+
+                                b.HasKey("Id");
+		                b.HasIndex("DOItemId");
+
+                                b.ToTable("TransferDeliveryOrderDetails");
+                            });
+
+            modelBuilder.Entity("Com.Danliris.Service.Internal.Transfer.Lib.Models.TransferDeliveryOrderModel.TransferDeliveryOrderItem", b =>
+             {
+                                b.Property<int>("Id");
+
+                                b.Property<bool>("Active");
+
+                                b.Property<int>("DOId")
+                                    .HasMaxLength(100);
+
+                b.Property<string>("ETOId")
+                                    .HasMaxLength(100);
+
+                b.Property<string>("ETONo")
+                                    .HasMaxLength(255);
+
+                b.Property<string>("ITOId")
+                                    .HasMaxLength(100);
+
+                b.Property<string>("ITONo")
+                                    .HasMaxLength(255);
+
+                b.Property<string>("TRId")
+                                    .HasMaxLength(100);
+
+                b.Property<string>("TRNo")
+                                    .HasMaxLength(255);
+                b.Property<string>("_CreatedAgent")
+                                    .IsRequired()
+                                    .HasMaxLength(255);
+
+                b.Property<string>("_CreatedBy")
+                                    .IsRequired()
+                                    .HasMaxLength(255);
+
+                b.Property<DateTime>("_CreatedUtc");
+
+                                b.Property<string>("_DeletedAgent")
+                                    .IsRequired()
+                                    .HasMaxLength(255);
+
+                b.Property<string>("_DeletedBy")
+                                    .IsRequired()
+                                    .HasMaxLength(255);
+
+                b.Property<DateTime>("_DeletedUtc");
+
+                                b.Property<bool>("_IsDeleted");
+
+                                b.Property<string>("_LastModifiedAgent")
+                                    .IsRequired()
+                                    .HasMaxLength(255);
+
+                b.Property<string>("_LastModifiedBy")
+                                    .IsRequired()
+                                    .HasMaxLength(255);
+
+                b.Property<DateTime>("_LastModifiedUtc");
+
+                                b.HasKey("Id");
+                                b.ToTable("TransferDeliveryOrderItems");
+                            });
+
             modelBuilder.Entity("Com.Danliris.Service.Internal.Transfer.Lib.Models.ExternalTransferOrderModel.ExternalTransferOrder", b =>
->>>>>>> upstream/dev
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
                     b.Property<bool>("Active");
 
-<<<<<<< HEAD
-                    b.Property<DateTime>("ArrivalDate");
-
-                    b.Property<string>("DONo")
-                        .HasMaxLength(255);
-
-                    b.Property<DateTime>("DOdate");
-
-                    b.Property<string>("Remark")
-                        .HasMaxLength(500);
-
-                    b.Property<string>("SupplierCode");
-
-                    b.Property<string>("SupplierId");
-
-                    b.Property<string>("SupplierName")
-                        .HasMaxLength(500);
-=======
                     b.Property<string>("CurrencyCode")
                         .HasMaxLength(255);
 
@@ -86,7 +267,6 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Migrations
 
                     b.Property<string>("SupplierName")
                         .HasMaxLength(255);
->>>>>>> upstream/dev
 
                     b.Property<string>("_CreatedAgent")
                         .IsRequired()
@@ -122,56 +302,16 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Migrations
 
                     b.HasKey("Id");
 
-<<<<<<< HEAD
-                    b.ToTable("TransferDeliveryOrders");
-                });
-
-            modelBuilder.Entity("Com.Danliris.Service.Internal.Transfer.Lib.Models.TransferDeliveryOrderModel.TransferDeliveryOrderDetail", b =>
-=======
                     b.ToTable("ExternalTransferOrders");
                 });
 
             modelBuilder.Entity("Com.Danliris.Service.Internal.Transfer.Lib.Models.ExternalTransferOrderModel.ExternalTransferOrderDetail", b =>
->>>>>>> upstream/dev
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
                     b.Property<bool>("Active");
 
-<<<<<<< HEAD
-                    b.Property<int>("DOItemId");
-
-                    b.Property<string>("ETODetailId");
-
-                    b.Property<string>("Grade")
-                        .HasMaxLength(100);
-
-                    b.Property<string>("ITODetailId");
-
-                    b.Property<string>("Note")
-                        .HasMaxLength(500);
-
-                    b.Property<string>("ProductCode");
-
-                    b.Property<string>("ProductId");
-
-                    b.Property<string>("ProductName");
-
-                    b.Property<string>("ProductRemark");
-
-                    b.Property<int>("ReceivedQuantity");
-
-                    b.Property<int>("RemainingQuantity");
-
-                    b.Property<int>("RequestedQuantity");
-
-                    b.Property<string>("TRDetailId");
-
-                    b.Property<int>("UnitReceivedQuantity")
-                        .ValueGeneratedOnAdd()
-                        .HasDefaultValue(0);
-=======
                     b.Property<double>("Convertion");
 
                     b.Property<double>("DealQuantity");
@@ -422,7 +562,6 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Migrations
                     b.Property<string>("Status");
 
                     b.Property<int>("TRDetailId");
->>>>>>> upstream/dev
 
                     b.Property<string>("UomId");
 
@@ -462,36 +601,6 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Migrations
 
                     b.HasKey("Id");
 
-<<<<<<< HEAD
-                    b.HasIndex("DOItemId");
-
-                    b.ToTable("TransferDeliveryOrderDetails");
-                });
-
-            modelBuilder.Entity("Com.Danliris.Service.Internal.Transfer.Lib.Models.TransferDeliveryOrderModel.TransferDeliveryOrderItem", b =>
-                {
-                    b.Property<int>("Id");
-
-                    b.Property<bool>("Active");
-
-                    b.Property<int>("DOId")
-                        .HasMaxLength(100);
-
-                    b.Property<string>("ETOId")
-                        .HasMaxLength(100);
-
-                    b.Property<string>("ETONo")
-                        .HasMaxLength(255);
-
-                    b.Property<string>("ITOId")
-                        .HasMaxLength(100);
-
-                    b.Property<string>("ITONo")
-                        .HasMaxLength(255);
-
-                    b.Property<string>("TRId")
-                        .HasMaxLength(100);
-=======
                     b.HasIndex("ITOId");
 
                     b.ToTable("InternalTransferOrderDetails");
@@ -533,13 +642,10 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Migrations
 
                     b.Property<DateTime>("TRDate")
                         .HasMaxLength(255);
->>>>>>> upstream/dev
 
                     b.Property<string>("TRNo")
                         .HasMaxLength(255);
 
-<<<<<<< HEAD
-=======
                     b.Property<string>("UnitCode")
                         .HasMaxLength(255);
 
@@ -549,7 +655,6 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Migrations
                     b.Property<string>("UnitName")
                         .HasMaxLength(255);
 
->>>>>>> upstream/dev
                     b.Property<string>("_CreatedAgent")
                         .IsRequired()
                         .HasMaxLength(255);
@@ -584,24 +689,6 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Migrations
 
                     b.HasKey("Id");
 
-<<<<<<< HEAD
-                    b.ToTable("TransferDeliveryOrderItems");
-                });
-
-            modelBuilder.Entity("Com.Danliris.Service.Internal.Transfer.Lib.Models.TransferDeliveryOrderModel.TransferDeliveryOrderDetail", b =>
-                {
-                    b.HasOne("Com.Danliris.Service.Internal.Transfer.Lib.Models.TransferDeliveryOrderModel.TransferDeliveryOrderItem", "transferDeliveryOrderItem")
-                        .WithMany("transferDeliveryOrderDetail")
-                        .HasForeignKey("DOItemId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
-            modelBuilder.Entity("Com.Danliris.Service.Internal.Transfer.Lib.Models.TransferDeliveryOrderModel.TransferDeliveryOrderItem", b =>
-                {
-                    b.HasOne("Com.Danliris.Service.Internal.Transfer.Lib.Models.TransferDeliveryOrderModel.TransferDeliveryOrder", "transferDeliveryOrder")
-                        .WithMany("TransferDeliveryOrderItem")
-                        .HasForeignKey("Id")
-=======
                     b.ToTable("TransferRequests");
                 });
 
@@ -677,6 +764,23 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Migrations
                     b.ToTable("TransferRequestDetails");
                 });
 
+            modelBuilder.Entity("Com.Danliris.Service.Internal.Transfer.Lib.Models.TransferDeliveryOrderModel.TransferDeliveryOrderDetail", b =>
+            {
+                b.HasOne("Com.Danliris.Service.Internal.Transfer.Lib.Models.TransferDeliveryOrderModel.TransferDeliveryOrderItem", "transferDeliveryOrderItem")
+                    .WithMany("transferDeliveryOrderDetail")
+                    .HasForeignKey("DOItemId")
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity("Com.Danliris.Service.Internal.Transfer.Lib.Models.TransferDeliveryOrderModel.TransferDeliveryOrderItem", b =>
+            {
+                b.HasOne("Com.Danliris.Service.Internal.Transfer.Lib.Models.TransferDeliveryOrderModel.TransferDeliveryOrder", "transferDeliveryOrder")
+                    .WithMany("TransferDeliveryOrderItem")
+                    .HasForeignKey("Id")
+        .OnDelete(DeleteBehavior.Cascade);
+            });
+
+
             modelBuilder.Entity("Com.Danliris.Service.Internal.Transfer.Lib.Models.ExternalTransferOrderModel.ExternalTransferOrderDetail", b =>
                 {
                     b.HasOne("Com.Danliris.Service.Internal.Transfer.Lib.Models.ExternalTransferOrderModel.ExternalTransferOrderItem", "ExternalTransferOrderItem")
@@ -706,7 +810,6 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Migrations
                     b.HasOne("Com.Danliris.Service.Internal.Transfer.Lib.Models.TransferRequestModel.TransferRequest", "TransferRequest")
                         .WithMany("TransferRequestDetails")
                         .HasForeignKey("TransferRequestId")
->>>>>>> upstream/dev
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618

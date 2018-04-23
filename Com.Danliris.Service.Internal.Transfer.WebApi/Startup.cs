@@ -11,7 +11,7 @@ using System.Text;
 using Com.Danliris.Service.Internal.Transfer.Lib;
 using Com.Danliris.Service.Internal.Transfer.Lib.Helpers;
 using Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferDeliveryOrderService;
-using Com.Danliris.Service.Internal.Transfer.Lib.Services.ExternalTransferOrderService;
+using Com.Danliris.Service.Internal.Transfer.Lib.Services.ExternalTransferOrderServices;
 using Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferRequestService;
 using Com.Danliris.Service.Internal.Transfer.Lib.Services.InternalTransferOrderServices;
 

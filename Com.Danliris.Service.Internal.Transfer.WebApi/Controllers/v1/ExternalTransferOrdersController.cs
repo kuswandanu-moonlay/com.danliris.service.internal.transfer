@@ -1,8 +1,8 @@
 ﻿using Com.Danliris.Service.Internal.Transfer.Lib;
 using Com.Danliris.Service.Internal.Transfer.Lib.Models.ExternalTransferOrderModel;
 using Com.Danliris.Service.Internal.Transfer.Lib.PDFTemplates;
-using Com.Danliris.Service.Internal.Transfer.Lib.Services.ExternalTransferOrderService;
-using Com.Danliris.Service.Internal.Transfer.Lib.ViewModels.ExternalTransferOrderViewModel;
+using Com.Danliris.Service.Internal.Transfer.Lib.Services.ExternalTransferOrderServices;
+using Com.Danliris.Service.Internal.Transfer.Lib.ViewModels.ExternalTransferOrderViewModels;
 using Com.Danliris.Service.Internal.Transfer.WebApi.Helpers;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -49,28 +49,12 @@ namespace Com.Danliris.Service.Internal.Transfer.WebApi.Controllers.v1
             }
         }
 
-        [HttpGet("posted")]
-        public IActionResult GetPostedExternalTransferOrderRequest(int Page = 1, int Size = 25, string Order = "{}", [Bind(Prefix = "Select[]")]List<string> Select = null, string Keyword = null, string Filter = "{}")
         [HttpPut("eto-post")]
         public IActionResult ETOPost([FromBody]List<int> Ids)
         {
             try
             {
                 Service.Username = User.Claims.Single(p => p.Type.Equals("username")).Value;
-                Tuple<List<ExternalTransferOrder>, int, Dictionary<string, string>, List<string>> Data = Service.ReadModel(Page, Size, Order, Select, Keyword, Filter);
-
-                Dictionary<string, object> Result =
-                    new ResultFormatter(ApiVersion, General.OK_STATUS_CODE, General.OK_MESSAGE)
-                    .Ok(Data.Item1, Service.MapToViewModel, Page, Size, Data.Item2, Data.Item1.Count, Data.Item3, Data.Item4);
-
-                return Ok(Result);
-            }
-            catch (Exception e)
-            {
-                Dictionary<string, object> Result =
-                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
-                    .Fail();
-                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
 
                 if (this.Service.ETOPost(Ids))
                 {
@@ -150,6 +134,29 @@ namespace Com.Danliris.Service.Internal.Transfer.WebApi.Controllers.v1
             catch (Exception)
             {
                 return StatusCode(General.INTERNAL_ERROR_STATUS_CODE);
+            }
+        }
+
+        [HttpGet("modelDo")]
+        public IActionResult GetModelDoExternalTransferOrder(int Page = 1, int Size = 25, string Order = "{}", [Bind(Prefix = "Select[]")]List<string> Select = null, string Keyword = null, string Filter = "{}")
+        {
+            try
+            {
+                Service.Username = User.Claims.Single(p => p.Type.Equals("username")).Value;
+                Tuple<List<ExternalTransferOrder>, int, Dictionary<string, string>, List<string>> Data = Service.ReadModelDo(Page, Size, Order, Select, Keyword, Filter);
+
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.OK_STATUS_CODE, General.OK_MESSAGE)
+                    .Ok(Data.Item1, Service.MapToViewModel, Page, Size, Data.Item2, Data.Item1.Count, Data.Item3, Data.Item4);
+
+                return Ok(Result);
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
             }
         }
     }

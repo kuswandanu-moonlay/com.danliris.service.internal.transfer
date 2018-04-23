@@ -22,7 +22,6 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.ViewModels.TransferDelivery
         public int ReceivedQuantity { get; set; }
         public int UnitReceivedQuantity { get; set; }
         public int RemainingQuantity { get; set; }
-        public string Note { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

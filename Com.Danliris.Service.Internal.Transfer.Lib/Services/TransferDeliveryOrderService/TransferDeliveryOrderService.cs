@@ -31,7 +31,6 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferDeliveryOr
 
             model.DONo = viewModel.DONo;
             model.DOdate = (DateTime)viewModel.DODate;
-            model.ArrivalDate = (DateTime)viewModel.ArrivalDate;
             model.SupplierId = viewModel.Supplier._id ?? "";
             model.SupplierCode = viewModel.Supplier.Code;
             model.SupplierName = viewModel.Supplier.Name;
@@ -71,10 +70,9 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferDeliveryOr
                     transferDeliveryOrderDetail.RequestedQuantity = transferDeliveryOrderDetailViewModel.RequestedQuantity;
                     transferDeliveryOrderDetail.UomId = transferDeliveryOrderDetailViewModel.UomId;
                     transferDeliveryOrderDetail.UomUnit = transferDeliveryOrderDetailViewModel.UomUnit;
-                    transferDeliveryOrderDetail.ReceivedQuantity = transferDeliveryOrderDetailViewModel.ReceivedQuantity;
-                    transferDeliveryOrderDetail.UnitReceivedQuantity = transferDeliveryOrderDetailViewModel.UnitReceivedQuantity;
+                    transferDeliveryOrderDetail.DOQuantity = transferDeliveryOrderDetailViewModel.ReceivedQuantity;
+                    transferDeliveryOrderDetail.ShippingOrderQuantity = transferDeliveryOrderDetailViewModel.UnitReceivedQuantity;
                     transferDeliveryOrderDetail.RemainingQuantity = transferDeliveryOrderDetailViewModel.RemainingQuantity;
-                    transferDeliveryOrderDetail.Note = transferDeliveryOrderDetailViewModel.Note;
 
                     transferDeliveryOrderItem.transferDeliveryOrderDetail.Add(transferDeliveryOrderDetail);
                 }
@@ -96,7 +94,6 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferDeliveryOr
             };
             viewModel.DODate = model.DOdate;
             viewModel.DONo = model.DONo;
-            viewModel.ArrivalDate = model.ArrivalDate;
             viewModel.Remark = model.Remark;
 
             viewModel.items = new List<TransferDeliveryOrderItemViewModel>();
@@ -135,10 +132,9 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferDeliveryOr
                             transferDeliveryOrderDetailViewModel.RequestedQuantity = transferDeliveryOrderDetail.RequestedQuantity;
                             transferDeliveryOrderDetailViewModel.UomId = transferDeliveryOrderDetail.UomId;
                             transferDeliveryOrderDetailViewModel.UomUnit = transferDeliveryOrderDetail.UomUnit;
-                            transferDeliveryOrderDetailViewModel.ReceivedQuantity = transferDeliveryOrderDetail.ReceivedQuantity;
-                            transferDeliveryOrderDetailViewModel.UnitReceivedQuantity = transferDeliveryOrderDetail.UnitReceivedQuantity;
+                            transferDeliveryOrderDetailViewModel.ReceivedQuantity = transferDeliveryOrderDetail.DOQuantity;
+                            transferDeliveryOrderDetailViewModel.UnitReceivedQuantity = transferDeliveryOrderDetail.ShippingOrderQuantity;
                             transferDeliveryOrderDetailViewModel.RemainingQuantity = transferDeliveryOrderDetail.RemainingQuantity;
-                            transferDeliveryOrderDetailViewModel.Note = transferDeliveryOrderDetail.Note;
 
                             transferDeliveryOrderItemViewModel.details.Add(transferDeliveryOrderDetailViewModel);
                         }

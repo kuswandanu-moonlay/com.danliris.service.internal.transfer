@@ -9,8 +9,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Configs.TransferDeliveryOrd
         public void Configure(EntityTypeBuilder<TransferDeliveryOrderDetail> builder)
         {
             builder.Property(p => p.Grade).HasMaxLength(100);
-            builder.Property(p => p.UnitReceivedQuantity).HasDefaultValue(0);
-            builder.Property(p => p.Note).HasMaxLength(500);
+            builder.Property(p => p.ShippingOrderQuantity).HasDefaultValue(0);
         }
     }
 }

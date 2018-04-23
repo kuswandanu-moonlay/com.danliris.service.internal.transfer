@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-﻿using Com.Danliris.Service.Internal.Transfer.Lib.ViewModels.ExternalTransferOrderViewModel;
-=======
 ﻿using Com.Danliris.Service.Internal.Transfer.Lib.ViewModels.ExternalTransferOrderViewModels;
->>>>>>> upstream/dev
 using iTextSharp.text;
 using iTextSharp.text.pdf;
 using System;

@@ -23,10 +23,9 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Models.TransferDeliveryOrde
         public int RequestedQuantity { get; set; }
         public string UomId { get; set; }
         public string UomUnit { get; set; }
-        public int ReceivedQuantity { get; set; }
-        public int UnitReceivedQuantity { get; set; }
+        public int DOQuantity { get; set; }
+        public int ShippingOrderQuantity { get; set; }
         public int RemainingQuantity { get; set; }
-        public string Note { get; set; }
         public virtual TransferDeliveryOrderItem transferDeliveryOrderItem { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
