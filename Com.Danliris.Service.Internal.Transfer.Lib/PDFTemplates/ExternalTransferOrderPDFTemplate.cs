@@ -59,13 +59,13 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.PDFTemplates
             cb.SetFontAndSize(bf, 10);
             cb.ShowTextAligned(PdfContentByte.ALIGN_RIGHT, "Sukoharjo, " + viewModel.OrderDate.ToString("dd MMMM yyyy", new CultureInfo("id-ID")), width - margin, 700, 0);
             cb.ShowTextAligned(PdfContentByte.ALIGN_LEFT, "Kepada :", margin, 700, 0);
-            cb.ShowTextAligned(PdfContentByte.ALIGN_LEFT, viewModel.Supplier.name, margin + 45, 700, 0);
+            cb.ShowTextAligned(PdfContentByte.ALIGN_LEFT, viewModel.Division.name, margin + 45, 700, 0);
             cb.ShowTextAligned(PdfContentByte.ALIGN_LEFT, "Attn.", margin + 45, 685, 0);
             cb.ShowTextAligned(PdfContentByte.ALIGN_LEFT, "Telp.", margin + 45, 670, 0);
 
             cb.EndText();
 
-            string paragraphContent = $"Dengan hormat, Yang bertanda tangan di bawah ini, Unit {unit.name} (selanjutnya disebut sebagai pihak Pemesan) dan Unit {viewModel.Supplier.name} (selanjutnya disebut sebagai pihak Pengirim) saling menyetujui untuk mengadakan transfer dengan ketentuan sebagai berikut:";
+            string paragraphContent = $"Dengan hormat, Yang bertanda tangan di bawah ini, Unit {unit.name} (selanjutnya disebut sebagai pihak Pemesan) dan Unit {viewModel.Division.name} (selanjutnya disebut sebagai pihak Pengirim) saling menyetujui untuk mengadakan transfer dengan ketentuan sebagai berikut:";
             Paragraph paragraph = new Paragraph(paragraphContent, normal_font) { Alignment = Element.ALIGN_JUSTIFIED };
 
             PdfPCell cellCenter = new PdfPCell() { Border = Rectangle.TOP_BORDER | Rectangle.LEFT_BORDER | Rectangle.BOTTOM_BORDER | Rectangle.RIGHT_BORDER, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_MIDDLE, Padding = 5 };
@@ -138,7 +138,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.PDFTemplates
             cellSignatureContent.PaddingTop = 50f;
             cellSignatureContent.Phrase = new Phrase(unit.name, bold_font);
             tableSignature.AddCell(cellSignatureContent);
-            cellSignatureContent.Phrase = new Phrase($"{viewModel.Supplier.name}", bold_font);
+            cellSignatureContent.Phrase = new Phrase($"{viewModel.Division.name}", bold_font);
             tableSignature.AddCell(cellSignatureContent);
 
             // --------- kalo dihapus tabel malah jadi ada margin kanan dan kiri

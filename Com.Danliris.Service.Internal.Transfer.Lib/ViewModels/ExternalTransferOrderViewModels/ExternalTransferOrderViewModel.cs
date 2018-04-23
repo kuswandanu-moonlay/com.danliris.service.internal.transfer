@@ -11,7 +11,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.ViewModels.ExternalTransfer
     public class ExternalTransferOrderViewModel : BasicViewModel, IValidatableObject
     {
         public string ExternalTransferOrderNo { get; set; }
-        public SupplierViewModel Supplier { get; set; }
+        public DivisionViewModel Division { get; set; }
         public DateTime OrderDate { get; set; }
         public DateTime DeliveryDate { get; set; }
         public CurrencyViewModel Currency { get; set; }
@@ -24,7 +24,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.ViewModels.ExternalTransfer
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
-            if (this.Supplier == null || string.IsNullOrWhiteSpace(this.Supplier._id))
+            if (this.Division == null || string.IsNullOrWhiteSpace(this.Division._id))
                 yield return new ValidationResult("Supplier is required", new List<string> { "Supplier" });
 
             if (this.OrderDate == null || this.OrderDate == DateTime.MinValue)
