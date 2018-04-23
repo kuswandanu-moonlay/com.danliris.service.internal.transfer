@@ -233,7 +233,12 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.ExternalTransferOr
                                         q => new ExternalTransferOrderDetail
                                         {
                                             Id = q.Id,
-                                            ExternalTransferOrderItemId = q.ExternalTransferOrderItemId
+                                            ExternalTransferOrderItemId = q.ExternalTransferOrderItemId,
+                                            InternalTransferOrderDetailId = q.InternalTransferOrderDetailId,
+                                            TransferRequestDetailId = q.TransferRequestDetailId,
+                                            ProductId = q.ProductId,
+                                            ProductName = q.ProductName,
+
                                         }
                                      )
                                      .Where(
