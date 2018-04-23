@@ -701,8 +701,16 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.ExternalTransferOr
 
             return IsSuccessful;
         }
-
-       
+        public UnitViewModel GetUnitFromInternalTransferOrderByInternalTransferOrderId(int Id)
+        {
+            InternalTransferOrder internalTransferOrder = this.DbContext.InternalTransferOrders.FirstOrDefault(p => p.Id.Equals(Id));
+            return new UnitViewModel()
+            {
+                _id = internalTransferOrder.UnitId,
+                code = internalTransferOrder.UnitCode,
+                name = internalTransferOrder.UnitName,
+            };
+        }
     }
 }
 

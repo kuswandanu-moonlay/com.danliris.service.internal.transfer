@@ -21,5 +21,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.ViewModels.TransferRequestV
         public string grade { get; set; }
         public string status { get; set; }
         public DateTime _updatedDate { get; set; }
+        public DateTime deliveryDateETO { get; set; }
+        public string DONo { get; set; }
     }
 }

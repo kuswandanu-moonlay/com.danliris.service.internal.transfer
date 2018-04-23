@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Com.Danliris.Service.Internal.Transfer.Lib.ViewModels.InternalTransferOrderViewModels
 {
-    public class InternalTransferOrderViewModel : BasicViewModel//, IValidatableObject
+    public class InternalTransferOrderViewModel : BasicViewModel, IValidatableObject
     {
         public string ITONo { get; set; }
 
@@ -43,9 +43,10 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.ViewModels.InternalTransfer
         
         public List<InternalTransferOrderDetailViewModel> InternalTransferOrderDetails { get; set; }
         ///public List<sourceTransferOrderViewModel> sourceTransferOrder { get; set; }
-        //public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
-        //{
-        //    throw new NotImplementedException();
-        //}
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            if (this.TRNo == null || string.IsNullOrWhiteSpace(this.TRNo))
+                yield return new ValidationResult("No TR harus diisi", new List<string> { "TRNo" });
+        }
     }
 }
