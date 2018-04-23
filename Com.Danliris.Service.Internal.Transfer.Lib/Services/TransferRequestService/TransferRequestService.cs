@@ -202,7 +202,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferRequestSer
             CategoryViewModel Category = new CategoryViewModel()
             {
                 _id = model.CategoryId,
-                code = model.CategoryName,
+                code = model.CategoryCode,
                 name = model.CategoryName,
             };
 
@@ -386,8 +386,23 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferRequestSer
             {
                 try
                 {
-                    var mdn = this.DbSet.Where(m => Ids.Contains(m.Id)).ToList();
-                    mdn.ForEach(m => { m.IsPosted = true; m._LastModifiedUtc = DateTime.UtcNow; m._LastModifiedAgent = "Service"; m._LastModifiedBy = this.Username; });
+                    var transfer = this.DbSet.Where(m => Ids.Contains(m.Id)).Include(d => d.TransferRequestDetails).ToList();
+                    transfer.ForEach(tr => {
+                        tr.IsPosted = true;
+                        tr._LastModifiedUtc = DateTime.UtcNow;
+                        tr._LastModifiedAgent = "Service";
+                        tr._LastModifiedBy = this.Username;
+
+                        foreach(var data in tr.TransferRequestDetails)
+                        {
+                            TransferRequestDetail trDetail = this.DbContext.TransferRequestDetails.FirstOrDefault(s => s.Id == data.Id);
+                            trDetail._LastModifiedUtc = DateTime.UtcNow;
+                            trDetail._LastModifiedAgent = "Service";
+                            trDetail._LastModifiedBy = this.Username;
+                        }
+                    });
+
+
                     this.DbContext.SaveChanges();
 
                     IsSuccessful = true;
@@ -411,11 +426,20 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferRequestSer
             {
                 try
                 {
-                    var transfer = this.DbSet.FirstOrDefault(tr => tr.Id == Id && tr._IsDeleted==false);
+                    var transfer = this.DbSet.Include(d => d.TransferRequestDetails).FirstOrDefault(tr => tr.Id == Id && tr._IsDeleted==false);
                     transfer.IsPosted = false;
                     transfer._LastModifiedUtc = DateTime.UtcNow;
                     transfer._LastModifiedAgent = "Service";
                     transfer._LastModifiedBy = this.Username;
+
+                    foreach (var data in transfer.TransferRequestDetails)
+                    {
+                        TransferRequestDetail trDetail = this.DbContext.TransferRequestDetails.FirstOrDefault(s => s.Id == data.Id);
+                        trDetail._LastModifiedUtc = DateTime.UtcNow;
+                        trDetail._LastModifiedAgent = "Service";
+                        trDetail._LastModifiedBy = this.Username;
+                    }
+
                     this.DbContext.SaveChanges();
 
                     IsSuccessful = true;
@@ -477,15 +501,27 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferRequestSer
         {
             DateTime DateFrom = dateFrom == null ? new DateTime(1970, 1, 1) : (DateTime)dateFrom;
             DateTime DateTo = dateTo == null ? DateTime.Now : (DateTime)dateTo;
+            bool isCancel = false;
+            if (status == "Dibatalkan")
+            {
+                isCancel = true;
+                status = "";
+            }
 
             var Query = (from a in DbContext.TransferRequests
                          join b in DbContext.TransferRequestDetails on a.Id equals b.TransferRequestId
+                         join c in DbContext.ExternalTransferOrderItems on a.Id equals c.TRId into eto
+                         from e in eto.DefaultIfEmpty()
+                         join d in DbContext.ExternalTransferOrders on e.ETOId equals d.Id into etoI
+                         from g in etoI.DefaultIfEmpty()
                          where a._IsDeleted == false
+                             && g._IsDeleted == false
                              && a.TRNo == (string.IsNullOrWhiteSpace(trNo) ? a.TRNo : trNo)
                              && a.UnitId == (string.IsNullOrWhiteSpace(unitId) ? a.UnitId : unitId)
                              && b.Status == (string.IsNullOrWhiteSpace(status) ? b.Status : status)
                              && a.TRDate.AddHours(offset).Date >= DateFrom.Date
                              && a.TRDate.AddHours(offset).Date <= DateTo.Date
+                             && a.IsCanceled==isCancel
                          select new TransferRequestReportViewModel
                          {
                              trNo = a.TRNo,
@@ -501,10 +537,11 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferRequestSer
                              quantity = b.Quantity,
                              isPosted = a.IsPosted,
                              isCanceled = a.IsCanceled,
-                             status=b.Status,
-                             _updatedDate=a._LastModifiedUtc
+                             status = b.Status,
+                             _updatedDate = a._LastModifiedUtc,
+                             deliveryDateETO = g.DeliveryDate !=null ? g.DeliveryDate : new DateTime(1970, 1, 1)
+                             
                          });
-
             return Query;
         }
 
@@ -552,8 +589,9 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferRequestSer
                 result.Rows.Add("", "", "", "", "", "", 0, "", "", "", ""); // to allow column name to be generated properly for empty data as template
             else
                 foreach (var item in Query)
-                    result.Rows.Add((item.trNo), item.trDate, item.unitName, item.categoryName, item.productCode, item.productName, item.quantity, item.uom, item.requestedArrivalDate, item.status);
-
+                {
+                    result.Rows.Add((item.trNo), item.trDate.ToString("dd MMM yyyy"), item.unitName, item.categoryName, item.productCode, item.productName, item.quantity, item.uom, item.requestedArrivalDate.ToString("dd MMM yyyy"), item.deliveryDateETO == new DateTime(1970, 1, 1)? "-" : item.deliveryDateETO.ToString("dd MMM yyyy"), item.status);
+                }
             return Excel.CreateExcel(new List<KeyValuePair<DataTable, string>>() { new KeyValuePair<DataTable, string>(result, "Territory") }, true);
         }
     }

@@ -7,6 +7,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.PDFTemplates
 {
     public class TransferRequestPDFTemplate
     {
+        public string[] Bulan = { "Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "Nopember", "Desember" };
         public MemoryStream GeneratePdfTemplate(TransferRequestViewModel viewModel)
         {
             BaseFont bf = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.CP1250, BaseFont.NOT_EMBEDDED);
@@ -46,11 +47,13 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.PDFTemplates
 
             cb.SetFontAndSize(bf, 9);
             cb.ShowTextAligned(PdfContentByte.ALIGN_RIGHT, "Sukoharjo, ", 320, 500, 0);
-            cb.ShowTextAligned(PdfContentByte.ALIGN_LEFT, viewModel.trDate.ToString("dd-MM-yyyy"), 330, 500, 0);
+            cb.ShowTextAligned(PdfContentByte.ALIGN_LEFT, $"{ viewModel.trDate.Day} { Bulan[viewModel.trDate.Month - 1]} { viewModel.trDate.Year}", 330, 500, 0);
 
             cb.ShowTextAligned(PdfContentByte.ALIGN_LEFT, "Dari", 20, 490, 0);
             cb.ShowTextAligned(PdfContentByte.ALIGN_LEFT, ":", 55, 490, 0);
             cb.ShowTextAligned(PdfContentByte.ALIGN_LEFT, viewModel.unit.name, 65, 490, 0);
+
+            cb.ShowTextAligned(PdfContentByte.ALIGN_LEFT, "Mohon ditransfer barang tersebut di bawah ini:", 20, 470, 0);
 
             //cb.ShowTextAligned(PdfContentByte.ALIGN_LEFT, "Kepada", 50, 306, 0);
             //cb.ShowTextAligned(PdfContentByte.ALIGN_LEFT, ":", 110, 306, 0);
@@ -62,6 +65,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.PDFTemplates
             PdfPTable table = new PdfPTable(5);
             PdfPCell cell;
             table.TotalWidth = 360f;
+            int rowsPerPage = 10;
 
             float[] widths = new float[] { 2f, 4f, 10f, 4f, 4f };
             table.SetWidths(widths);
@@ -89,6 +93,8 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.PDFTemplates
 
             int index = 1;
 
+            int TotalRows = viewModel.details.Count;
+
             foreach (var detail in viewModel.details)
             {
                 cell = new PdfPCell() { Border = Rectangle.TOP_BORDER | Rectangle.LEFT_BORDER | Rectangle.BOTTOM_BORDER | Rectangle.RIGHT_BORDER, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_MIDDLE, Padding = 5 };
@@ -98,7 +104,9 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.PDFTemplates
                 cell.Phrase = new Phrase(detail.product.code , normal_font);
                 table.AddCell(cell);
 
-                cell.Phrase = new Phrase(detail.product.name + " GRADE " + detail.grade + " " + detail.productRemark, normal_font);
+                string productGrade = detail.grade == "" ? " " : " GRADE " + detail.grade + " ";
+
+                cell.Phrase = new Phrase(detail.product.name + productGrade + detail.productRemark, normal_font);
                 table.AddCell(cell);
 
 
@@ -108,8 +116,36 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.PDFTemplates
                 cell.Phrase = new Phrase("", normal_font);
                 table.AddCell(cell);
 
+                //if(index )
+
+                if (index % rowsPerPage == 0)
+                {
+                    if(index == TotalRows)
+                    {
+                        continue;
+                    }
+                    else if (index == rowsPerPage)
+                    {
+                        table.WriteSelectedRows(0, -1, 15, 460, cb);
+                    }
+                    else
+                    {
+                        table.WriteSelectedRows(0, -1, 15, 500, cb);
+                    }
+
+                    for (var i = 0; i < rowsPerPage; i++)
+                    {
+                        table.DeleteLastRow();
+                    }
+
+                    if (index != TotalRows)
+                        document.NewPage();
+                }
+
                 index++;
             }
+
+            
 
             var footerCell = new PdfPCell(new Phrase    ("Kategori              : " + viewModel.category.name, normal_font));
             footerCell.Colspan = 5;
@@ -117,7 +153,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.PDFTemplates
             footerCell.HorizontalAlignment = Element.ALIGN_LEFT;
             table.AddCell(footerCell);
 
-            var footerCell1 = new PdfPCell(new Phrase   ("Diminta Datang   : " + viewModel.requestedArrivalDate.ToString("dd-MM-yyyy"), normal_font));
+            var footerCell1 = new PdfPCell(new Phrase   ("Diminta Datang   : " + $"{ viewModel.requestedArrivalDate.Day} { Bulan[viewModel.requestedArrivalDate.Month - 1]} { viewModel.requestedArrivalDate.Year}", normal_font));
             footerCell1.Colspan = 5;
             footerCell1.Border = Rectangle.NO_BORDER;
             footerCell1.HorizontalAlignment = Element.ALIGN_LEFT;
@@ -130,7 +166,14 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.PDFTemplates
             footerCell2.HorizontalAlignment = Element.ALIGN_LEFT;
             table.AddCell(footerCell2);
 
-            table.WriteSelectedRows(0, -1, 20, 470, cb);
+            index--;
+            if (index % rowsPerPage != 0)
+            {
+                if (index < rowsPerPage)
+                    table.WriteSelectedRows(0, -1, 15, 460, cb);
+                else
+                    table.WriteSelectedRows(0, -1, 15, 500, cb);
+            }
             #endregion
 
             #region CreateTable2
@@ -138,7 +181,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.PDFTemplates
             PdfPCell cell2;
             table2.TotalWidth = 360f;
 
-            float[] widths2 = new float[] { 5f,5f,5f,5f,5f };
+            float[] widths2 = new float[] { 5f,5f,5f,5.5f,5f };
             table2.SetWidths(widths2);
 
             cell2 = new PdfPCell() { Border = Rectangle.TOP_BORDER | Rectangle.LEFT_BORDER | Rectangle.BOTTOM_BORDER | Rectangle.RIGHT_BORDER, HorizontalAlignment = Element.ALIGN_CENTER, VerticalAlignment = Element.ALIGN_MIDDLE, Padding = 5 };

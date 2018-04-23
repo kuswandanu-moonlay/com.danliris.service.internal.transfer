@@ -144,10 +144,8 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.InternalTransferOr
             IQueryable<InternalTransferOrder> Query = this.DbContext.InternalTransferOrders;
 
             List<string> SearchAttributes = new List<string>()
-            {
-
+            { 
                 "TRNo","UnitName","DivisionName","CategoryName","_CreatedBy", "ITONo"
-
             };
 
             Query = ConfigureSearch(Query, SearchAttributes, Keyword);
@@ -290,6 +288,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.InternalTransferOr
             return viewModel;
         }
 
+ 
         //public async Task<int> SplitUpdate(int Id,InternalTransferOrderViewModel viewModel, InternalTransferOrder Model)
         //{
         //    InternalTransferOrderDetailService internalTransferOrderDetailService = this.ServiceProvider.GetService<InternalTransferOrderDetailService>();
@@ -339,6 +338,8 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.InternalTransferOr
 
         //    return Updated;
         //}
+ 
+       
         public List<InternalTransferOrder> ReadModelUnused(string Order = "{}", List<string> Select = null, string Keyword = null, string Filter = "{}", List<int> CurrentUsed = null)
         {
             IQueryable<InternalTransferOrder> Query = this.DbContext.InternalTransferOrders;
@@ -356,7 +357,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.InternalTransferOr
             };
 
             ExternalTransferOrderItemService externalTransferOrderItemService = this.ServiceProvider.GetService<ExternalTransferOrderItemService>();
-            HashSet<int> externalTransferOrderItems = new HashSet<int>(externalTransferOrderItemService.DbSet.Select(p => p.InternalTransferOrderId));
+            HashSet<int> externalTransferOrderItems = new HashSet<int>(externalTransferOrderItemService.DbSet.Select(p => p.ITOId));
 
             Query = Query
                 .Select(mdn => new InternalTransferOrder
@@ -386,7 +387,10 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.InternalTransferOr
             List<InternalTransferOrder> Data = Query.ToList<InternalTransferOrder>();
 
             return Data;
+<<<<<<< HEAD
 
+=======
+>>>>>>> upstream/dev
         }
     }
 }
