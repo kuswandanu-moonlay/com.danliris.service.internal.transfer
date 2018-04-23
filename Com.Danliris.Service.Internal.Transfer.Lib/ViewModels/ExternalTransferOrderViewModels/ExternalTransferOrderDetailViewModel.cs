@@ -19,7 +19,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.ViewModels.ExternalTransfer
         public double DealQuantity { get; set; }
         public UomViewModel DealUom { get; set; }
 
-        public double ReceivedQuantity { get; set; }
+        public double DOQuantity { get; set; }
         public double RemainingQuantity { get; set; }
         public double Convertion { get; set; }
         public double Price { get; set; }
