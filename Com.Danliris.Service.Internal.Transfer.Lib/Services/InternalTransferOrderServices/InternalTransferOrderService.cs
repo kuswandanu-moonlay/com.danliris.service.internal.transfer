@@ -387,10 +387,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.InternalTransferOr
             List<InternalTransferOrder> Data = Query.ToList<InternalTransferOrder>();
 
             return Data;
-<<<<<<< HEAD
-
-=======
->>>>>>> upstream/dev
+ 
         }
     }
 }
