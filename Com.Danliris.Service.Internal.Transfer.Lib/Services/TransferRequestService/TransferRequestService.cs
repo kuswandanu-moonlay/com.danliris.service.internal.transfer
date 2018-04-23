@@ -510,9 +510,9 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferRequestSer
 
             var Query = (from a in DbContext.TransferRequests
                          join b in DbContext.TransferRequestDetails on a.Id equals b.TransferRequestId
-                         join c in DbContext.ExternalTransferOrderItems on a.Id equals c.TransferRequestId into eto
+                         join c in DbContext.ExternalTransferOrderItems on a.Id equals c.TRId into eto
                          from e in eto.DefaultIfEmpty()
-                         join d in DbContext.ExternalTransferOrders on e.ExternalTransferOrderId equals d.Id into etoI
+                         join d in DbContext.ExternalTransferOrders on e.ETOId equals d.Id into etoI
                          from g in etoI.DefaultIfEmpty()
                          where a._IsDeleted == false
                              && g._IsDeleted == false
