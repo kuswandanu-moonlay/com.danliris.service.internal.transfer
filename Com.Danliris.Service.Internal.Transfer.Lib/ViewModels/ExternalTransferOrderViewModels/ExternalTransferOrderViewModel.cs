@@ -26,7 +26,10 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.ViewModels.ExternalTransfer
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             if (this.DeliveryDivision == null || string.IsNullOrWhiteSpace(this.DeliveryDivision._id))
-                yield return new ValidationResult("Division is required", new List<string> { "Division" });
+                yield return new ValidationResult("Division is required", new List<string> { "DeliveryDivision" });
+
+            if (this.OrderDivision == null || string.IsNullOrWhiteSpace(this.OrderDivision._id))
+                yield return new ValidationResult("Division is required", new List<string> { "OrderDivision" });
 
             if (this.OrderDate == null || this.OrderDate == DateTime.MinValue)
                 yield return new ValidationResult("OrderDate is required", new List<string> { "OrderDate" });
