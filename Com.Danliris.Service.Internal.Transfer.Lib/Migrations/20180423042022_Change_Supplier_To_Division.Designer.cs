@@ -11,9 +11,10 @@ using System;
 namespace Com.Danliris.Service.Internal.Transfer.Lib.Migrations
 {
     [DbContext(typeof(InternalTransferDbContext))]
-    partial class InternalTransferDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180423042022_Change_Supplier_To_Division")]
+    partial class Change_Supplier_To_Division
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -52,7 +53,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Migrations
                     b.Property<string>("DivisionName")
                         .HasMaxLength(255);
 
-                    b.Property<string>("ETONo");
+                    b.Property<string>("ExternalTransferOrderNo");
 
                     b.Property<bool>("IsCanceled");
 
@@ -129,12 +130,12 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Migrations
                     b.Property<string>("DefaultUomUnit")
                         .HasMaxLength(255);
 
-                    b.Property<int>("ETOItemId");
+                    b.Property<int>("ExternalTransferOrderItemId");
 
                     b.Property<string>("Grade")
                         .HasMaxLength(255);
 
-                    b.Property<int>("ITODetailId");
+                    b.Property<int>("InternalTransferOrderDetailId");
 
                     b.Property<double>("Price");
 
@@ -152,7 +153,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Migrations
 
                     b.Property<double>("RemainingQuantity");
 
-                    b.Property<int>("TRDetailId");
+                    b.Property<int>("TransferRequestDetailId");
 
                     b.Property<string>("_CreatedAgent")
                         .IsRequired()
@@ -188,7 +189,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ETOItemId");
+                    b.HasIndex("ExternalTransferOrderItemId");
 
                     b.ToTable("ExternalTransferOrderDetails");
                 });
@@ -200,16 +201,16 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Migrations
 
                     b.Property<bool>("Active");
 
-                    b.Property<int>("ETOId");
+                    b.Property<int>("ExternalTransferOrderId");
 
-                    b.Property<int>("ITOId");
+                    b.Property<int>("InternalTransferOrderId");
 
-                    b.Property<string>("ITONo")
+                    b.Property<string>("InternalTransferOrderNo")
                         .HasMaxLength(255);
 
-                    b.Property<int>("TRId");
+                    b.Property<int>("TransferRequestId");
 
-                    b.Property<string>("TRNo")
+                    b.Property<string>("TransferRequestNo")
                         .HasMaxLength(255);
 
                     b.Property<string>("_CreatedAgent")
@@ -246,7 +247,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ETOId");
+                    b.HasIndex("ExternalTransferOrderId");
 
                     b.ToTable("ExternalTransferOrderItems");
                 });
@@ -565,7 +566,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Migrations
                 {
                     b.HasOne("Com.Danliris.Service.Internal.Transfer.Lib.Models.ExternalTransferOrderModel.ExternalTransferOrderItem", "ExternalTransferOrderItem")
                         .WithMany("ExternalTransferOrderDetails")
-                        .HasForeignKey("ETOItemId")
+                        .HasForeignKey("ExternalTransferOrderItemId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
@@ -573,7 +574,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Migrations
                 {
                     b.HasOne("Com.Danliris.Service.Internal.Transfer.Lib.Models.ExternalTransferOrderModel.ExternalTransferOrder", "ExternalTransferOrder")
                         .WithMany("ExternalTransferOrderItems")
-                        .HasForeignKey("ETOId")
+                        .HasForeignKey("ExternalTransferOrderId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
