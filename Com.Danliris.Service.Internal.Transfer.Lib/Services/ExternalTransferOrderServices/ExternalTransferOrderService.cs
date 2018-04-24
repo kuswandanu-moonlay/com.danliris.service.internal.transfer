@@ -28,9 +28,12 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.ExternalTransferOr
             ExternalTransferOrder model = new ExternalTransferOrder();
             PropertyCopier<ExternalTransferOrderViewModel, ExternalTransferOrder>.Copy(viewModel, model);
 
-            model.DivisionId = viewModel.Division._id;
-            model.DivisionCode = viewModel.Division.code;
-            model.DivisionName = viewModel.Division.name;
+            model.OrderDivisionId = viewModel.OrderDivision._id;
+            model.OrderDivisionCode = viewModel.OrderDivision.code;
+            model.OrderDivisionName = viewModel.OrderDivision.name;
+            model.DeliveryDivisionId = viewModel.DeliveryDivision._id;
+            model.DeliveryDivisionCode = viewModel.DeliveryDivision.code;
+            model.DeliveryDivisionName = viewModel.DeliveryDivision.name;
             model.CurrencyId = viewModel.Currency._id;
             model.CurrencyCode = viewModel.Currency.code;
             model.CurrencyRate = viewModel.Currency.rate;
@@ -75,11 +78,18 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.ExternalTransferOr
             ExternalTransferOrderViewModel viewModel = new ExternalTransferOrderViewModel();
             PropertyCopier<ExternalTransferOrder, ExternalTransferOrderViewModel>.Copy(model, viewModel);
 
-            viewModel.Division = new DivisionViewModel()
+            viewModel.OrderDivision = new DivisionViewModel()
             {
-                _id = model.DivisionId,
-                code = model.DivisionCode,
-                name = model.DivisionName
+                _id = model.OrderDivisionId,
+                code = model.OrderDivisionCode,
+                name = model.OrderDivisionName
+            };
+
+            viewModel.DeliveryDivision = new DivisionViewModel()
+            {
+                _id = model.DeliveryDivisionId,
+                code = model.DeliveryDivisionCode,
+                name = model.DeliveryDivisionName
             };
 
             viewModel.Currency = new CurrencyViewModel()
@@ -149,14 +159,14 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.ExternalTransferOr
             List<string> SearchAttributes = new List<string>()
                 {
                     // Model
-                    "ETONo", "DivisionName", "ExternalTransferOrderItems.TRNo", "ExternalTransferOrderItems.ITONo"
+                    "ETONo", "DeliveryDivisionName", "ExternalTransferOrderItems.TRNo", "ExternalTransferOrderItems.ITONo"
                 };
             Query = ConfigureSearch(Query, SearchAttributes, Keyword);
 
             List<string> SelectedFields = new List<string>()
                 {
                     // ViewModel
-                    "Id", "ETONo", "OrderDate", "Division", "ExternalTransferOrderItems", "IsPosted"
+                    "Id", "ETONo", "OrderDate", "DeliveryDivision", "ExternalTransferOrderItems", "IsPosted"
                 };
             Query = Query
                 .Select(result => new ExternalTransferOrder
@@ -165,7 +175,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.ExternalTransferOr
                     Id = result.Id,
                     ETONo = result.ETONo,
                     OrderDate = result.OrderDate,
-                    DivisionName = result.DivisionName,
+                    DeliveryDivisionName = result.DeliveryDivisionName,
                     IsPosted = result.IsPosted,
                     Remark = result.Remark,
                     _LastModifiedUtc = result._LastModifiedUtc,
@@ -284,7 +294,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.ExternalTransferOr
             DateTime Now = DateTime.Now;
             string Year = Now.ToString("yy");
 
-            string externalTransferOrderNo = "ETO" + model.DivisionCode + Year;
+            string externalTransferOrderNo = "ETO" + model.DeliveryDivisionCode + Year;
 
             var lastExternalTransferOrderNo = await this.DbSet.Where(w => w.ETONo.StartsWith(externalTransferOrderNo)).OrderByDescending(o => o.ETONo).FirstOrDefaultAsync();
 
