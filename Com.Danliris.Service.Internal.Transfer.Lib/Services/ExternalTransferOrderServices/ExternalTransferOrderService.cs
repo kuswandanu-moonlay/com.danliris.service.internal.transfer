@@ -43,6 +43,10 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.ExternalTransferOr
                 ExternalTransferOrderItem externalTransferOrderItem = new ExternalTransferOrderItem();
                 PropertyCopier<ExternalTransferOrderItemViewModel, ExternalTransferOrderItem>.Copy(externalTransferOrderItemViewModel, externalTransferOrderItem);
 
+                externalTransferOrderItem.UnitId = externalTransferOrderItemViewModel.Unit._id;
+                externalTransferOrderItem.UnitCode = externalTransferOrderItemViewModel.Unit.code;
+                externalTransferOrderItem.UnitName = externalTransferOrderItemViewModel.Unit.name;
+
                 externalTransferOrderItem.ExternalTransferOrderDetails = new List<ExternalTransferOrderDetail>();
                 foreach (ExternalTransferOrderDetailViewModel externalTransferOrderDetailViewModel in externalTransferOrderItemViewModel.ExternalTransferOrderDetails)
                 {
@@ -94,6 +98,13 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.ExternalTransferOr
                 {
                     ExternalTransferOrderItemViewModel externalTransferOrderItemViewModel = new ExternalTransferOrderItemViewModel();
                     PropertyCopier<ExternalTransferOrderItem, ExternalTransferOrderItemViewModel>.Copy(externalTransferOrderItem, externalTransferOrderItemViewModel);
+
+                    externalTransferOrderItemViewModel.Unit = new UnitViewModel
+                    {
+                        _id = externalTransferOrderItem.UnitId,
+                        code = externalTransferOrderItem.UnitCode,
+                        name = externalTransferOrderItem.UnitName
+                    };
 
                     externalTransferOrderItemViewModel.ExternalTransferOrderDetails = new List<ExternalTransferOrderDetailViewModel>();
                     if (externalTransferOrderItem.ExternalTransferOrderDetails != null)
