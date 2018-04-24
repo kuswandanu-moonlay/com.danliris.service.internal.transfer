@@ -226,6 +226,12 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.ExternalTransferOr
                             internalTransferOrderDetail._LastModifiedAgent = "Service";
                             internalTransferOrderDetail._LastModifiedBy = this.Username;
                         }
+
+                        InternalTransferOrder internalTransferOrder = this.DbContext.InternalTransferOrders.FirstOrDefault(s => s.Id == item.ITOId);
+                        internalTransferOrder.IsPost = true;
+                        internalTransferOrder._LastModifiedUtc = DateTime.UtcNow;
+                        internalTransferOrder._LastModifiedAgent = "Service";
+                        internalTransferOrder._LastModifiedBy = this.Username;
                     }
                     this.DbContext.SaveChanges();
 
@@ -311,6 +317,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.ExternalTransferOr
 
                         ExternalTransferOrderItem externalTransferOrderItem = Model.ExternalTransferOrderItems.FirstOrDefault(p => p.Id.Equals(itemId));
 
+                        // cek item apakah dihapus (sesuai data yang diubah)
                         if (externalTransferOrderItem == null)
                         {
                             ExternalTransferOrderItem item = this.DbContext.ExternalTransferOrderItems
@@ -327,6 +334,9 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.ExternalTransferOr
                                     InternalTransferOrderDetail internalTransferOrderDetail = this.DbContext.InternalTransferOrderDetails.FirstOrDefault(s => s.Id == detail.ITODetailId);
                                     internalTransferOrderDetail.Status = "TO Internal belum diorder";
                                 }
+
+                                InternalTransferOrder internalTransferOrder = this.DbContext.InternalTransferOrders.FirstOrDefault(s => s.Id == item.ITOId);
+                                internalTransferOrder.IsPost = false;
                             }
 
                             foreach (int detailId in ExternalTransferOrderDetailIds)
@@ -367,6 +377,9 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.ExternalTransferOr
                                 InternalTransferOrderDetail internalTransferOrderDetail = this.DbContext.InternalTransferOrderDetails.FirstOrDefault(s => s.Id == detail.ITODetailId);
                                 internalTransferOrderDetail.Status = "Sudah dibuat TO Eksternal";
                             }
+
+                            InternalTransferOrder internalTransferOrder = this.DbContext.InternalTransferOrders.FirstOrDefault(s => s.Id == item.ITOId);
+                            internalTransferOrder.IsPost = true;
                         }
                     }
 
@@ -437,6 +450,9 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.ExternalTransferOr
                                     InternalTransferOrderDetail internalTransferOrderDetail = this.DbContext.InternalTransferOrderDetails.FirstOrDefault(s => s.Id == detail.ITODetailId);
                                     internalTransferOrderDetail.Status = "TO Internal belum diorder";
                                 }
+
+                                InternalTransferOrder internalTransferOrder = this.DbContext.InternalTransferOrders.FirstOrDefault(s => s.Id == item.ITOId);
+                                internalTransferOrder.IsPost = false;
                             }
                         }
 
@@ -486,12 +502,6 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.ExternalTransferOr
 
                         foreach (var item in data.ExternalTransferOrderItems)
                         {
-                            InternalTransferOrder internalTransferOrder = this.DbContext.InternalTransferOrders.FirstOrDefault(s => s.Id == item.ITOId);
-                            internalTransferOrder.IsPost = true;
-                            internalTransferOrder._LastModifiedUtc = DateTime.UtcNow;
-                            internalTransferOrder._LastModifiedAgent = "Service";
-                            internalTransferOrder._LastModifiedBy = this.Username;
-
                             foreach (var detail in item.ExternalTransferOrderDetails)
                             {
                                 InternalTransferOrderDetail internalTransferOrderDetail = this.DbContext.InternalTransferOrderDetails.FirstOrDefault(s => s.Id == detail.ITODetailId);
@@ -537,12 +547,6 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.ExternalTransferOr
 
                     foreach (var item in data.ExternalTransferOrderItems)
                     {
-                        InternalTransferOrder internalTransferOrder = this.DbContext.InternalTransferOrders.FirstOrDefault(s => s.Id == item.ITOId);
-                        internalTransferOrder.IsPost = false;
-                        internalTransferOrder._LastModifiedUtc = DateTime.UtcNow;
-                        internalTransferOrder._LastModifiedAgent = "Service";
-                        internalTransferOrder._LastModifiedBy = this.Username;
-
                         foreach (var detail in item.ExternalTransferOrderDetails)
                         {
                             InternalTransferOrderDetail internalTransferOrderDetail = this.DbContext.InternalTransferOrderDetails.FirstOrDefault(s => s.Id == detail.ITODetailId);
