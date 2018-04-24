@@ -11,9 +11,10 @@ using System;
 namespace Com.Danliris.Service.Internal.Transfer.Lib.Migrations
 {
     [DbContext(typeof(InternalTransferDbContext))]
-    partial class InternalTransferDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180424043158_Add_Unit_To_ExternalTransferOrderItem")]
+    partial class Add_Unit_To_ExternalTransferOrderItem
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -43,13 +44,13 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Migrations
 
                     b.Property<DateTime>("DeliveryDate");
 
-                    b.Property<string>("DeliveryDivisionCode")
+                    b.Property<string>("DivisionCode")
                         .HasMaxLength(255);
 
-                    b.Property<string>("DeliveryDivisionId")
+                    b.Property<string>("DivisionId")
                         .HasMaxLength(255);
 
-                    b.Property<string>("DeliveryDivisionName")
+                    b.Property<string>("DivisionName")
                         .HasMaxLength(255);
 
                     b.Property<string>("ETONo");
@@ -61,12 +62,6 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Migrations
                     b.Property<bool>("IsPosted");
 
                     b.Property<DateTime>("OrderDate");
-
-                    b.Property<string>("OrderDivisionCode");
-
-                    b.Property<string>("OrderDivisionId");
-
-                    b.Property<string>("OrderDivisionName");
 
                     b.Property<string>("Remark")
                         .HasMaxLength(1000);
