@@ -131,14 +131,9 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.PDFTemplates
             PdfPTable tableSignature = new PdfPTable(2);
 
             PdfPCell cellSignatureContent = new PdfPCell() { Border = Rectangle.NO_BORDER, HorizontalAlignment = Element.ALIGN_CENTER };
-            cellSignatureContent.Phrase = new Phrase("Pemesan", bold_font);
+            cellSignatureContent.Phrase = new Phrase("Pemesan\n\n\n\n\n\n\n" + unit.name, bold_font);
             tableSignature.AddCell(cellSignatureContent);
-            cellSignatureContent.Phrase = new Phrase("Pengirim", bold_font);
-            tableSignature.AddCell(cellSignatureContent);
-            cellSignatureContent.PaddingTop = 50f;
-            cellSignatureContent.Phrase = new Phrase(unit.name, bold_font);
-            tableSignature.AddCell(cellSignatureContent);
-            cellSignatureContent.Phrase = new Phrase($"{viewModel.DeliveryDivision.name}", bold_font);
+            cellSignatureContent.Phrase = new Phrase("Pengirim\n\n\n\n\n\n\n" + viewModel.DeliveryDivision.name, bold_font);
             tableSignature.AddCell(cellSignatureContent);
 
             // --------- kalo dihapus tabel malah jadi ada margin kanan dan kiri
