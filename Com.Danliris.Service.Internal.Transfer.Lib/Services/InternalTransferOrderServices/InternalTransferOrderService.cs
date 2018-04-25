@@ -144,8 +144,8 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.InternalTransferOr
             IQueryable<InternalTransferOrder> Query = this.DbContext.InternalTransferOrders;
 
             List<string> SearchAttributes = new List<string>()
-            {
-                "TRNo","UnitName","DivisionName","CategoryName","_CreatedBy","ITONo"
+            { 
+                "TRNo","UnitName","DivisionName","CategoryName","_CreatedBy", "ITONo"
             };
 
             Query = ConfigureSearch(Query, SearchAttributes, Keyword);
@@ -288,56 +288,58 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.InternalTransferOr
             return viewModel;
         }
 
-        public async Task<int> SplitUpdate(int Id,InternalTransferOrderViewModel viewModel, InternalTransferOrder Model)
-        {
-            InternalTransferOrderDetailService internalTransferOrderDetailService = this.ServiceProvider.GetService<InternalTransferOrderDetailService>();
-            internalTransferOrderDetailService.Username = this.Username;
-            InternalTransferOrderService service = this.ServiceProvider.GetService<InternalTransferOrderService>();
-            service.Username = this.Username;
+ 
+        //public async Task<int> SplitUpdate(int Id,InternalTransferOrderViewModel viewModel, InternalTransferOrder Model)
+        //{
+        //    InternalTransferOrderDetailService internalTransferOrderDetailService = this.ServiceProvider.GetService<InternalTransferOrderDetailService>();
+        //    internalTransferOrderDetailService.Username = this.Username;
+        //    InternalTransferOrderService service = this.ServiceProvider.GetService<InternalTransferOrderService>();
+        //    service.Username = this.Username;
 
-            int Updated = 0;
-            InternalTransferOrder Data = await this.ReadModelById(Id);
-            InternalTransferOrderViewModel viewM= service.MapToViewModel(Data);
+        //    int Updated = 0;
+        //    InternalTransferOrder Data = await this.ReadModelById(Id);
+        //    InternalTransferOrderViewModel viewM= service.MapToViewModel(Data);
 
-            foreach (InternalTransferOrderDetail item in Data.InternalTransferOrderDetails)
-            {
-                InternalTransferOrderDetail internalTransferOrderDetail = this.DbContext.InternalTransferOrderDetails.FirstOrDefault(s => s.Id == item.Id);
-                var dataView = Model.InternalTransferOrderDetails.FirstOrDefault(s => s.Id == item.Id);
+        //    foreach (InternalTransferOrderDetail item in Data.InternalTransferOrderDetails)
+        //    {
+        //        InternalTransferOrderDetail internalTransferOrderDetail = this.DbContext.InternalTransferOrderDetails.FirstOrDefault(s => s.Id == item.Id);
+        //        var dataView = Model.InternalTransferOrderDetails.FirstOrDefault(s => s.Id == item.Id);
 
-                if (dataView == null)
-                {
-                    this.DbContext.InternalTransferOrderDetails.Remove(internalTransferOrderDetail);
-                }
-                else
-                {
-                    if (internalTransferOrderDetail.Quantity != dataView.Quantity)
-                        internalTransferOrderDetail.Quantity -= dataView.Quantity;
-                    internalTransferOrderDetail._LastModifiedBy = this.Username;
-                    internalTransferOrderDetail._LastModifiedUtc = DateTime.UtcNow;
-                    InternalTransferOrderDetailViewModel itemDetail = viewM.InternalTransferOrderDetails.FirstOrDefault(s=>s.Id==item.Id);
-                    viewM.InternalTransferOrderDetails.Remove(itemDetail);
-                    viewM.Id = 0;
-                    viewM.InternalTransferOrderDetails.ForEach(i=>i.Id = 0);
-                }
-            }
-            InternalTransferOrder models=service.MapToModel(viewM);
-                   await service.CreateModel(models);
-            using (var transaction = this.DbContext.Database.BeginTransaction())
-            {
-                try
-                {
-                    this.DbContext.SaveChanges();
-                    transaction.Commit();
-                }
-                catch (Exception e)
-                {
-                    transaction.Rollback();
-                }
-            }
+        //        if (dataView == null)
+        //        {
+        //            this.DbContext.InternalTransferOrderDetails.Remove(internalTransferOrderDetail);
+        //        }
+        //        else
+        //        {
+        //            if (internalTransferOrderDetail.Quantity != dataView.Quantity)
+        //                internalTransferOrderDetail.Quantity -= dataView.Quantity;
+        //            internalTransferOrderDetail._LastModifiedBy = this.Username;
+        //            internalTransferOrderDetail._LastModifiedUtc = DateTime.UtcNow;
+        //            InternalTransferOrderDetailViewModel itemDetail = viewM.InternalTransferOrderDetails.FirstOrDefault(s=>s.Id==item.Id);
+        //            viewM.InternalTransferOrderDetails.Remove(itemDetail);
+        //            viewM.Id = 0;
+        //            viewM.InternalTransferOrderDetails.ForEach(i=>i.Id = 0);
+        //        }
+        //    }
+        //    InternalTransferOrder models=service.MapToModel(viewM);
+        //           await service.CreateModel(models);
+        //    using (var transaction = this.DbContext.Database.BeginTransaction())
+        //    {
+        //        try
+        //        {
+        //            this.DbContext.SaveChanges();
+        //            transaction.Commit();
+        //        }
+        //        catch (Exception e)
+        //        {
+        //            transaction.Rollback();
+        //        }
+        //    }
 
-            return Updated;
-        }
-
+        //    return Updated;
+        //}
+ 
+       
         public List<InternalTransferOrder> ReadModelUnused(string Order = "{}", List<string> Select = null, string Keyword = null, string Filter = "{}", List<int> CurrentUsed = null)
         {
             IQueryable<InternalTransferOrder> Query = this.DbContext.InternalTransferOrders;
@@ -366,6 +368,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.InternalTransferOr
                     RequestedArrivalDate = mdn.RequestedArrivalDate,
                     CategoryName = mdn.CategoryName,
                     UnitName = mdn.UnitName,
+                    DivisionId = mdn.DivisionId,
                     DivisionName = mdn.DivisionName,
                     TRId = mdn.TRId,
                     TRNo = mdn.TRNo,
@@ -385,6 +388,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.InternalTransferOr
             List<InternalTransferOrder> Data = Query.ToList<InternalTransferOrder>();
 
             return Data;
+ 
         }
     }
 }

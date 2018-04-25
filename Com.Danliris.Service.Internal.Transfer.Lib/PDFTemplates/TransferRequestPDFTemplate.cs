@@ -145,26 +145,39 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.PDFTemplates
                 index++;
             }
 
-            
-
-            var footerCell = new PdfPCell(new Phrase    ("Kategori              : " + viewModel.category.name, normal_font));
-            footerCell.Colspan = 5;
+            var footerCell = new PdfPCell();
+            footerCell.Phrase = new Phrase("Kategori                   :", normal_font);
+            footerCell.Colspan = 2;
             footerCell.Border = Rectangle.NO_BORDER;
-            footerCell.HorizontalAlignment = Element.ALIGN_LEFT;
             table.AddCell(footerCell);
 
-            var footerCell1 = new PdfPCell(new Phrase   ("Diminta Datang   : " + $"{ viewModel.requestedArrivalDate.Day} { Bulan[viewModel.requestedArrivalDate.Month - 1]} { viewModel.requestedArrivalDate.Year}", normal_font));
-            footerCell1.Colspan = 5;
+            footerCell.Phrase = new Phrase(viewModel.category.name, normal_font);
+            footerCell.Colspan = 3;
+            footerCell.Border = Rectangle.NO_BORDER;
+            table.AddCell(footerCell);
+
+            var footerCell1 = new PdfPCell();
+            footerCell1.Phrase = new Phrase("Diminta Datang        :", normal_font);
+            footerCell1.Colspan = 2;
             footerCell1.Border = Rectangle.NO_BORDER;
-            footerCell1.HorizontalAlignment = Element.ALIGN_LEFT;
             table.AddCell(footerCell1);
 
+            footerCell1.Phrase = new Phrase($"{ viewModel.requestedArrivalDate.Day} { Bulan[viewModel.requestedArrivalDate.Month - 1]} { viewModel.requestedArrivalDate.Year}", normal_font);
+            footerCell1.Colspan = 3;
+            footerCell1.Border = Rectangle.NO_BORDER;
+            table.AddCell(footerCell1);
 
-            var footerCell2 = new PdfPCell(new Phrase("Keterangan         : " + viewModel.remark, normal_font));
-            footerCell2.Colspan = 5;
+            var footerCell2 = new PdfPCell();
+            footerCell2.Phrase = new Phrase("Keterangan              :", normal_font);
+            footerCell2.Colspan = 2;
             footerCell2.Border = Rectangle.NO_BORDER;
-            footerCell2.HorizontalAlignment = Element.ALIGN_LEFT;
             table.AddCell(footerCell2);
+
+            footerCell2.Phrase = new Phrase(viewModel.remark, normal_font);
+            footerCell2.Colspan = 3;
+            footerCell2.Border = Rectangle.NO_BORDER;
+            table.AddCell(footerCell2);
+            
 
             index--;
             if (index % rowsPerPage != 0)
