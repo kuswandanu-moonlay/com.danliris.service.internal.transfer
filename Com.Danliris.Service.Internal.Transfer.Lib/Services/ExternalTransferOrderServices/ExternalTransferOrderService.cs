@@ -293,19 +293,20 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.ExternalTransferOr
         {
             DateTime Now = DateTime.Now;
             string Year = Now.ToString("yy");
+            string Month = Now.ToString("MM");
 
-            string externalTransferOrderNo = "ETO" + model.DeliveryDivisionCode + Year;
+            string externalTransferOrderNo = "ETO" + model.DeliveryDivisionCode + Year + Month;
 
             var lastExternalTransferOrderNo = await this.DbSet.Where(w => w.ETONo.StartsWith(externalTransferOrderNo)).OrderByDescending(o => o.ETONo).FirstOrDefaultAsync();
 
             if (lastExternalTransferOrderNo == null)
             {
-                return externalTransferOrderNo + "00001";
+                return externalTransferOrderNo + "001";
             }
             else
             {
                 int lastNo = Int32.Parse(lastExternalTransferOrderNo.ETONo.Replace(externalTransferOrderNo, "")) + 1;
-                return externalTransferOrderNo + lastNo.ToString().PadLeft(5, '0');
+                return externalTransferOrderNo + lastNo.ToString().PadLeft(3, '0');
             }
         }
 
