@@ -13,14 +13,9 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.ViewModels.TransferDelivery
 
         public DateTime ArrivalDate { get; set; }
 
-        public SupplierVM Supplier { get; set; }
+        public SupplierViewModel Supplier { get; set; }
 
-        public class SupplierVM
-        {
-            public string _id { get; set; }
-            public string Code { get; set; }
-            public string Name { get; set; }
-        }
+        public DivisionViewModel Division { get; set; }
 
         public string Remark { get; set; }
 

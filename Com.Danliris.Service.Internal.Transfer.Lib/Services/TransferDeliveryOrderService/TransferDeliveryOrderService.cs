@@ -32,8 +32,8 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferDeliveryOr
             model.DONo = viewModel.DONo;
             model.DOdate = (DateTime)viewModel.DODate;
             model.SupplierId = viewModel.Supplier._id ?? "";
-            model.SupplierCode = viewModel.Supplier.Code;
-            model.SupplierName = viewModel.Supplier.Name;
+            model.SupplierCode = viewModel.Supplier.code;
+            model.SupplierName = viewModel.Supplier.name;
             model.Remark = viewModel.Remark;
 
             model.TransferDeliveryOrderItem = new List<TransferDeliveryOrderItem>();
@@ -86,12 +86,13 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferDeliveryOr
         {
             TransferDeliveryOrderViewModel viewModel = new TransferDeliveryOrderViewModel();
             PropertyCopier<TransferDeliveryOrder, TransferDeliveryOrderViewModel>.Copy(model, viewModel);
-            viewModel.Supplier = new TransferDeliveryOrderViewModel.SupplierVM
+            viewModel.Supplier = new SupplierViewModel()
             {
                 _id = model.SupplierId,
-                Code = model.SupplierCode,
-                Name = model.SupplierName
+                code = model.SupplierCode,
+                name = model.SupplierName
             };
+            
             viewModel.DODate = model.DOdate;
             viewModel.DONo = model.DONo;
             viewModel.Remark = model.Remark;

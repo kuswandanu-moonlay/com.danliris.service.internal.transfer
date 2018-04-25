@@ -1,7 +1,7 @@
 ﻿using Com.Danliris.Service.Internal.Transfer.Lib.Models.TransferDeliveryOrderModel;
 using Com.Danliris.Service.Internal.Transfer.Lib.Configs.TransferDeliveryOrderConfig;
 using Com.Danliris.Service.Internal.Transfer.Lib.Models.ExternalTransferOrderModel;
-using Com.Danliris.Service.Internal.Transfer.Lib.Configs.ExternalTransferOrderConfig;
+using Com.Danliris.Service.Internal.Transfer.Lib.Configs.ExternalTransferOrderConfigs;
 
 using Com.Danliris.Service.Internal.Transfer.Lib.Configs.InternalTransferOrderConfigs;
 using Com.Danliris.Service.Internal.Transfer.Lib.Configs.TransferRequestConfig;

@@ -8,9 +8,9 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Models.ExternalTransferOrde
 {
     public class ExternalTransferOrderDetail : StandardEntity, IValidatableObject
     {
-        public int ExternalTransferOrderItemId { get; set; }
-        public int InternalTransferOrderDetailId { get; set; }
-        public int TransferRequestDetailId { get; set; }
+        public int ETOItemId { get; set; }
+        public int ITODetailId { get; set; }
+        public int TRDetailId { get; set; }
 
         public string ProductId { get; set; }
         public string ProductCode { get; set; }
@@ -24,7 +24,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Models.ExternalTransferOrde
         public string DealUomId { get; set; }
         public string DealUomUnit { get; set; }
 
-        public double ReceivedQuantity { get; set; }
+        public double DOQuantity { get; set; }
         public double RemainingQuantity { get; set; }
         public double Convertion { get; set; }
         public double Price { get; set; }

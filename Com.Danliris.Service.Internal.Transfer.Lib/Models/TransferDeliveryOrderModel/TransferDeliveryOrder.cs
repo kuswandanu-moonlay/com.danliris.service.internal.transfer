@@ -13,10 +13,15 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Models.TransferDeliveryOrde
     {
         public string DONo { get; set; }
         public DateTime DOdate { get; set; }
+        public string OrderDivisionId { get; set; }
+        public string OrderDivisionCode { get; set; }
+        public string OrderDivisionName { get; set; }
         public string SupplierId { get; set; }
         public string SupplierCode { get; set; }
         public string SupplierName { get; set; }
         public string Remark { get; set; }
+        //public bool IsPosted { get; set; }
+        
         public virtual ICollection<TransferDeliveryOrderItem> TransferDeliveryOrderItem { get; set; }
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {

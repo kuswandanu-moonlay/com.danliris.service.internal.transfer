@@ -37,7 +37,7 @@ namespace Com.Danliris.Service.Internal.Transfer.WebApi.Controllers.v1
 
                 return new FileStreamResult(stream, "application/pdf")
                 {
-                    FileDownloadName = $"TransferOrderEksternal-{viewModel.ExternalTransferOrderNo}.pdf"
+                    FileDownloadName = $"TransferOrderEksternal-{viewModel.ETONo}.pdf"
                 };
             }
             catch (Exception e)
@@ -148,6 +148,27 @@ namespace Com.Danliris.Service.Internal.Transfer.WebApi.Controllers.v1
                 Dictionary<string, object> Result =
                     new ResultFormatter(ApiVersion, General.OK_STATUS_CODE, General.OK_MESSAGE)
                     .Ok(Data.Item1, Service.MapToViewModel, Page, Size, Data.Item2, Data.Item1.Count, Data.Item3, Data.Item4);
+                return Ok(Result);
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
+
+        [HttpGet("isused/{id}")]
+        public IActionResult CheckIsUsedByDeliveryOrder([FromRoute]int Id)
+        {
+            try
+            {
+                var data = Service.CheckIdIsUsedByDeliveryOrder(Id);
+
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.OK_STATUS_CODE, General.OK_MESSAGE)
+                    .Ok<bool>(data);
 
                 return Ok(Result);
             }
