@@ -253,19 +253,20 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferRequestSer
         {
             DateTime Now = DateTime.Now;
             string Year = Now.ToString("yy");
+            string Month = Now.ToString("MM");
 
-            string transferRequestNo = "TR" + model.UnitCode + Year;
+            string transferRequestNo = "TR" + model.UnitCode + Year + Month;
 
             var lastTransferRequestNo = await this.DbSet.Where(w => w.TRNo.StartsWith(transferRequestNo)).OrderByDescending(o => o.TRNo).FirstOrDefaultAsync();
 
             if (lastTransferRequestNo == null)
             {
-                return transferRequestNo + "00001";
+                return transferRequestNo + "001";
             }
             else
             {
                 int lastNo = Int32.Parse(lastTransferRequestNo.TRNo.Replace(transferRequestNo, "")) + 1;
-                return transferRequestNo + lastNo.ToString().PadLeft(5, '0');
+                return transferRequestNo + lastNo.ToString().PadLeft(3, '0');
             }
         }
 
