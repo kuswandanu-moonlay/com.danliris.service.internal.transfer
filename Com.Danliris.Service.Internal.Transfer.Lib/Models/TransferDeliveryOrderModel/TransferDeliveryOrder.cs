@@ -20,7 +20,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Models.TransferDeliveryOrde
         public string SupplierCode { get; set; }
         public string SupplierName { get; set; }
         public string Remark { get; set; }
-        //public bool IsPosted { get; set; }
+        public bool IsPosted { get; set; }
         
         public virtual ICollection<TransferDeliveryOrderItem> TransferDeliveryOrderItem { get; set; }
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)

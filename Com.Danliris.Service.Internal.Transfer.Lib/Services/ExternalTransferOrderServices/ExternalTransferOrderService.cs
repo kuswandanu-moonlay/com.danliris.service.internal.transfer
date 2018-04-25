@@ -176,7 +176,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.ExternalTransferOr
                     ETONo = result.ETONo,
                     OrderDate = result.OrderDate,
                     DeliveryDivisionName = result.DeliveryDivisionName,
-                    IsPosted = result.IsPosted,
+                    isPosted = result.isPosted,
                     Remark = result.Remark,
                     _LastModifiedUtc = result._LastModifiedUtc,
                     ExternalTransferOrderItems = result.ExternalTransferOrderItems
@@ -237,7 +237,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.ExternalTransferOr
                     Id = result.Id,
                     ETONo = result.ETONo,
                     OrderDate = result.OrderDate,
-                    IsPosted = result.IsPosted,
+                    isPosted = result.isPosted,
                     Remark = result.Remark,
                     _LastModifiedUtc = result._LastModifiedUtc,
                     ExternalTransferOrderItems = result.ExternalTransferOrderItems
@@ -273,7 +273,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.ExternalTransferOr
                             i => i.ETOId.Equals(result.Id) && i.ExternalTransferOrderDetails.Count()!=0
                         )
                         .ToList()
-                }).Where(s => s.IsPosted == true && s.IsCanceled == false && s.IsClosed == false && s._IsDeleted == false && s.ExternalTransferOrderItems.Count()!=0);
+                }).Where(s => s.isPosted == true && s.isCanceled == false && s.isClosed == false && s._IsDeleted == false && s.ExternalTransferOrderItems.Count()!=0);
 
             Dictionary<string, string> FilterDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(Filter);
             Query = ConfigureFilter(Query, FilterDictionary);
@@ -593,7 +593,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.ExternalTransferOr
                             .ThenInclude(d => d.ExternalTransferOrderDetails)
                         .ToList();
                     listData.ForEach(data => {
-                        data.IsPosted = true;
+                        data.isPosted = true;
                         data._LastModifiedUtc = DateTime.UtcNow;
                         data._LastModifiedAgent = "Service";
                         data._LastModifiedBy = this.Username;
@@ -638,7 +638,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.ExternalTransferOr
                         .Include(d => d.ExternalTransferOrderItems)
                             .ThenInclude(d => d.ExternalTransferOrderDetails)
                         .FirstOrDefault(tr => tr.Id == Id && tr._IsDeleted == false);
-                    data.IsPosted = false;
+                    data.isPosted = false;
                     data._LastModifiedUtc = DateTime.UtcNow;
                     data._LastModifiedAgent = "Service";
                     data._LastModifiedBy = this.Username;
@@ -679,7 +679,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.ExternalTransferOr
                 try
                 {
                     var data = this.DbSet.FirstOrDefault(tr => tr.Id == Id && tr._IsDeleted == false);
-                    data.IsClosed = true;
+                    data.isClosed = true;
                     data._LastModifiedUtc = DateTime.UtcNow;
                     data._LastModifiedAgent = "Service";
                     data._LastModifiedBy = this.Username;
@@ -711,7 +711,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.ExternalTransferOr
                         .Include(d => d.ExternalTransferOrderItems)
                             .ThenInclude(d => d.ExternalTransferOrderDetails)
                         .FirstOrDefault(tr => tr.Id == Id && tr._IsDeleted == false);
-                    data.IsCanceled = true;
+                    data.isCanceled = true;
                     data._LastModifiedUtc = DateTime.UtcNow;
                     data._LastModifiedAgent = "Service";
                     data._LastModifiedBy = this.Username;

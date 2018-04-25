@@ -19,6 +19,8 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.ViewModels.TransferDelivery
 
         public string Remark { get; set; }
 
+        public bool IsPosted { get; set; }
+
         public List<TransferDeliveryOrderItemViewModel> items { get; set; }
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)

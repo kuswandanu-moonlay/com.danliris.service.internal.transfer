@@ -35,6 +35,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferDeliveryOr
             model.SupplierCode = viewModel.Supplier.code;
             model.SupplierName = viewModel.Supplier.name;
             model.Remark = viewModel.Remark;
+            model.IsPosted = viewModel.IsPosted;
 
             model.TransferDeliveryOrderItem = new List<TransferDeliveryOrderItem>();
 
@@ -96,6 +97,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferDeliveryOr
             viewModel.DODate = model.DOdate;
             viewModel.DONo = model.DONo;
             viewModel.Remark = model.Remark;
+            viewModel.IsPosted = model.IsPosted;
 
             viewModel.items = new List<TransferDeliveryOrderItemViewModel>();
             if (model.TransferDeliveryOrderItem != null)
