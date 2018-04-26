@@ -11,8 +11,8 @@ using Com.Danliris.Service.Internal.Transfer.Lib.Models;
 using Com.Danliris.Service.Internal.Transfer.Lib.Models.ExternalTransferOrderModel;
 using Com.Moonlay.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using Com.Danliris.Service.Internal.Transfer.Lib.Configs.ShippingOrderConfigs;
-using Com.Danliris.Service.Internal.Transfer.Lib.Models.ShippingOrderModel;
+using Com.Danliris.Service.Internal.Transfer.Lib.Configs.TransferShippingOrderConfigs;
+using Com.Danliris.Service.Internal.Transfer.Lib.Models.TransferShippingOrderModel;
 
 namespace Com.Danliris.Service.Internal.Transfer.Lib
 {
@@ -36,9 +36,9 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib
         public DbSet<ExternalTransferOrderItem> ExternalTransferOrderItems { get; set; }
         public DbSet<ExternalTransferOrderDetail> ExternalTransferOrderDetails { get; set; }
 
-        public DbSet<ShippingOrder> ShippingOrders { get; set; }
-        public DbSet<ShippingOrderItem> ShippingOrderItems { get; set; }
-        public DbSet<ShippingOrderDetail> ShippingOrderDetails { get; set; }
+        public DbSet<TransferShippingOrder> TransferShippingOrders { get; set; }
+        public DbSet<TransferShippingOrderItem> TransferShippingOrderItems { get; set; }
+        public DbSet<TransferShippingOrderDetail> TransferShippingOrderDetails { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -58,9 +58,9 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib
             modelBuilder.ApplyConfiguration(new ExternalTransferOrderItemConfig());
             modelBuilder.ApplyConfiguration(new ExternalTransferOrderDetailConfig());
 
-            modelBuilder.ApplyConfiguration(new ShippingOrderConfig());
-            modelBuilder.ApplyConfiguration(new ShippingOrderDetailConfig());
-            modelBuilder.ApplyConfiguration(new ShippingOrderItemConfig());
+            modelBuilder.ApplyConfiguration(new TransferShippingOrderConfig());
+            modelBuilder.ApplyConfiguration(new TransferShippingOrderDetailConfig());
+            modelBuilder.ApplyConfiguration(new TransferShippingOrderItemConfig());
         }
     }
 }
