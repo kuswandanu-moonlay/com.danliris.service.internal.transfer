@@ -169,7 +169,6 @@ namespace Com.Danliris.Service.Internal.Transfer.WebApi.Controllers.v1
                 Dictionary<string, object> Result =
                     new ResultFormatter(ApiVersion, General.OK_STATUS_CODE, General.OK_MESSAGE)
                     .Ok<bool>(data);
-
                 return Ok(Result);
             }
             catch (Exception e)

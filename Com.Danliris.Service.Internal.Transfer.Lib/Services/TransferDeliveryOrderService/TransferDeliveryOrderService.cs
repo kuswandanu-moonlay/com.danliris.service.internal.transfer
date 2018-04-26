@@ -214,6 +214,31 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferDeliveryOr
                 .FirstOrDefaultAsync();
         }
 
+        public override async Task<int> CreateModel(TransferDeliveryOrder Model)
+        {
+            int Created = 0;
+            using (var transaction = this.DbContext.Database.BeginTransaction())
+            {
+                try
+                {
+                    Model.DONo = await this.GenerateTransferDeliveryOrderNo(Model);
+                    Created = await this.CreateAsync(Model);
+
+
+                    transaction.Commit();
+                }
+                catch (ServiceValidationExeption e)
+                {
+                    throw new ServiceValidationExeption(e.ValidationContext, e.ValidationResults);
+                }
+                catch (Exception e)
+                {
+                    transaction.Rollback();
+                }
+            }
+            return Created;
+        }
+
         public override void OnCreating(TransferDeliveryOrder model)
         {
             base.OnCreating(model);
@@ -232,7 +257,28 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferDeliveryOr
             }
         }
 
-       
+        async Task<string> GenerateTransferDeliveryOrderNo(TransferDeliveryOrder model)
+        {
+            DateTime Now = DateTime.Now;
+            string Year = Now.ToString("yy");
+            string Month = Now.ToString("mm");
+
+            string transferDeliveryOrderNo = "DO" + model.SupplierCode + Year + Month;
+
+            var lastTransferDeliveryOrderNo = await this.DbSet.Where(w => w.DONo.StartsWith(transferDeliveryOrderNo)).OrderByDescending(o => o.DONo).FirstOrDefaultAsync();
+
+            if (lastTransferDeliveryOrderNo == null)
+            {
+                return transferDeliveryOrderNo + "00001";
+            }
+            else
+            {
+                int lastNo = Int32.Parse(lastTransferDeliveryOrderNo.DONo.Replace(transferDeliveryOrderNo, "")) + 1;
+                return transferDeliveryOrderNo + lastNo.ToString().PadLeft(5, '0');
+            }
+        }
+
+
 
         public override void OnUpdating(int id, TransferDeliveryOrder model)
         {

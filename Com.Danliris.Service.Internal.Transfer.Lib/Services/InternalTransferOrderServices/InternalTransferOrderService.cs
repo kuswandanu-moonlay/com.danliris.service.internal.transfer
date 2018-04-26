@@ -368,7 +368,6 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.InternalTransferOr
                     RequestedArrivalDate = mdn.RequestedArrivalDate,
                     CategoryName = mdn.CategoryName,
                     UnitName = mdn.UnitName,
-                    DivisionId = mdn.DivisionId,
                     DivisionName = mdn.DivisionName,
                     TRId = mdn.TRId,
                     TRNo = mdn.TRNo,

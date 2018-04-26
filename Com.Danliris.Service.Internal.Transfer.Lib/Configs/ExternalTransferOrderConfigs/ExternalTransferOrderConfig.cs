@@ -8,9 +8,9 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Configs.ExternalTransferOrd
     {
         public void Configure(EntityTypeBuilder<ExternalTransferOrder> builder)
         {
-            builder.Property(p => p.DeliveryDivisionId).HasMaxLength(255);
-            builder.Property(p => p.DeliveryDivisionCode).HasMaxLength(255);
-            builder.Property(p => p.DeliveryDivisionName).HasMaxLength(255);
+            builder.Property(p => p.DivisionId).HasMaxLength(255);
+            builder.Property(p => p.DivisionCode).HasMaxLength(255);
+            builder.Property(p => p.DivisionName).HasMaxLength(255);
             builder.Property(p => p.CurrencyId).HasMaxLength(255);
             builder.Property(p => p.CurrencyCode).HasMaxLength(255);
             builder.Property(p => p.CurrencySymbol).HasMaxLength(255);

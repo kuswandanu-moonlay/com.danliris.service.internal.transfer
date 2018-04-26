@@ -13,7 +13,6 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.ViewModels.ExternalTransfer
         public string ITONo { get; set; }
         public int TRId { get; set; }
         public string TRNo { get; set; }
-        public UnitViewModel Unit { get; set; }
 
         public List<ExternalTransferOrderDetailViewModel> ExternalTransferOrderDetails { get; set; }
     }

@@ -8,12 +8,9 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Models.ExternalTransferOrde
     public class ExternalTransferOrder : StandardEntity, IValidatableObject
     {
         public string ETONo { get; set; }
-        public string OrderDivisionId { get; set; }
-        public string OrderDivisionCode { get; set; }
-        public string OrderDivisionName { get; set; }
-        public string DeliveryDivisionId { get; set; }
-        public string DeliveryDivisionCode { get; set; }
-        public string DeliveryDivisionName { get; set; }
+        public string DivisionId { get; set; }
+        public string DivisionCode { get; set; }
+        public string DivisionName { get; set; }
         public DateTime OrderDate { get; set; }
         public DateTime DeliveryDate { get; set; }
         public string CurrencyId { get; set; }
@@ -22,9 +19,9 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Models.ExternalTransferOrde
         public string CurrencySymbol { get; set; }
         public string CurrencyRate { get; set; }
         public string Remark { get; set; }
-        public bool isPosted { get; set; }
-        public bool isCanceled { get; set; }
-        public bool isClosed { get; set; }
+        public bool IsPosted { get; set; }
+        public bool IsCanceled { get; set; }
+        public bool IsClosed { get; set; }
 
         public virtual ICollection<ExternalTransferOrderItem> ExternalTransferOrderItems { get; set; }
 
