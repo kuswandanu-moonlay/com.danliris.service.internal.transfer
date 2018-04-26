@@ -11,8 +11,6 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.ViewModels.TransferDelivery
 
         public DateTime DODate { get; set; }
 
-        public DateTime ArrivalDate { get; set; }
-
         public SupplierViewModel Supplier { get; set; }
 
         public DivisionViewModel Division { get; set; }
@@ -27,17 +25,9 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.ViewModels.TransferDelivery
 
         {
 
-            if (string.IsNullOrWhiteSpace(this.DONo))
-
-                yield return new ValidationResult("Nomor Surat Jalan harus diisi", new List<string> { "Code" });
-
             if (this.DODate == null || this.DODate == DateTime.MinValue)
 
-                yield return new ValidationResult("Tanggal harus diisi", new List<string> { "DeliveryOrderDate" });
-
-            if (this.ArrivalDate == null || this.ArrivalDate == DateTime.MinValue)
-
-                yield return new ValidationResult("Tanggal harus diisi", new List<string> { "ArrivalDate" });
+                yield return new ValidationResult("Tanggal harus diisi", new List<string> { "DODate" });
 
             if (this.Supplier == null || string.IsNullOrWhiteSpace(this.Supplier._id))
 
