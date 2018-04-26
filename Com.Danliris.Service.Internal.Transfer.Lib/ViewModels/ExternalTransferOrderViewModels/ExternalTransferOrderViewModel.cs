@@ -61,7 +61,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.ViewModels.ExternalTransfer
                     }
                     else
                     {
-                        ExternalTransferOrderItemService externalTransferOrderItemService = (ExternalTransferOrderItemService) validationContext.GetService(typeof (ExternalTransferOrderItemService));
+                        ExternalTransferOrderItemService externalTransferOrderItemService = (ExternalTransferOrderItemService)validationContext.GetService(typeof(ExternalTransferOrderItemService));
                         //List<ExternalTransferOrderItem> itemsData = externalTransferOrderItemService.ReadModel(Filter: "{ InternalTransferOrderNo : '" + Item.InternalTransferOrderNo + "' }").Item1;
                         //itemsData = itemsData.Where(w => w.ExternalTransferOrderId != this.Id).ToList();
                         List<ExternalTransferOrderItem> itemsData = externalTransferOrderItemService.DbSet.Where(

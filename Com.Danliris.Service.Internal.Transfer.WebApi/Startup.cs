@@ -13,6 +13,7 @@ using Com.Danliris.Service.Internal.Transfer.Lib.Helpers;
 using Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferRequestService;
 using Com.Danliris.Service.Internal.Transfer.Lib.Services.InternalTransferOrderServices;
 using Com.Danliris.Service.Internal.Transfer.Lib.Services.ExternalTransferOrderServices;
+using Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferDeliveryOrderService;
 
 namespace Com.Danliris.Service.Internal.Transfer.WebApi
 {
@@ -44,6 +45,9 @@ namespace Com.Danliris.Service.Internal.Transfer.WebApi
                     options.DefaultApiVersion = new ApiVersion(1, 0);
                 });
             services
+                .AddTransient<TransferDeliveryOrderService>()
+                .AddTransient<TransferDeliveryOrderItemService>()
+                .AddTransient<TransferDeliveryOrderDetailService>()
                 .AddTransient<TransferRequestService>()
                 .AddTransient<TransferRequestDetailService>()
                 .AddTransient<InternalTransferOrderService>()

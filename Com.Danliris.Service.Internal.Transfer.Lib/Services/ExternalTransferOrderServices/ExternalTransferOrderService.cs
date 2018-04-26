@@ -212,6 +212,82 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.ExternalTransferOr
             return Tuple.Create(Data, TotalData, OrderDictionary, SelectedFields);
         }
 
+        public Tuple<List<ExternalTransferOrder>, int, Dictionary<string, string>, List<string>> ReadModelDo(int Page = 1, int Size = 25, string Order = "{}", List<string> Select = null, string Keyword = null, string Filter = "{}")
+        {
+            IQueryable<ExternalTransferOrder> Query = this.DbContext.ExternalTransferOrders;
+
+
+            List<string> SearchAttributes = new List<string>()
+                {
+                    // Model
+                    "ETONo", "ExternalTransferOrderItems.TRNo", "ExternalTransferOrderItems.ITONo"
+                };
+            Query = ConfigureSearch(Query, SearchAttributes, Keyword);
+
+            List<string> SelectedFields = new List<string>()
+                {
+                    // ViewModel
+                    "Id", "ETONo", "OrderDate", "ExternalTransferOrderItems", "IsPosted"
+                };
+
+            Query = Query
+                .Select(result => new ExternalTransferOrder
+                {
+                    // Model
+                    Id = result.Id,
+                    ETONo = result.ETONo,
+                    OrderDate = result.OrderDate,
+                    IsPosted = result.IsPosted,
+                    Remark = result.Remark,
+                    _LastModifiedUtc = result._LastModifiedUtc,
+                    ExternalTransferOrderItems = result.ExternalTransferOrderItems
+                        .Select(
+                            p => new ExternalTransferOrderItem
+                            {
+                                Id = p.Id,
+                                ETOId = p.ETOId,
+                                ITOId = p.ITOId,
+                                ITONo = p.ITONo,
+                                TRId = p.TRId,
+                                TRNo = p.TRNo,
+                                ExternalTransferOrderDetails = p.ExternalTransferOrderDetails
+                                    .Select(
+                                        q => new ExternalTransferOrderDetail
+                                        {
+                                            Id = q.Id,
+                                            ETOItemId = q.ETOItemId,
+                                            ITODetailId = q.ITODetailId,
+                                            TRDetailId = q.TRDetailId,
+                                            ProductId = q.ProductId,
+                                            ProductName = q.ProductName,
+                                            RemainingQuantity = q.RemainingQuantity
+                                        }
+                                     )
+                                     .Where(
+                                        j => j.RemainingQuantity > 0 && j.ETOItemId.Equals(p.Id)
+                                    )
+                                    .ToList()
+                            }
+                        )
+                        .Where(
+                            i => i.ETOId.Equals(result.Id) && i.ExternalTransferOrderDetails.Count() != 0
+                        )
+                        .ToList()
+                }).Where(s => s.IsPosted == true && s.IsCanceled == false && s.IsClosed == false && s._IsDeleted == false && s.ExternalTransferOrderItems.Count() != 0);
+
+            Dictionary<string, string> FilterDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(Filter);
+            Query = ConfigureFilter(Query, FilterDictionary);
+
+            Dictionary<string, string> OrderDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(Order);
+            Query = ConfigureOrder(Query, OrderDictionary);
+
+            Pageable<ExternalTransferOrder> pageable = new Pageable<ExternalTransferOrder>(Query, Page - 1, Size);
+            List<ExternalTransferOrder> Data = pageable.Data.ToList<ExternalTransferOrder>();
+            int TotalData = pageable.TotalCount;
+
+            return Tuple.Create(Data, TotalData, OrderDictionary, SelectedFields);
+        }
+
         public override async Task<ExternalTransferOrder> ReadModelById(int Id)
         {
             return await this.DbSet
@@ -691,4 +767,3 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.ExternalTransferOr
         }
     }
 }
-

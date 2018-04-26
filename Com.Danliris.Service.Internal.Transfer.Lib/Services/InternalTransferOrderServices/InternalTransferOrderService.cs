@@ -33,7 +33,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.InternalTransferOr
 
             DateTime Now = DateTime.Now;
             string Year = Now.ToString("yy");
-           
+
 
             if (lastData == null)
             {
@@ -75,7 +75,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.InternalTransferOr
             {
                 try
                 {
-                    
+
                     Model = await this.CustomCodeGenerator(Model);
                     Created = await this.CreateAsync(Model);
                     foreach (var detail in Model.InternalTransferOrderDetails)
@@ -144,7 +144,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.InternalTransferOr
             IQueryable<InternalTransferOrder> Query = this.DbContext.InternalTransferOrders;
 
             List<string> SearchAttributes = new List<string>()
-            { 
+            {
                 "TRNo","UnitName","DivisionName","CategoryName","_CreatedBy", "ITONo"
             };
 
@@ -159,18 +159,18 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.InternalTransferOr
                 {
                     Id = mdn.Id,
                     ITONo = mdn.ITONo,
-                    TRDate=mdn.TRDate,
-                    RequestedArrivalDate=mdn.RequestedArrivalDate,
-                    CategoryName=mdn.CategoryName,
-                    UnitName=mdn.UnitName,
-                    DivisionName=mdn.DivisionName,
-                    _CreatedBy =mdn._CreatedBy,
+                    TRDate = mdn.TRDate,
+                    RequestedArrivalDate = mdn.RequestedArrivalDate,
+                    CategoryName = mdn.CategoryName,
+                    UnitName = mdn.UnitName,
+                    DivisionName = mdn.DivisionName,
+                    _CreatedBy = mdn._CreatedBy,
                     TRId = mdn.TRId,
                     TRNo = mdn.TRNo,
                     _CreatedUtc = mdn._CreatedUtc,
                     _LastModifiedUtc = mdn._LastModifiedUtc,
-                    IsPost=mdn.IsPost
-                }).Where(s=>s._IsDeleted == false);
+                    IsPost = mdn.IsPost
+                }).Where(s => s._IsDeleted == false);
 
             Dictionary<string, string> FilterDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(Filter);
             Query = ConfigureFilter(Query, FilterDictionary);
@@ -246,7 +246,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.InternalTransferOr
                 internalTransferOrderDetail.Quantity = (double)detail.Quantity;
                 internalTransferOrderDetail.Status = "TO Internal belum diorder";
                 model.InternalTransferOrderDetails.Add(internalTransferOrderDetail);
-                
+
             }
 
             return model;
@@ -288,7 +288,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.InternalTransferOr
             return viewModel;
         }
 
- 
+
         //public async Task<int> SplitUpdate(int Id,InternalTransferOrderViewModel viewModel, InternalTransferOrder Model)
         //{
         //    InternalTransferOrderDetailService internalTransferOrderDetailService = this.ServiceProvider.GetService<InternalTransferOrderDetailService>();
@@ -338,8 +338,8 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.InternalTransferOr
 
         //    return Updated;
         //}
- 
-       
+
+
         public List<InternalTransferOrder> ReadModelUnused(string Order = "{}", List<string> Select = null, string Keyword = null, string Filter = "{}", List<int> CurrentUsed = null)
         {
             IQueryable<InternalTransferOrder> Query = this.DbContext.InternalTransferOrders;
@@ -388,7 +388,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.InternalTransferOr
             List<InternalTransferOrder> Data = Query.ToList<InternalTransferOrder>();
 
             return Data;
- 
+
         }
     }
 }
