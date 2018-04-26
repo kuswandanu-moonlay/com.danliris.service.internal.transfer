@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Com.Danliris.Service.Intern
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Com.Danliris.Service.Internal.Transfer.Lib", "Com.Danliris.Service.Internal.Transfer.Lib\Com.Danliris.Service.Internal.Transfer.Lib.csproj", "{B86BFF63-1B28-42B0-B9E3-36D22C49FC46}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Com.Danliris.Service.Internal.Transfer.Test", "Com.Danliris.Service.Internal.Transfer.Test\Com.Danliris.Service.Internal.Transfer.Test.csproj", "{2541C61B-CAE2-41F4-96B6-CB2644AC7916}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Com.Danliris.Service.Internal.Transfer.Test", "Com.Danliris.Service.Internal.Transfer.Test\Com.Danliris.Service.Internal.Transfer.Test.csproj", "{2541C61B-CAE2-41F4-96B6-CB2644AC7916}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
