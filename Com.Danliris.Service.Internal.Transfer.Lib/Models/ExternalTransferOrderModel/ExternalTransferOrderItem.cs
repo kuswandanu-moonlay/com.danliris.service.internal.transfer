@@ -13,6 +13,9 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Models.ExternalTransferOrde
         public string ITONo { get; set; }
         public int TRId { get; set; }
         public string TRNo { get; set; }
+        public string UnitId { get; set; }
+        public string UnitCode { get; set; }
+        public string UnitName { get; set; }
 
         public virtual ExternalTransferOrder ExternalTransferOrder { get; set; }
         public virtual ICollection<ExternalTransferOrderDetail> ExternalTransferOrderDetails { get; set; }
