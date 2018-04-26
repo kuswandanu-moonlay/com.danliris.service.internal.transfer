@@ -42,7 +42,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.ViewModels.ExternalTransfer
             int itemErrorCount = 0;
             int detailErrorCount = 0;
 
-            if (ExternalTransferOrderItems != null && ExternalTransferOrderItems.Count.Equals(0))
+            if (ExternalTransferOrderItems == null || ExternalTransferOrderItems.Count.Equals(0))
             {
                 yield return new ValidationResult("External Transfer Order Item is required", new List<string> { "ExternalTransferOrderItemsCount" });
             }
