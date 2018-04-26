@@ -1,6 +1,8 @@
 
 using Com.Danliris.Service.Internal.Transfer.Lib.Configs.InternalTransferOrderConfigs;
 using Com.Danliris.Service.Internal.Transfer.Lib.Configs.TransferRequestConfig;
+using Com.Danliris.Service.Internal.Transfer.Lib.Models.TransferDeliveryOrderModel;
+using Com.Danliris.Service.Internal.Transfer.Lib.Configs.TransferDeliveryOrderConfig;
 using Com.Danliris.Service.Internal.Transfer.Lib.Models.InternalTransferOrderModel;
 using Com.Danliris.Service.Internal.Transfer.Lib.Models.TransferRequestModel;
 using Com.Danliris.Service.Internal.Transfer.Lib.Configs;
@@ -20,6 +22,10 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib
         {
         }
 
+        public DbSet<TransferDeliveryOrder> TransferDeliveryOrders { get; set; }
+        public DbSet<TransferDeliveryOrderItem> TransferDeliveryOrderItems { get; set; }
+        public DbSet<TransferDeliveryOrderDetail> TransferDeliveryOrderDetails { get; set; }
+
         public DbSet<TransferRequest> TransferRequests { get; set; }
         public DbSet<TransferRequestDetail> TransferRequestDetails { get; set; }
 
@@ -37,6 +43,10 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.ApplyConfiguration(new TransferDeliveryOrderConfig());
+            modelBuilder.ApplyConfiguration(new TransferDeliveryOrderItemConfig());
+            modelBuilder.ApplyConfiguration(new TransferDeliveryOrderDetailConfig());
 
             modelBuilder.ApplyConfiguration(new TransferRequestConfig());
             modelBuilder.ApplyConfiguration(new TransferRequestDetailConfig());

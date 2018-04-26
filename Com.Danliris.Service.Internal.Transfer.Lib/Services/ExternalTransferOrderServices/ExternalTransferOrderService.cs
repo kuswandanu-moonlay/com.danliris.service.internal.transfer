@@ -28,9 +28,12 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.ExternalTransferOr
             ExternalTransferOrder model = new ExternalTransferOrder();
             PropertyCopier<ExternalTransferOrderViewModel, ExternalTransferOrder>.Copy(viewModel, model);
 
-            model.SupplierId = viewModel.Supplier._id;
-            model.SupplierCode = viewModel.Supplier.code;
-            model.SupplierName = viewModel.Supplier.name;
+            model.OrderDivisionId = viewModel.OrderDivision._id;
+            model.OrderDivisionCode = viewModel.OrderDivision.code;
+            model.OrderDivisionName = viewModel.OrderDivision.name;
+            model.DeliveryDivisionId = viewModel.DeliveryDivision._id;
+            model.DeliveryDivisionCode = viewModel.DeliveryDivision.code;
+            model.DeliveryDivisionName = viewModel.DeliveryDivision.name;
             model.CurrencyId = viewModel.Currency._id;
             model.CurrencyCode = viewModel.Currency.code;
             model.CurrencyRate = viewModel.Currency.rate;
@@ -42,6 +45,10 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.ExternalTransferOr
             {
                 ExternalTransferOrderItem externalTransferOrderItem = new ExternalTransferOrderItem();
                 PropertyCopier<ExternalTransferOrderItemViewModel, ExternalTransferOrderItem>.Copy(externalTransferOrderItemViewModel, externalTransferOrderItem);
+
+                externalTransferOrderItem.UnitId = externalTransferOrderItemViewModel.Unit._id;
+                externalTransferOrderItem.UnitCode = externalTransferOrderItemViewModel.Unit.code;
+                externalTransferOrderItem.UnitName = externalTransferOrderItemViewModel.Unit.name;
 
                 externalTransferOrderItem.ExternalTransferOrderDetails = new List<ExternalTransferOrderDetail>();
                 foreach (ExternalTransferOrderDetailViewModel externalTransferOrderDetailViewModel in externalTransferOrderItemViewModel.ExternalTransferOrderDetails)
@@ -71,11 +78,18 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.ExternalTransferOr
             ExternalTransferOrderViewModel viewModel = new ExternalTransferOrderViewModel();
             PropertyCopier<ExternalTransferOrder, ExternalTransferOrderViewModel>.Copy(model, viewModel);
 
-            viewModel.Supplier = new SupplierViewModel()
+            viewModel.OrderDivision = new DivisionViewModel()
             {
-                _id = model.SupplierId,
-                code = model.SupplierCode,
-                name = model.SupplierName
+                _id = model.OrderDivisionId,
+                code = model.OrderDivisionCode,
+                name = model.OrderDivisionName
+            };
+
+            viewModel.DeliveryDivision = new DivisionViewModel()
+            {
+                _id = model.DeliveryDivisionId,
+                code = model.DeliveryDivisionCode,
+                name = model.DeliveryDivisionName
             };
 
             viewModel.Currency = new CurrencyViewModel()
@@ -94,6 +108,13 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.ExternalTransferOr
                 {
                     ExternalTransferOrderItemViewModel externalTransferOrderItemViewModel = new ExternalTransferOrderItemViewModel();
                     PropertyCopier<ExternalTransferOrderItem, ExternalTransferOrderItemViewModel>.Copy(externalTransferOrderItem, externalTransferOrderItemViewModel);
+
+                    externalTransferOrderItemViewModel.Unit = new UnitViewModel
+                    {
+                        _id = externalTransferOrderItem.UnitId,
+                        code = externalTransferOrderItem.UnitCode,
+                        name = externalTransferOrderItem.UnitName
+                    };
 
                     externalTransferOrderItemViewModel.ExternalTransferOrderDetails = new List<ExternalTransferOrderDetailViewModel>();
                     if (externalTransferOrderItem.ExternalTransferOrderDetails != null)
@@ -138,23 +159,23 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.ExternalTransferOr
             List<string> SearchAttributes = new List<string>()
                 {
                     // Model
-                    "ExternalTransferOrderNo", "SupplierName", "ExternalTransferOrderItems.TransferRequestNo", "ExternalTransferOrderItems.InternalTransferOrderNo"
+                    "ETONo", "DeliveryDivisionName", "ExternalTransferOrderItems.TRNo", "ExternalTransferOrderItems.ITONo"
                 };
             Query = ConfigureSearch(Query, SearchAttributes, Keyword);
 
             List<string> SelectedFields = new List<string>()
                 {
                     // ViewModel
-                    "Id", "ExternalTransferOrderNo", "OrderDate", "Supplier", "ExternalTransferOrderItems", "isPosted"
+                    "Id", "ETONo", "OrderDate", "DeliveryDivision", "ExternalTransferOrderItems", "IsPosted"
                 };
             Query = Query
                 .Select(result => new ExternalTransferOrder
                 {
                     // Model
                     Id = result.Id,
-                    ExternalTransferOrderNo = result.ExternalTransferOrderNo,
+                    ETONo = result.ETONo,
                     OrderDate = result.OrderDate,
-                    SupplierName = result.SupplierName,
+                    DeliveryDivisionName = result.DeliveryDivisionName,
                     IsPosted = result.IsPosted,
                     Remark = result.Remark,
                     _LastModifiedUtc = result._LastModifiedUtc,
@@ -163,20 +184,96 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.ExternalTransferOr
                             p => new ExternalTransferOrderItem
                             {
                                 Id = p.Id,
-                                ExternalTransferOrderId = p.ExternalTransferOrderId,
-                                InternalTransferOrderId = p.InternalTransferOrderId,
-                                InternalTransferOrderNo = p.InternalTransferOrderNo,
-                                TransferRequestId = p.TransferRequestId,
-                                TransferRequestNo = p.TransferRequestNo,
+                                ETOId = p.ETOId,
+                                ITOId = p.ITOId,
+                                ITONo = p.ITONo,
+                                TRId = p.TRId,
+                                TRNo = p.TRNo,
                                 ExternalTransferOrderDetails = p.ExternalTransferOrderDetails
                             }
                         )
                         .Where(
-                            i => i.ExternalTransferOrderId.Equals(result.Id)
+                            i => i.ETOId.Equals(result.Id)
                         )
                         .ToList()
 
                 });
+
+            Dictionary<string, string> FilterDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(Filter);
+            Query = ConfigureFilter(Query, FilterDictionary);
+
+            Dictionary<string, string> OrderDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(Order);
+            Query = ConfigureOrder(Query, OrderDictionary);
+
+            Pageable<ExternalTransferOrder> pageable = new Pageable<ExternalTransferOrder>(Query, Page - 1, Size);
+            List<ExternalTransferOrder> Data = pageable.Data.ToList<ExternalTransferOrder>();
+            int TotalData = pageable.TotalCount;
+
+            return Tuple.Create(Data, TotalData, OrderDictionary, SelectedFields);
+        }
+
+        public Tuple<List<ExternalTransferOrder>, int, Dictionary<string, string>, List<string>> ReadModelDo(int Page = 1, int Size = 25, string Order = "{}", List<string> Select = null, string Keyword = null, string Filter = "{}")
+        {
+            IQueryable<ExternalTransferOrder> Query = this.DbContext.ExternalTransferOrders;
+
+
+            List<string> SearchAttributes = new List<string>()
+                {
+                    // Model
+                    "ETONo", "ExternalTransferOrderItems.TRNo", "ExternalTransferOrderItems.ITONo"
+                };
+            Query = ConfigureSearch(Query, SearchAttributes, Keyword);
+
+            List<string> SelectedFields = new List<string>()
+                {
+                    // ViewModel
+                    "Id", "ETONo", "OrderDate", "ExternalTransferOrderItems", "IsPosted"
+                };
+
+            Query = Query
+                .Select(result => new ExternalTransferOrder
+                {
+                    // Model
+                    Id = result.Id,
+                    ETONo = result.ETONo,
+                    OrderDate = result.OrderDate,
+                    IsPosted = result.IsPosted,
+                    Remark = result.Remark,
+                    _LastModifiedUtc = result._LastModifiedUtc,
+                    ExternalTransferOrderItems = result.ExternalTransferOrderItems
+                        .Select(
+                            p => new ExternalTransferOrderItem
+                            {
+                                Id = p.Id,
+                                ETOId = p.ETOId,
+                                ITOId = p.ITOId,
+                                ITONo = p.ITONo,
+                                TRId = p.TRId,
+                                TRNo = p.TRNo,
+                                ExternalTransferOrderDetails = p.ExternalTransferOrderDetails
+                                    .Select(
+                                        q => new ExternalTransferOrderDetail
+                                        {
+                                            Id = q.Id,
+                                            ETOItemId = q.ETOItemId,
+                                            ITODetailId = q.ITODetailId,
+                                            TRDetailId = q.TRDetailId,
+                                            ProductId = q.ProductId,
+                                            ProductName = q.ProductName,
+                                            RemainingQuantity = q.RemainingQuantity
+                                        }
+                                     )
+                                     .Where(
+                                        j => j.RemainingQuantity > 0 && j.ETOItemId.Equals(p.Id)
+                                    )
+                                    .ToList()
+                            }
+                        )
+                        .Where(
+                            i => i.ETOId.Equals(result.Id) && i.ExternalTransferOrderDetails.Count() != 0
+                        )
+                        .ToList()
+                }).Where(s => s.IsPosted == true && s.IsCanceled == false && s.IsClosed == false && s._IsDeleted == false && s.ExternalTransferOrderItems.Count() != 0);
 
             Dictionary<string, string> FilterDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(Filter);
             Query = ConfigureFilter(Query, FilterDictionary);
@@ -207,25 +304,31 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.ExternalTransferOr
             {
                 try
                 {
-                    Model.ExternalTransferOrderNo = await this.GenerateExternalTransferOrderNo(Model);
+                    Model.ETONo = await this.GenerateExternalTransferOrderNo(Model);
                     Created = await this.CreateAsync(Model);
 
                     foreach (var item in Model.ExternalTransferOrderItems)
                     {
                         foreach (var detail in item.ExternalTransferOrderDetails)
                         {
-                            TransferRequestDetail transferRequestDetail = this.DbContext.TransferRequestDetails.FirstOrDefault(s => s.Id == detail.TransferRequestDetailId);
-                            transferRequestDetail.Status = "Sudah diorder ke Supplier";
+                            TransferRequestDetail transferRequestDetail = this.DbContext.TransferRequestDetails.FirstOrDefault(s => s.Id == detail.TRDetailId);
+                            transferRequestDetail.Status = "Sudah diorder ke Divisi Pengirim";
                             transferRequestDetail._LastModifiedUtc = DateTime.UtcNow;
                             transferRequestDetail._LastModifiedAgent = "Service";
                             transferRequestDetail._LastModifiedBy = this.Username;
 
-                            InternalTransferOrderDetail internalTransferOrderDetail = this.DbContext.InternalTransferOrderDetails.FirstOrDefault(s => s.Id == detail.InternalTransferOrderDetailId);
+                            InternalTransferOrderDetail internalTransferOrderDetail = this.DbContext.InternalTransferOrderDetails.FirstOrDefault(s => s.Id == detail.ITODetailId);
                             internalTransferOrderDetail.Status = "Sudah dibuat TO Eksternal";
                             internalTransferOrderDetail._LastModifiedUtc = DateTime.UtcNow;
                             internalTransferOrderDetail._LastModifiedAgent = "Service";
                             internalTransferOrderDetail._LastModifiedBy = this.Username;
                         }
+
+                        InternalTransferOrder internalTransferOrder = this.DbContext.InternalTransferOrders.FirstOrDefault(s => s.Id == item.ITOId);
+                        internalTransferOrder.IsPost = true;
+                        internalTransferOrder._LastModifiedUtc = DateTime.UtcNow;
+                        internalTransferOrder._LastModifiedAgent = "Service";
+                        internalTransferOrder._LastModifiedBy = this.Username;
                     }
                     this.DbContext.SaveChanges();
 
@@ -266,19 +369,20 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.ExternalTransferOr
         {
             DateTime Now = DateTime.Now;
             string Year = Now.ToString("yy");
+            string Month = Now.ToString("MM");
 
-            string externalTransferOrderNo = "ETO" + model.SupplierCode + Year;
+            string externalTransferOrderNo = "ETO" + model.DeliveryDivisionCode + Year + Month;
 
-            var lastExternalTransferOrderNo = await this.DbSet.Where(w => w.ExternalTransferOrderNo.StartsWith(externalTransferOrderNo)).OrderByDescending(o => o.ExternalTransferOrderNo).FirstOrDefaultAsync();
+            var lastExternalTransferOrderNo = await this.DbSet.Where(w => w.ETONo.StartsWith(externalTransferOrderNo)).OrderByDescending(o => o.ETONo).FirstOrDefaultAsync();
 
             if (lastExternalTransferOrderNo == null)
             {
-                return externalTransferOrderNo + "00001";
+                return externalTransferOrderNo + "001";
             }
             else
             {
-                int lastNo = Int32.Parse(lastExternalTransferOrderNo.ExternalTransferOrderNo.Replace(externalTransferOrderNo, "")) + 1;
-                return externalTransferOrderNo + lastNo.ToString().PadLeft(5, '0');
+                int lastNo = Int32.Parse(lastExternalTransferOrderNo.ETONo.Replace(externalTransferOrderNo, "")) + 1;
+                return externalTransferOrderNo + lastNo.ToString().PadLeft(3, '0');
             }
         }
 
@@ -297,7 +401,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.ExternalTransferOr
 
                     HashSet<int> ExternalTransferOrderItemIds = new HashSet<int>(
                         this.DbContext.ExternalTransferOrderItems
-                            .Where(p => p.ExternalTransferOrderId.Equals(Id))
+                            .Where(p => p.ETOId.Equals(Id))
                             .Select(p => p.Id)
                         );
 
@@ -305,12 +409,13 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.ExternalTransferOr
                     {
                         HashSet<int> ExternalTransferOrderDetailIds = new HashSet<int>(
                             this.DbContext.ExternalTransferOrderDetails
-                                .Where(p => p.ExternalTransferOrderItemId.Equals(itemId))
+                                .Where(p => p.ETOItemId.Equals(itemId))
                                 .Select(p => p.Id)
                             );
 
                         ExternalTransferOrderItem externalTransferOrderItem = Model.ExternalTransferOrderItems.FirstOrDefault(p => p.Id.Equals(itemId));
 
+                        // cek item apakah dihapus (sesuai data yang diubah)
                         if (externalTransferOrderItem == null)
                         {
                             ExternalTransferOrderItem item = this.DbContext.ExternalTransferOrderItems
@@ -321,12 +426,15 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.ExternalTransferOr
                             {
                                 foreach (var detail in item.ExternalTransferOrderDetails)
                                 {
-                                    TransferRequestDetail transferRequestDetail = this.DbContext.TransferRequestDetails.FirstOrDefault(s => s.Id == detail.TransferRequestDetailId);
+                                    TransferRequestDetail transferRequestDetail = this.DbContext.TransferRequestDetails.FirstOrDefault(s => s.Id == detail.TRDetailId);
                                     transferRequestDetail.Status = "Sudah diterima Pembelian";
 
-                                    InternalTransferOrderDetail internalTransferOrderDetail = this.DbContext.InternalTransferOrderDetails.FirstOrDefault(s => s.Id == detail.InternalTransferOrderDetailId);
+                                    InternalTransferOrderDetail internalTransferOrderDetail = this.DbContext.InternalTransferOrderDetails.FirstOrDefault(s => s.Id == detail.ITODetailId);
                                     internalTransferOrderDetail.Status = "TO Internal belum diorder";
                                 }
+
+                                InternalTransferOrder internalTransferOrder = this.DbContext.InternalTransferOrders.FirstOrDefault(s => s.Id == item.ITOId);
+                                internalTransferOrder.IsPost = false;
                             }
 
                             foreach (int detailId in ExternalTransferOrderDetailIds)
@@ -361,12 +469,15 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.ExternalTransferOr
 
                             foreach (var detail in item.ExternalTransferOrderDetails)
                             {
-                                TransferRequestDetail transferRequestDetail = this.DbContext.TransferRequestDetails.FirstOrDefault(s => s.Id == detail.TransferRequestDetailId);
-                                transferRequestDetail.Status = "Sudah diorder ke Supplier";
+                                TransferRequestDetail transferRequestDetail = this.DbContext.TransferRequestDetails.FirstOrDefault(s => s.Id == detail.TRDetailId);
+                                transferRequestDetail.Status = "Sudah diorder ke Divisi Pengirim";
 
-                                InternalTransferOrderDetail internalTransferOrderDetail = this.DbContext.InternalTransferOrderDetails.FirstOrDefault(s => s.Id == detail.InternalTransferOrderDetailId);
+                                InternalTransferOrderDetail internalTransferOrderDetail = this.DbContext.InternalTransferOrderDetails.FirstOrDefault(s => s.Id == detail.ITODetailId);
                                 internalTransferOrderDetail.Status = "Sudah dibuat TO Eksternal";
                             }
+
+                            InternalTransferOrder internalTransferOrder = this.DbContext.InternalTransferOrders.FirstOrDefault(s => s.Id == item.ITOId);
+                            internalTransferOrder.IsPost = true;
                         }
                     }
 
@@ -407,7 +518,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.ExternalTransferOr
 
                     HashSet<int> ExternalTransferOrderItemIds = new HashSet<int>(
                         this.DbContext.ExternalTransferOrderItems
-                            .Where(p => p.ExternalTransferOrderId.Equals(Id))
+                            .Where(p => p.ETOId.Equals(Id))
                             .Select(p => p.Id)
                         );
 
@@ -415,7 +526,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.ExternalTransferOr
                     {
                         HashSet<int> ExternalTransferOrderDetailIds = new HashSet<int>(
                             this.DbContext.ExternalTransferOrderDetails
-                                .Where(p => p.ExternalTransferOrderItemId.Equals(itemId))
+                                .Where(p => p.ETOItemId.Equals(itemId))
                                 .Select(p => p.Id)
                             );
 
@@ -431,12 +542,15 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.ExternalTransferOr
                             {
                                 foreach (var detail in item.ExternalTransferOrderDetails)
                                 {
-                                    TransferRequestDetail transferRequestDetail = this.DbContext.TransferRequestDetails.FirstOrDefault(s => s.Id == detail.TransferRequestDetailId);
+                                    TransferRequestDetail transferRequestDetail = this.DbContext.TransferRequestDetails.FirstOrDefault(s => s.Id == detail.TRDetailId);
                                     transferRequestDetail.Status = "Sudah diterima Pembelian";
 
-                                    InternalTransferOrderDetail internalTransferOrderDetail = this.DbContext.InternalTransferOrderDetails.FirstOrDefault(s => s.Id == detail.InternalTransferOrderDetailId);
+                                    InternalTransferOrderDetail internalTransferOrderDetail = this.DbContext.InternalTransferOrderDetails.FirstOrDefault(s => s.Id == detail.ITODetailId);
                                     internalTransferOrderDetail.Status = "TO Internal belum diorder";
                                 }
+
+                                InternalTransferOrder internalTransferOrder = this.DbContext.InternalTransferOrders.FirstOrDefault(s => s.Id == item.ITOId);
+                                internalTransferOrder.IsPost = false;
                             }
                         }
 
@@ -488,8 +602,8 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.ExternalTransferOr
                         {
                             foreach (var detail in item.ExternalTransferOrderDetails)
                             {
-                                InternalTransferOrderDetail internalTransferOrderDetail = this.DbContext.InternalTransferOrderDetails.FirstOrDefault(s => s.Id == detail.InternalTransferOrderDetailId);
-                                internalTransferOrderDetail.Status = "Sudah diorder ke Supplier";
+                                InternalTransferOrderDetail internalTransferOrderDetail = this.DbContext.InternalTransferOrderDetails.FirstOrDefault(s => s.Id == detail.ITODetailId);
+                                internalTransferOrderDetail.Status = "Sudah diorder ke Divisi Pengirim";
                                 internalTransferOrderDetail._LastModifiedUtc = DateTime.UtcNow;
                                 internalTransferOrderDetail._LastModifiedAgent = "Service";
                                 internalTransferOrderDetail._LastModifiedBy = this.Username;
@@ -533,7 +647,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.ExternalTransferOr
                     {
                         foreach (var detail in item.ExternalTransferOrderDetails)
                         {
-                            InternalTransferOrderDetail internalTransferOrderDetail = this.DbContext.InternalTransferOrderDetails.FirstOrDefault(s => s.Id == detail.InternalTransferOrderDetailId);
+                            InternalTransferOrderDetail internalTransferOrderDetail = this.DbContext.InternalTransferOrderDetails.FirstOrDefault(s => s.Id == detail.ITODetailId);
                             internalTransferOrderDetail.Status = "Sudah dibuat TO Eksternal";
                             internalTransferOrderDetail._LastModifiedUtc = DateTime.UtcNow;
                             internalTransferOrderDetail._LastModifiedAgent = "Service";
@@ -604,13 +718,13 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.ExternalTransferOr
 
                     foreach (var item in data.ExternalTransferOrderItems)
                     {
-                        InternalTransferOrder internalTransferOrder = this.DbContext.InternalTransferOrders.FirstOrDefault(s => s.Id == item.InternalTransferOrderId);
+                        InternalTransferOrder internalTransferOrder = this.DbContext.InternalTransferOrders.FirstOrDefault(s => s.Id == item.ITOId);
                         internalTransferOrder.IsCanceled = true;
                         internalTransferOrder._LastModifiedUtc = DateTime.UtcNow;
                         internalTransferOrder._LastModifiedAgent = "Service";
                         internalTransferOrder._LastModifiedBy = this.Username;
 
-                        TransferRequest transferRequest = this.DbContext.TransferRequests.FirstOrDefault(s => s.Id == item.TransferRequestId);
+                        TransferRequest transferRequest = this.DbContext.TransferRequests.FirstOrDefault(s => s.Id == item.TRId);
                         transferRequest.IsCanceled = true;
                         transferRequest._LastModifiedUtc = DateTime.UtcNow;
                         transferRequest._LastModifiedAgent = "Service";
@@ -642,6 +756,14 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.ExternalTransferOr
                 name = internalTransferOrder.UnitName,
             };
         }
+
+        public bool CheckIdIsUsedByDeliveryOrder(int Id)
+        {
+            //DeliveryOrderItemService deliveryOrderItemService = this.ServiceProvider.GetService<DeliveryOrderItemService>();
+            //HashSet<int> deliveryOrderItemIds = new HashSet<int>(deliveryOrderItemService.DbSet.Select(p => p.ExternalTransferOrderId));
+
+            List<int> ITOinDO= new List<int> { 1, 2, 3 };
+            return ITOinDO.Contains(Id);
+        }
     }
 }
-

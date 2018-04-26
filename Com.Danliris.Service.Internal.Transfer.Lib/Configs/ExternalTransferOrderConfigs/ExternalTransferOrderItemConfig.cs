@@ -8,13 +8,13 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Configs.ExternalTransferOrd
     {
         public void Configure(EntityTypeBuilder<ExternalTransferOrderItem> builder)
         {
-            builder.Property(p => p.InternalTransferOrderNo).HasMaxLength(255);
-            builder.Property(p => p.TransferRequestNo).HasMaxLength(255);
+            builder.Property(p => p.ITONo).HasMaxLength(255);
+            builder.Property(p => p.TRNo).HasMaxLength(255);
 
             builder
                 .HasMany(h => h.ExternalTransferOrderDetails)
                 .WithOne(w => w.ExternalTransferOrderItem)
-                .HasForeignKey(f => f.ExternalTransferOrderItemId)
+                .HasForeignKey(f => f.ETOItemId)
                 .IsRequired();
         }
     }

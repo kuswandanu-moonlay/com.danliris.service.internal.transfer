@@ -32,9 +32,9 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.ExternalTransferOr
             Query = Query
                 .Select(result => new ExternalTransferOrderItem
                 {
-                    ExternalTransferOrderId = result.ExternalTransferOrderId,
-                    TransferRequestNo = result.TransferRequestNo,
-                    InternalTransferOrderNo = result.InternalTransferOrderNo,
+                    ETOId = result.ETOId,
+                    TRNo = result.TRNo,
+                    ITONo = result.ITONo,
                 });
 
             Dictionary<string, string> FilterDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(Filter);

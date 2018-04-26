@@ -8,11 +8,14 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Models.ExternalTransferOrde
 {
     public class ExternalTransferOrderItem : StandardEntity, IValidatableObject
     {
-        public int ExternalTransferOrderId { get; set; }
-        public int InternalTransferOrderId { get; set; }
-        public string InternalTransferOrderNo { get; set; }
-        public int TransferRequestId { get; set; }
-        public string TransferRequestNo { get; set; }
+        public int ETOId { get; set; }
+        public int ITOId { get; set; }
+        public string ITONo { get; set; }
+        public int TRId { get; set; }
+        public string TRNo { get; set; }
+        public string UnitId { get; set; }
+        public string UnitCode { get; set; }
+        public string UnitName { get; set; }
 
         public virtual ExternalTransferOrder ExternalTransferOrder { get; set; }
         public virtual ICollection<ExternalTransferOrderDetail> ExternalTransferOrderDetails { get; set; }
