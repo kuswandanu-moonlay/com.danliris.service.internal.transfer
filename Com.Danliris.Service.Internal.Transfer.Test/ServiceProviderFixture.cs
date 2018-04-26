@@ -1,5 +1,12 @@
 ﻿using Com.Danliris.Service.Internal.Transfer.Lib;
 using Com.Danliris.Service.Internal.Transfer.Lib.Helpers;
+using Com.Danliris.Service.Internal.Transfer.Lib.Services.ExternalTransferOrderServices;
+using Com.Danliris.Service.Internal.Transfer.Lib.Services.InternalTransferOrderServices;
+using Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferRequestService;
+using Com.Danliris.Service.Internal.Transfer.Test.DataUtils.ExternalTransferOrderDataUtils;
+using Com.Danliris.Service.Internal.Transfer.Test.DataUtils.InternalTransferOrderDataUtils;
+using Com.Danliris.Service.Internal.Transfer.Test.DataUtils.TransferRequestDataUtils;
+using Com.Danliris.Service.Internal.Transfer.Test.Helpers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,8 +23,6 @@ namespace Com.Danliris.Service.Internal.Transfer.Test
         public void RegisterEndpoint(IConfigurationRoot Configuration)
         {
             APIEndpoint.Core = Configuration.GetValue<string>("CoreEndpoint") ?? Configuration["CoreEndpoint"];
-            APIEndpoint.Inventory = Configuration.GetValue<string>("InventoryEndpoint") ?? Configuration["InventoryEndpoint"];
-            APIEndpoint.Production = Configuration.GetValue<string>("ProductionEndpoint") ?? Configuration["ProductionEndpoint"];
         }
 
         public ServiceProviderFixture()
@@ -40,29 +45,42 @@ namespace Com.Danliris.Service.Internal.Transfer.Test
                     new KeyValuePair<string, string>("Secret", "DANLIRISTESTENVIRONMENT"),
                     new KeyValuePair<string, string>("ASPNETCORE_ENVIRONMENT", "Test"),
                     new KeyValuePair<string, string>("CoreEndpoint", "http://localhost:5001/v1/"),
-                    new KeyValuePair<string, string>("InventoryEndpoint", "http://localhost:5002/v1/"),
-                    new KeyValuePair<string, string>("ProductionEndpoint", "http://localhost:5003/v1/"),
-                    new KeyValuePair<string, string>("DefaultConnection", "Server=localhost,1401;Database=com.danliris.db.inventory.service.test;User=sa;password=Standar123.;MultipleActiveResultSets=true;")
+                    new KeyValuePair<string, string>("DefaultConnection", "Server=localhost,1401;Database=com.danliris.db.internal.transfer.service.test;User=sa;password=Standar123.;MultipleActiveResultSets=true;")
                 })
                 .Build();
 
             RegisterEndpoint(configuration);
             string connectionString = configuration.GetConnectionString("DefaultConnection") ?? configuration["DefaultConnection"];
 
-            //this.ServiceProvider = new ServiceCollection()
-            //    .AddDbContext<InternalTransferDbContext>((serviceProvider, options) =>
-            //    {
-            //        options.UseSqlServer(connectionString);
-            //    }, ServiceLifetime.Transient)
-            //    .AddTransient<MaterialDistributionNoteService>(provider => new MaterialDistributionNoteService(provider))
-            //    .AddTransient<MaterialDistributionNoteItemService>(provider => new MaterialDistributionNoteItemService(provider))
-            //    .AddTransient<MaterialDistributionNoteDetailService>(provider => new MaterialDistributionNoteDetailService(provider))
-            //    .AddTransient<MaterialsRequestNoteService>(provider => new MaterialsRequestNoteService(provider))
-            //    .AddTransient<MaterialsRequestNote_ItemService>(provider => new MaterialsRequestNote_ItemService(provider))
-            //    .AddTransient<MaterialRequestNoteDataUtil>()
-            //    .AddTransient<MaterialRequestNoteItemDataUtil>()
-            //    .AddSingleton<HttpClientService>()
-            //    .BuildServiceProvider();
+            this.ServiceProvider = new ServiceCollection()
+                .AddDbContext<InternalTransferDbContext>((serviceProvider, options) =>
+                {
+                    options.UseSqlServer(connectionString);
+                }, ServiceLifetime.Transient)
+
+                .AddTransient<TransferRequestService>(provider => new TransferRequestService(provider))
+                .AddTransient<TransferRequestDetailService>(provider => new TransferRequestDetailService(provider))
+
+                .AddTransient<InternalTransferOrderService>(provider => new InternalTransferOrderService(provider))
+                .AddTransient<InternalTransferOrderDetailService>(provider => new InternalTransferOrderDetailService(provider))
+
+                .AddTransient<ExternalTransferOrderService>(provider => new ExternalTransferOrderService(provider))
+                .AddTransient<ExternalTransferOrderItemService>(provider => new ExternalTransferOrderItemService(provider))
+                .AddTransient<ExternalTransferOrderDetailService>(provider => new ExternalTransferOrderDetailService(provider))
+
+                .AddTransient<TransferRequestDataUtil>()
+                .AddTransient<TransferRequestDetailDataUtil>()
+
+                .AddTransient<InternalTransferOrderDataUtil>()
+                .AddTransient<InternalTransferOrderDetailDataUtil>()
+
+                .AddTransient<ExternalTransferOrderDataUtil>()
+                .AddTransient<ExternalTransferOrderItemDataUtil>()
+                .AddTransient<ExternalTransferOrderDetailDataUtil>()
+
+                .AddSingleton<HttpClientService>()
+
+                .BuildServiceProvider();
 
             InternalTransferDbContext dbContext = ServiceProvider.GetService<InternalTransferDbContext>();
             dbContext.Database.Migrate();
