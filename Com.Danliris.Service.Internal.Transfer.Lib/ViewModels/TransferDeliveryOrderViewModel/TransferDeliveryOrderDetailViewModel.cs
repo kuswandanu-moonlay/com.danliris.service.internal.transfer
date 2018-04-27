@@ -8,9 +8,9 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.ViewModels.TransferDelivery
     public class TransferDeliveryOrderDetailViewModel : BasicViewModel, IValidatableObject
     {
         public int DOItemId { get; set; }
-        public string ETODetailId { get; set; }
-        public string ITODetailId { get; set; }
-        public string TRDetailId { get; set; }
+        public int ETODetailId { get; set; }
+        public int ITODetailId { get; set; }
+        public int TRDetailId { get; set; }
         public string ProductId { get; set; }
         public string ProductCode { get; set; }
         public string ProductName { get; set; }

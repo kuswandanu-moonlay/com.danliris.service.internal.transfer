@@ -34,6 +34,9 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferDeliveryOr
             model.SupplierId = viewModel.Supplier._id ?? "";
             model.SupplierCode = viewModel.Supplier.code;
             model.SupplierName = viewModel.Supplier.name;
+            model.OrderDivisionId = viewModel.Division._id;
+            model.OrderDivisionCode = viewModel.Division.code;
+            model.OrderDivisionName = viewModel.Division.name;
             model.Remark = viewModel.Remark;
             model.IsPosted = viewModel.IsPosted;
 
@@ -51,7 +54,10 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferDeliveryOr
                 transferDeliveryOrderItem.TRId = transferDeliveryOrderItemViewModel.TRId;
                 transferDeliveryOrderItem.TRNo = transferDeliveryOrderItemViewModel.TRNo;
                 transferDeliveryOrderItem.ITOId = transferDeliveryOrderItemViewModel.ITOId;
-                transferDeliveryOrderItem.ITONo = transferDeliveryOrderItemViewModel.ITONo;                
+                transferDeliveryOrderItem.ITONo = transferDeliveryOrderItemViewModel.ITONo;
+                transferDeliveryOrderItem.UnitId = transferDeliveryOrderItemViewModel.UnitId;
+                transferDeliveryOrderItem.UnitCode = transferDeliveryOrderItemViewModel.UnitCode;
+                transferDeliveryOrderItem.UnitName = transferDeliveryOrderItemViewModel.UnitName;
 
                 transferDeliveryOrderItem.transferDeliveryOrderDetail = new List<TransferDeliveryOrderDetail>();
                 foreach (TransferDeliveryOrderDetailViewModel transferDeliveryOrderDetailViewModel in transferDeliveryOrderItemViewModel.details)
@@ -93,6 +99,12 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferDeliveryOr
                 code = model.SupplierCode,
                 name = model.SupplierName
             };
+            viewModel.Division = new DivisionViewModel()
+            {
+                _id = model.OrderDivisionId,
+                code = model.OrderDivisionCode,
+                name = model.OrderDivisionName
+            };
             
             viewModel.DODate = model.DOdate;
             viewModel.DONo = model.DONo;
@@ -114,6 +126,9 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferDeliveryOr
                     transferDeliveryOrderItemViewModel.TRNo = transferDeliveryOrderItem.TRNo;
                     transferDeliveryOrderItemViewModel.ITOId = transferDeliveryOrderItem.ITOId;
                     transferDeliveryOrderItemViewModel.ITONo = transferDeliveryOrderItem.ITONo;
+                    transferDeliveryOrderItemViewModel.UnitId = transferDeliveryOrderItem.UnitId;
+                    transferDeliveryOrderItemViewModel.UnitCode = transferDeliveryOrderItem.UnitCode;
+                    transferDeliveryOrderItemViewModel.UnitName = transferDeliveryOrderItem.UnitName;
 
                     transferDeliveryOrderItemViewModel.details = new List<TransferDeliveryOrderDetailViewModel>();
                     if (transferDeliveryOrderItem.transferDeliveryOrderDetail != null)
@@ -269,7 +284,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferDeliveryOr
 
             if (lastTransferDeliveryOrderNo == null)
             {
-                return transferDeliveryOrderNo + "00001";
+                return transferDeliveryOrderNo + "001";
             }
             else
             {

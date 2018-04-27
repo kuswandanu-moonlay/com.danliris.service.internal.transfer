@@ -15,7 +15,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Configs.TransferDeliveryOrd
             builder
                 .HasMany(h => h.TransferDeliveryOrderItem)
                 .WithOne(w => w.transferDeliveryOrder)
-                .HasForeignKey(f => f.Id)
+                .HasForeignKey(f => f.DOId)
                 .IsRequired();
         }
     }

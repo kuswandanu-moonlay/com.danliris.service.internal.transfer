@@ -25,10 +25,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Models.TransferDeliveryOrde
         public virtual ICollection<TransferDeliveryOrderItem> TransferDeliveryOrderItem { get; set; }
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
-            TransferDeliveryOrderService service = validationContext.GetService<TransferDeliveryOrderService>();
-
-            if (service.DbSet.Count(r => r.DONo != this.DONo && r._IsDeleted.Equals(false)) > 0)
-                yield return new ValidationResult("Nomor Surat Jalan sudah ada", new List<string> { "Code" });
+            return new List<ValidationResult>();
         }
     }
 }
