@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Com.Danliris.Service.Internal.Transfer.Lib.Migrations
 {
-    public partial class createTableTransferDeliveryOrder : Migration
+    public partial class create_table_transferdeliveryorder_and_shipping_order : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -46,15 +46,19 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Migrations
                 name: "TransferDeliveryOrderItems",
                 columns: table => new
                 {
-                    Id = table.Column<int>(nullable: false),
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     Active = table.Column<bool>(nullable: false),
                     DOId = table.Column<int>(maxLength: 100, nullable: false),
-                    ETOId = table.Column<string>(maxLength: 100, nullable: true),
+                    ETOId = table.Column<int>(maxLength: 100, nullable: false),
                     ETONo = table.Column<string>(maxLength: 255, nullable: true),
-                    ITOId = table.Column<string>(maxLength: 100, nullable: true),
+                    ITOId = table.Column<int>(maxLength: 100, nullable: false),
                     ITONo = table.Column<string>(maxLength: 255, nullable: true),
-                    TRId = table.Column<string>(maxLength: 100, nullable: true),
+                    TRId = table.Column<int>(maxLength: 100, nullable: false),
                     TRNo = table.Column<string>(maxLength: 255, nullable: true),
+                    UnitCode = table.Column<string>(nullable: true),
+                    UnitId = table.Column<string>(nullable: true),
+                    UnitName = table.Column<string>(nullable: true),
                     _CreatedAgent = table.Column<string>(maxLength: 255, nullable: false),
                     _CreatedBy = table.Column<string>(maxLength: 255, nullable: false),
                     _CreatedUtc = table.Column<DateTime>(nullable: false),
@@ -70,8 +74,8 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Migrations
                 {
                     table.PrimaryKey("PK_TransferDeliveryOrderItems", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_TransferDeliveryOrderItems_TransferDeliveryOrders_Id",
-                        column: x => x.Id,
+                        name: "FK_TransferDeliveryOrderItems_TransferDeliveryOrders_DOId",
+                        column: x => x.DOId,
                         principalTable: "TransferDeliveryOrders",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -86,9 +90,9 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Migrations
                     Active = table.Column<bool>(nullable: false),
                     DOItemId = table.Column<int>(nullable: false),
                     DOQuantity = table.Column<int>(nullable: false),
-                    ETODetailId = table.Column<string>(nullable: true),
+                    ETODetailId = table.Column<int>(nullable: false),
                     Grade = table.Column<string>(maxLength: 100, nullable: true),
-                    ITODetailId = table.Column<string>(nullable: true),
+                    ITODetailId = table.Column<int>(nullable: false),
                     ProductCode = table.Column<string>(nullable: true),
                     ProductId = table.Column<string>(nullable: true),
                     ProductName = table.Column<string>(nullable: true),
@@ -96,7 +100,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Migrations
                     RemainingQuantity = table.Column<int>(nullable: false),
                     RequestedQuantity = table.Column<int>(nullable: false),
                     ShippingOrderQuantity = table.Column<int>(nullable: false, defaultValue: 0),
-                    TRDetailId = table.Column<string>(nullable: true),
+                    TRDetailId = table.Column<int>(nullable: false),
                     UomId = table.Column<string>(nullable: true),
                     UomUnit = table.Column<string>(nullable: true),
                     _CreatedAgent = table.Column<string>(maxLength: 255, nullable: false),
@@ -125,6 +129,11 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Migrations
                 name: "IX_TransferDeliveryOrderDetails_DOItemId",
                 table: "TransferDeliveryOrderDetails",
                 column: "DOItemId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TransferDeliveryOrderItems_DOId",
+                table: "TransferDeliveryOrderItems",
+                column: "DOId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
