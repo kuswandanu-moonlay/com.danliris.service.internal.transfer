@@ -49,14 +49,14 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferRequestSer
                     Id = tr.Id,
                     TRNo = tr.TRNo,
                     _CreatedUtc = tr._CreatedUtc,
-                    DivisionName=tr.DivisionName,
-                    TRDate=tr.TRDate,
+                    DivisionName = tr.DivisionName,
+                    TRDate = tr.TRDate,
                     CategoryName = tr.CategoryName,
                     RequestedArrivalDate = tr.RequestedArrivalDate,
                     _LastModifiedUtc = tr._LastModifiedUtc,
-                    UnitName= tr.UnitName,
-                    IsPosted=tr.IsPosted,
-                    IsCanceled=tr.IsCanceled
+                    UnitName = tr.UnitName,
+                    IsPosted = tr.IsPosted,
+                    IsCanceled = tr.IsCanceled
                 });
 
             Dictionary<string, string> FilterDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(Filter);
@@ -72,16 +72,16 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferRequestSer
             return Tuple.Create(Data, TotalData, OrderDictionary, SelectedFields);
         }
 
-        public  Tuple<List<TransferRequest>, int, Dictionary<string, string>, List<string>> ReadModelPosted(int Page = 1, int Size = 25, string Order = "{}", List<string> Select = null, string Keyword = null, string Filter = "{}")
+        public Tuple<List<TransferRequest>, int, Dictionary<string, string>, List<string>> ReadModelPosted(int Page = 1, int Size = 25, string Order = "{}", List<string> Select = null, string Keyword = null, string Filter = "{}")
         {
             IQueryable<TransferRequest> Query = this.DbContext.TransferRequests;
-            
+
             List<string> SearchAttributes = new List<string>()
             {
                 "TRNo"
             };
 
-            
+
             Query = ConfigureSearch(Query, SearchAttributes, Keyword);
 
             List<string> SelectedFields = new List<string>()
@@ -95,23 +95,23 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferRequestSer
                     Id = tr.Id,
                     TRNo = tr.TRNo,
                     _CreatedUtc = tr._CreatedUtc,
-                    DivisionId=tr.DivisionId,
-                    DivisionCode=tr.DivisionCode,
+                    DivisionId = tr.DivisionId,
+                    DivisionCode = tr.DivisionCode,
                     DivisionName = tr.DivisionName,
                     TRDate = tr.TRDate,
-                    Remark=tr.Remark,
-                    CategoryId=tr.CategoryId,
-                    CategoryCode=tr.CategoryCode,
+                    Remark = tr.Remark,
+                    CategoryId = tr.CategoryId,
+                    CategoryCode = tr.CategoryCode,
                     CategoryName = tr.CategoryName,
                     RequestedArrivalDate = tr.RequestedArrivalDate,
                     _LastModifiedUtc = tr._LastModifiedUtc,
-                    UnitId=tr.UnitId,
-                    UnitCode=tr.UnitCode,
+                    UnitId = tr.UnitId,
+                    UnitCode = tr.UnitCode,
                     UnitName = tr.UnitName,
                     IsPosted = tr.IsPosted,
                     IsCanceled = tr.IsCanceled,
-                    TransferRequestDetails=tr.TransferRequestDetails
-                }).Where(s=>s.IsPosted== true && !(from data in this.DbContext.InternalTransferOrders select data.TRId).Contains(s.Id));
+                    TransferRequestDetails = tr.TransferRequestDetails
+                }).Where(s => s.IsPosted == true && !(from data in this.DbContext.InternalTransferOrders select data.TRId).Contains(s.Id));
 
             Dictionary<string, string> FilterDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(Filter);
             Query = ConfigureFilter(Query, FilterDictionary);
@@ -154,7 +154,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferRequestSer
                 TransferRequestDetail transferRequestDetail = new TransferRequestDetail();
 
                 PropertyCopier<TransferRequestDetailViewModel, TransferRequestDetail>.Copy(transferRequestDetailViewModel, transferRequestDetail);
-                
+
                 transferRequestDetail.ProductId = transferRequestDetailViewModel.product._id;
                 transferRequestDetail.ProductCode = transferRequestDetailViewModel.product.code;
                 transferRequestDetail.ProductName = transferRequestDetailViewModel.product.name;
@@ -194,9 +194,9 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferRequestSer
                 _id = model.UnitId,
                 code = model.UnitCode,
                 name = model.UnitName,
-                divisionId=model.DivisionId,
-                divisionCode=model.DivisionCode,
-                divisionName=model.DivisionName
+                divisionId = model.DivisionId,
+                divisionCode = model.DivisionCode,
+                divisionName = model.DivisionName
             };
 
             CategoryViewModel Category = new CategoryViewModel()
@@ -253,19 +253,20 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferRequestSer
         {
             DateTime Now = DateTime.Now;
             string Year = Now.ToString("yy");
+            string Month = Now.ToString("MM");
 
-            string transferRequestNo = "TR" + model.UnitCode + Year;
+            string transferRequestNo = "TR" + model.UnitCode + Year + Month;
 
             var lastTransferRequestNo = await this.DbSet.Where(w => w.TRNo.StartsWith(transferRequestNo)).OrderByDescending(o => o.TRNo).FirstOrDefaultAsync();
 
             if (lastTransferRequestNo == null)
             {
-                return transferRequestNo + "00001";
+                return transferRequestNo + "001";
             }
             else
             {
                 int lastNo = Int32.Parse(lastTransferRequestNo.TRNo.Replace(transferRequestNo, "")) + 1;
-                return transferRequestNo + lastNo.ToString().PadLeft(5, '0');
+                return transferRequestNo + lastNo.ToString().PadLeft(3, '0');
             }
         }
 
@@ -287,7 +288,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferRequestSer
                     Model.TRNo = await this.CustomCodeGenerator(Model);
                     Created = await this.CreateAsync(Model);
 
-                    
+
                     transaction.Commit();
                 }
                 catch (ServiceValidationExeption e)
@@ -332,7 +333,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferRequestSer
         {
             TransferRequestDetailService transferRequestDetailService = this.ServiceProvider.GetService<TransferRequestDetailService>();
             transferRequestDetailService.Username = this.Username;
-            
+
 
             int Updated = 0;
             using (var transaction = this.DbContext.Database.BeginTransaction())
@@ -393,7 +394,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferRequestSer
                         tr._LastModifiedAgent = "Service";
                         tr._LastModifiedBy = this.Username;
 
-                        foreach(var data in tr.TransferRequestDetails)
+                        foreach (var data in tr.TransferRequestDetails)
                         {
                             TransferRequestDetail trDetail = this.DbContext.TransferRequestDetails.FirstOrDefault(s => s.Id == data.Id);
                             trDetail._LastModifiedUtc = DateTime.UtcNow;
@@ -426,7 +427,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferRequestSer
             {
                 try
                 {
-                    var transfer = this.DbSet.Include(d => d.TransferRequestDetails).FirstOrDefault(tr => tr.Id == Id && tr._IsDeleted==false);
+                    var transfer = this.DbSet.Include(d => d.TransferRequestDetails).FirstOrDefault(tr => tr.Id == Id && tr._IsDeleted == false);
                     transfer.IsPosted = false;
                     transfer._LastModifiedUtc = DateTime.UtcNow;
                     transfer._LastModifiedAgent = "Service";
@@ -485,7 +486,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferRequestSer
                         await transferRequestDetailService.DeleteModel(transferRequestDetail);
                     }
 
-                    
+
                     transaction.Commit();
                 }
                 catch (Exception)
@@ -521,7 +522,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferRequestSer
                              && b.Status == (string.IsNullOrWhiteSpace(status) ? b.Status : status)
                              && a.TRDate.AddHours(offset).Date >= DateFrom.Date
                              && a.TRDate.AddHours(offset).Date <= DateTo.Date
-                             && a.IsCanceled==isCancel
+                             && a.IsCanceled == isCancel
                          select new TransferRequestReportViewModel
                          {
                              trNo = a.TRNo,
@@ -539,8 +540,8 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferRequestSer
                              isCanceled = a.IsCanceled,
                              status = b.Status,
                              _updatedDate = a._LastModifiedUtc,
-                             deliveryDateETO = g.DeliveryDate !=null ? g.DeliveryDate : new DateTime(1970, 1, 1)
-                             
+                             deliveryDateETO = g.DeliveryDate != null ? g.DeliveryDate : new DateTime(1970, 1, 1)
+
                          });
             return Query;
         }
@@ -590,7 +591,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferRequestSer
             else
                 foreach (var item in Query)
                 {
-                    result.Rows.Add((item.trNo), item.trDate.ToString("dd MMM yyyy"), item.unitName, item.categoryName, item.productCode, item.productName, item.quantity, item.uom, item.requestedArrivalDate.ToString("dd MMM yyyy"), item.deliveryDateETO == new DateTime(1970, 1, 1)? "-" : item.deliveryDateETO.ToString("dd MMM yyyy"), item.status);
+                    result.Rows.Add((item.trNo), item.trDate.ToString("dd MMM yyyy"), item.unitName, item.categoryName, item.productCode, item.productName, item.quantity, item.uom, item.requestedArrivalDate.ToString("dd MMM yyyy"), item.deliveryDateETO == new DateTime(1970, 1, 1) ? "-" : item.deliveryDateETO.ToString("dd MMM yyyy"), item.status);
                 }
             return Excel.CreateExcel(new List<KeyValuePair<DataTable, string>>() { new KeyValuePair<DataTable, string>(result, "Territory") }, true);
         }

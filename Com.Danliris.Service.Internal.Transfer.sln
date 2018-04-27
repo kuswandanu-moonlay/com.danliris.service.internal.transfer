@@ -7,7 +7,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Com.Danliris.Service.Intern
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Com.Danliris.Service.Internal.Transfer.Lib", "Com.Danliris.Service.Internal.Transfer.Lib\Com.Danliris.Service.Internal.Transfer.Lib.csproj", "{B86BFF63-1B28-42B0-B9E3-36D22C49FC46}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Com.Danliris.Service.Internal.Transfer.Test", "Com.Danliris.Service.Internal.Transfer.Test\Com.Danliris.Service.Internal.Transfer.Test.csproj", "{2541C61B-CAE2-41F4-96B6-CB2644AC7916}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Com.Danliris.Service.Internal.Transfer.Test", "Com.Danliris.Service.Internal.Transfer.Test\Com.Danliris.Service.Internal.Transfer.Test.csproj", "{2541C61B-CAE2-41F4-96B6-CB2644AC7916}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Setup", "Setup", "{1D34414F-2562-45C6-BD3E-93E76C61F8E1}"
+	ProjectSection(SolutionItems) = preProject
+		docker-compose.test.yml = docker-compose.test.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

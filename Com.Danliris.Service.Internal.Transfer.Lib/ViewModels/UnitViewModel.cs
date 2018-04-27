@@ -13,5 +13,6 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.ViewModels
         public string divisionId { get; set; }
         public string divisionCode { get; set; }
         public string divisionName { get; set; }
+        public DivisionViewModel division { get; set; }
     }
 }
