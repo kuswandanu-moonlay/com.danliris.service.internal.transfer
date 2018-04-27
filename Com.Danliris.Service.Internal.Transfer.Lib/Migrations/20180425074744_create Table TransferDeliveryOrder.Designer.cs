@@ -44,13 +44,13 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Migrations
 
                     b.Property<DateTime>("DeliveryDate");
 
-                    b.Property<string>("DivisionCode")
+                    b.Property<string>("DeliveryDivisionCode")
                         .HasMaxLength(255);
 
-                    b.Property<string>("DivisionId")
+                    b.Property<string>("DeliveryDivisionId")
                         .HasMaxLength(255);
 
-                    b.Property<string>("DivisionName")
+                    b.Property<string>("DeliveryDivisionName")
                         .HasMaxLength(255);
 
                     b.Property<string>("ETONo");
@@ -62,6 +62,12 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Migrations
                     b.Property<bool>("IsPosted");
 
                     b.Property<DateTime>("OrderDate");
+
+                    b.Property<string>("OrderDivisionCode");
+
+                    b.Property<string>("OrderDivisionId");
+
+                    b.Property<string>("OrderDivisionName");
 
                     b.Property<string>("Remark")
                         .HasMaxLength(1000);
@@ -212,6 +218,12 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Migrations
 
                     b.Property<string>("TRNo")
                         .HasMaxLength(255);
+
+                    b.Property<string>("UnitCode");
+
+                    b.Property<string>("UnitId");
+
+                    b.Property<string>("UnitName");
 
                     b.Property<string>("_CreatedAgent")
                         .IsRequired()
