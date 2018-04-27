@@ -14,6 +14,7 @@ using Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferRequestService
 using Com.Danliris.Service.Internal.Transfer.Lib.Services.InternalTransferOrderServices;
 using Com.Danliris.Service.Internal.Transfer.Lib.Services.ExternalTransferOrderServices;
 using Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferDeliveryOrderService;
+using Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferShippingOrderServices;
 
 namespace Com.Danliris.Service.Internal.Transfer.WebApi
 {
@@ -54,7 +55,10 @@ namespace Com.Danliris.Service.Internal.Transfer.WebApi
                 .AddTransient<InternalTransferOrderDetailService>()
                 .AddTransient<ExternalTransferOrderService>()
                 .AddTransient<ExternalTransferOrderItemService>()
-                .AddTransient<ExternalTransferOrderDetailService>();
+                .AddTransient<ExternalTransferOrderDetailService>()
+                .AddTransient<TransferShippingOrderService>()
+                .AddTransient<TransferShippingOrderItemService>()
+                .AddTransient<TransferShippingOrderDetailService>(); ;
 
             var Secret = Configuration.GetValue<string>("Secret") ?? Configuration["Secret"];
             var Key = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Secret));

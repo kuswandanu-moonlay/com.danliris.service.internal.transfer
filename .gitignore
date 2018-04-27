@@ -264,3 +264,7 @@ __pycache__/
 Com.Danliris.Service.Internal.Transfer.WebApi/Properties/launchSettings.json
 Com.Danliris.Service.Internal.Transfer.WebApi/appsettings.Development.json
 Com.Danliris.Service.Internal.Transfer.WebApi/appsettings.json
+
+#vscode
+.vscode/
+Com.Danliris.Service.Internal.Transfer.WebApi/appsettings.json

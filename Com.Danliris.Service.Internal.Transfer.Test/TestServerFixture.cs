@@ -1,5 +1,12 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using Com.Danliris.Service.Internal.Transfer.Lib;
+using Com.Danliris.Service.Internal.Transfer.Test.DataUtils.ExternalTransferOrderDataUtils;
+using Com.Danliris.Service.Internal.Transfer.Test.DataUtils.InternalTransferOrderDataUtils;
+using Com.Danliris.Service.Internal.Transfer.Test.DataUtils.TransferRequestDataUtils;
+using Com.Danliris.Service.Internal.Transfer.Test.Helpers;
+using Com.Danliris.Service.Internal.Transfer.WebApi;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
@@ -36,33 +43,40 @@ namespace Com.Danliris.Service.Internal.Transfer.Test
                     new KeyValuePair<string, string>("ClientId", "dl-test"),
                     */
                     new KeyValuePair<string, string>("CoreEndpoint", "http://localhost:5001/v1/"),
-                    new KeyValuePair<string, string>("InventoryEndpoint", "http://localhost:5002/v1/"),
-                    new KeyValuePair<string, string>("ProductionEndpoint", "http://localhost:5003/v1/"),
                     new KeyValuePair<string, string>("Secret", "DANLIRISTESTENVIRONMENT"),
                     new KeyValuePair<string, string>("ASPNETCORE_ENVIRONMENT", "Test"),
-                    new KeyValuePair<string, string>("DefaultConnection", "Server=localhost,1401;Database=com.danliris.db.inventory.controller.test;User=sa;password=Standar123.;MultipleActiveResultSets=true;")
+                    new KeyValuePair<string, string>("DefaultConnection", "Server=localhost,1401;Database=com.danliris.db.internal.transfer.controller.test;User=sa;password=Standar123.;MultipleActiveResultSets=true;")
                 })
                 .Build();
 
 
-            //var builder = new WebHostBuilder()
-            //    .UseConfiguration(configuration)
-            //    .ConfigureServices(services =>
-            //    {
-            //        services
-            //            .AddTransient<MaterialRequestNoteDataUtil>()
-            //            .AddTransient<MaterialRequestNoteItemDataUtil>()
-            //            .AddSingleton<HttpClientService>();
-            //    })
-            //    .UseStartup<Startup>();
+            var builder = new WebHostBuilder()
+                .UseConfiguration(configuration)
+                .ConfigureServices(services =>
+                {
+                    services
+                        .AddTransient<TransferRequestDataUtil>()
+                        .AddTransient<TransferRequestDetailDataUtil>()
+
+                        .AddTransient<InternalTransferOrderDataUtil>()
+                        .AddTransient<InternalTransferOrderDetailDataUtil>()
+
+                        .AddTransient<ExternalTransferOrderDataUtil>()
+                        .AddTransient<ExternalTransferOrderItemDataUtil>()
+                        .AddTransient<ExternalTransferOrderDetailDataUtil>()
+
+                        .AddSingleton<HttpClientService>()
+                        .AddDbContext<InternalTransferDbContext>(options => options.UseSqlServer(configuration["DefaultConnection"]), ServiceLifetime.Transient);
+                })
+                .UseStartup<Startup>();
 
             string authority = configuration["Authority"];
             string clientId = configuration["ClientId"];
             string secret = configuration["Secret"];
 
-            //_server = new TestServer(builder);
-            //Client = _server.CreateClient();
-            //Service = _server.Host.Services;
+            _server = new TestServer(builder);
+            Client = _server.CreateClient();
+            Service = _server.Host.Services;
 
             var User = new { username = "dev2", password = "Standar123" };
 
