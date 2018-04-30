@@ -14,6 +14,7 @@ using Microsoft.EntityFrameworkCore;
 using Com.Moonlay.NetCore.Lib.Service;
 using Com.Danliris.Service.Internal.Transfer.Lib.Models.TransferRequestModel;
 using Com.Danliris.Service.Internal.Transfer.Lib.Models.InternalTransferOrderModel;
+using Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferDeliveryOrderService;
 
 namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.ExternalTransferOrderServices
 {
@@ -759,11 +760,10 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.ExternalTransferOr
 
         public bool CheckIdIsUsedByDeliveryOrder(int Id)
         {
-            //DeliveryOrderItemService deliveryOrderItemService = this.ServiceProvider.GetService<DeliveryOrderItemService>();
-            //HashSet<int> deliveryOrderItemIds = new HashSet<int>(deliveryOrderItemService.DbSet.Select(p => p.ExternalTransferOrderId));
+            TransferDeliveryOrderItemService TransferDeliveryOrderItemService = this.ServiceProvider.GetService<TransferDeliveryOrderItemService>();
+            HashSet<int> TransferDeliveryOrderItemIds = new HashSet<int>(TransferDeliveryOrderItemService.DbSet.Select(p => p.ETOId));
 
-            List<int> ITOinDO= new List<int> { 1, 2, 3 };
-            return ITOinDO.Contains(Id);
+            return TransferDeliveryOrderItemIds.Contains(Id);
         }
     }
 }
