@@ -92,7 +92,12 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.PDFTemplates
                 for (int indexDetail = 0; indexDetail < externalTransferOrderItem.ExternalTransferOrderDetails.Count; indexDetail++)
                 {
                     ExternalTransferOrderDetailViewModel externalTransferOrderDetail = externalTransferOrderItem.ExternalTransferOrderDetails[indexDetail];
-                    cellLeft.Phrase = new Phrase($"{externalTransferOrderDetail.Product.code}\n{externalTransferOrderItem.TRNo}", normal_font);
+                    string NamaDanJenisBarang = externalTransferOrderDetail.Product.code;
+                    if (externalTransferOrderDetail.Grade != null)
+                        NamaDanJenisBarang += externalTransferOrderDetail.Grade.Replace(" ", "").Equals("") ?  "" : $" - {externalTransferOrderDetail.Grade}";
+                    if (externalTransferOrderDetail.ProductRemark != null)
+                        NamaDanJenisBarang += externalTransferOrderDetail.ProductRemark.Replace(" ", "").Equals("") ? "" : $" - {externalTransferOrderDetail.ProductRemark}";
+                    cellLeft.Phrase = new Phrase($"{NamaDanJenisBarang}\n{externalTransferOrderItem.TRNo}", normal_font);
                     tableContent.AddCell(cellLeft);
                     cellRight.Phrase = new Phrase($"{externalTransferOrderDetail.DealQuantity} {externalTransferOrderDetail.DealUom.unit}", normal_font);
                     tableContent.AddCell(cellRight);
@@ -131,9 +136,9 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.PDFTemplates
             PdfPTable tableSignature = new PdfPTable(2);
 
             PdfPCell cellSignatureContent = new PdfPCell() { Border = Rectangle.NO_BORDER, HorizontalAlignment = Element.ALIGN_CENTER };
-            cellSignatureContent.Phrase = new Phrase("Pemesan\n\n\n\n\n\n\n" + unit.name, bold_font);
+            cellSignatureContent.Phrase = new Phrase("Pemesan\n\n\n\n\n\n\n(                         )", bold_font);
             tableSignature.AddCell(cellSignatureContent);
-            cellSignatureContent.Phrase = new Phrase("Pengirim\n\n\n\n\n\n\n" + viewModel.DeliveryDivision.name, bold_font);
+            cellSignatureContent.Phrase = new Phrase("Pengirim\n\n\n\n\n\n\n(                         )", bold_font);
             tableSignature.AddCell(cellSignatureContent);
 
             // --------- kalo dihapus tabel malah jadi ada margin kanan dan kiri
