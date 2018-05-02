@@ -82,7 +82,8 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.ViewModels.ExternalTransfer
                     {
                         externalTransferOrderDetailError += "{ ";
 
-                        if (Detail.DefaultUom.unit.Equals(Detail.DealUom.unit) && Detail.DefaultQuantity == Detail.DealQuantity && Detail.Convertion != 1)
+                        //if (Detail.DefaultUom.unit.Equals(Detail.DealUom.unit) && Detail.DefaultQuantity == Detail.DealQuantity && Detail.Convertion != 1)
+                        if (Detail.DefaultUom.unit.Equals(Detail.DealUom.unit) && Detail.Convertion != 1)
                         {
                             detailErrorCount++;
                             externalTransferOrderDetailError += "Convertion: 'Convertion should be 1', ";

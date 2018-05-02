@@ -40,7 +40,9 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.ViewModels.InternalTransfer
         public string Remarks { get; set; }
 
         public bool IsPost { get; set; }
-        
+
+        public bool IsCanceled { get; set; }
+
         public List<InternalTransferOrderDetailViewModel> InternalTransferOrderDetails { get; set; }
         ///public List<sourceTransferOrderViewModel> sourceTransferOrder { get; set; }
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
