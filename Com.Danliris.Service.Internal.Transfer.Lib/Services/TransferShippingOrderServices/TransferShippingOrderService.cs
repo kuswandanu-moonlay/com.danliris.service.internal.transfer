@@ -51,6 +51,13 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferShippingOr
                             TransferShippingOrderDetailViewModel shippingOrderDetailViewModel = new TransferShippingOrderDetailViewModel();
                             PropertyCopier<TransferShippingOrderDetail, TransferShippingOrderDetailViewModel>.Copy(shippingOrderDetail, shippingOrderDetailViewModel);
 
+                            TransferRequestDetail transferRequestDetail = this.DbContext.TransferRequestDetails.SingleOrDefault(d => d.Id == shippingOrderDetailViewModel.TRDetailId);
+                            if (transferRequestDetail != null)
+                            {
+                                int TRId = transferRequestDetail.TransferRequestId;
+                                shippingOrderDetailViewModel.TRNo = this.DbContext.TransferRequests.SingleOrDefault(d => d.Id == TRId).TRNo;
+                            }
+
                             shippingOrderDetailViewModel.Product = new ProductViewModel
                             {
                                 _id = shippingOrderDetail.ProductId,
@@ -99,7 +106,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferShippingOr
                     shippingOrderDetail.ProductCode = shippingOrderDetailViewModel.Product.code;
                     shippingOrderDetail.ProductName = shippingOrderDetailViewModel.Product.name;
                     shippingOrderDetail.UomId = shippingOrderDetailViewModel.Uom._id;
-                    shippingOrderDetail.UomId = shippingOrderDetailViewModel.Uom.unit;
+                    shippingOrderDetail.UomUnit = shippingOrderDetailViewModel.Uom.unit;
 
                     shippingOrderItem.TransferShippingOrderDetails.Add(shippingOrderDetail);
                 }
