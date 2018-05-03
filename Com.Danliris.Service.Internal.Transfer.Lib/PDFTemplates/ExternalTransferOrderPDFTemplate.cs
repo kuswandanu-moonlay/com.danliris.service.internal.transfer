@@ -92,9 +92,9 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.PDFTemplates
                 for (int indexDetail = 0; indexDetail < externalTransferOrderItem.ExternalTransferOrderDetails.Count; indexDetail++)
                 {
                     ExternalTransferOrderDetailViewModel externalTransferOrderDetail = externalTransferOrderItem.ExternalTransferOrderDetails[indexDetail];
-                    string NamaDanJenisBarang = externalTransferOrderDetail.Product.code;
+                    string NamaDanJenisBarang = externalTransferOrderDetail.Product.name;
                     if (externalTransferOrderDetail.Grade != null)
-                        NamaDanJenisBarang += externalTransferOrderDetail.Grade.Replace(" ", "").Equals("") ?  "" : $" - {externalTransferOrderDetail.Grade}";
+                        NamaDanJenisBarang += externalTransferOrderDetail.Grade.Replace(" ", "").Equals("") ?  "" : $" - Grade {externalTransferOrderDetail.Grade}";
                     if (externalTransferOrderDetail.ProductRemark != null)
                         NamaDanJenisBarang += externalTransferOrderDetail.ProductRemark.Replace(" ", "").Equals("") ? "" : $" - {externalTransferOrderDetail.ProductRemark}";
                     cellLeft.Phrase = new Phrase($"{NamaDanJenisBarang}\n{externalTransferOrderItem.TRNo}", normal_font);
