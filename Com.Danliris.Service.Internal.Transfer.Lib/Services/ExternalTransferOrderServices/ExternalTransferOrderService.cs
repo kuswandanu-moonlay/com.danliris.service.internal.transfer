@@ -476,7 +476,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.ExternalTransferOr
                             foreach (var detail in item.ExternalTransferOrderDetails)
                             {
                                 TransferRequestDetail transferRequestDetail = this.DbContext.TransferRequestDetails.FirstOrDefault(s => s.Id == detail.TRDetailId);
-                                transferRequestDetail.Status = "Sudah diorder ke Divisi Pengirim";
+                                transferRequestDetail.Status = "Sudah dibuat TO Eksternal";
 
                                 InternalTransferOrderDetail internalTransferOrderDetail = this.DbContext.InternalTransferOrderDetails.FirstOrDefault(s => s.Id == detail.ITODetailId);
                                 internalTransferOrderDetail.Status = "Sudah dibuat TO Eksternal";
