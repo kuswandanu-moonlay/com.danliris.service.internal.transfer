@@ -152,7 +152,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.InternalTransferOr
 
             List<string> SelectedFields = new List<string>()
             {
-                "Id", "ITONo","TRDate","Active", "_CreatedBy", "TRId", "TRNo" ,"RequestedArrivalDate","CategoryName","DivisionName","UnitName","IsPost"};
+                "Id", "ITONo","TRDate","Active", "_CreatedBy", "TRId", "TRNo" ,"RequestedArrivalDate","CategoryName","DivisionName","UnitName","IsPost", "IsCanceled"};
 
             Query = Query
                 .Select(mdn => new InternalTransferOrder
@@ -169,7 +169,8 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.InternalTransferOr
                     TRNo = mdn.TRNo,
                     _CreatedUtc = mdn._CreatedUtc,
                     _LastModifiedUtc = mdn._LastModifiedUtc,
-                    IsPost = mdn.IsPost
+                    IsPost = mdn.IsPost,
+                    IsCanceled = mdn.IsCanceled
                 }).Where(s => s._IsDeleted == false);
 
             Dictionary<string, string> FilterDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(Filter);
