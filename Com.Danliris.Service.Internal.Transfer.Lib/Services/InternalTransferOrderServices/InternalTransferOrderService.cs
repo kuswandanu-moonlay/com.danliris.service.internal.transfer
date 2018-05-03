@@ -71,7 +71,6 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.InternalTransferOr
         public override async Task<int> CreateModel(InternalTransferOrder Model)
         {
             int Created = 0;
-            throw new Exception();
             using (var transaction = this.DbContext.Database.BeginTransaction())
             {
                 try
