@@ -5,7 +5,7 @@ using System;
 
 namespace Com.Danliris.Service.Internal.Transfer.Lib.ViewModels.TransferDeliveryOrderViewModel
 {
-    public class TransferDeliveryOrderItemViewModel : BasicViewModel, IValidatableObject
+    public class TransferDeliveryOrderItemViewModel : BasicViewModel
     {
         public int DOId { get; set; }
         public int ETOId { get; set; }
@@ -19,10 +19,6 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.ViewModels.TransferDelivery
         public string UnitName { get; set; }
 
         public List<TransferDeliveryOrderDetailViewModel> details { get; set; }
-
-        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
-        {
-            return new List<ValidationResult>();
-        }
+ 
     }
 }

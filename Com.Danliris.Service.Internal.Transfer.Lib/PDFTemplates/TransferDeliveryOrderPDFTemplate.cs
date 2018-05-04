@@ -1,6 +1,6 @@
-﻿using Com.Danliris.Service.Internal.Transfer.Lib.Services.ExternalTransferOrderServices;
+﻿using Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferDeliveryOrderService;
 using Com.Danliris.Service.Internal.Transfer.Lib.ViewModels;
-using Com.Danliris.Service.Internal.Transfer.Lib.ViewModels.ExternalTransferOrderViewModels;
+using Com.Danliris.Service.Internal.Transfer.Lib.ViewModels.TransferDeliveryOrderViewModel;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
 using iTextSharp.text.pdf.draw;
@@ -10,9 +10,9 @@ using System.IO;
 
 namespace Com.Danliris.Service.Internal.Transfer.Lib.PDFTemplates
 {
-    public class ExternalTransferOrderPDFTemplate
+    public class TransferDeliveryOrderPDFTemplate
     {
-        public MemoryStream GeneratePdfTemplate(ExternalTransferOrderViewModel viewModel, ExternalTransferOrderService externalTransferOrderService)
+        public MemoryStream GeneratePdfTemplate(TransferDeliveryOrderViewModel viewModel, TransferDeliveryOrderService transferDeliveryOrderService)
         {
             UnitViewModel unit = externalTransferOrderService.GetUnitFromInternalTransferOrderByInternalTransferOrderId(viewModel.ExternalTransferOrderItems[0].ITOId);
 
@@ -27,49 +27,34 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.PDFTemplates
             Document document = new Document(PageSize.A4, 40, 40, 40, 40);
             MemoryStream stream = new MemoryStream();
             PdfWriter writer = PdfWriter.GetInstance(document, stream);
-            //writer.CloseStream = false;
+            writer.CloseStream = false;
             document.Open();
 
             PdfContentByte cb = writer.DirectContent;
 
             cb.BeginText();
 
-            cb.SetFontAndSize(bf_bold, 8);
+            cb.SetFontAndSize(bf_bold, 12);
             string[] headerLeft = new string[] {
                 "PT.DAN LIRIS",
-                "Head Office: Kelurahan Banaran",
-                "Kecamatan Grogol",
-                "Sukoharjo 57193 - INDONESIA",
-                "PO.BOX 166 Solo 57100",
-                "Telp. (0271) 740888, 714400",
-                "Fax. (0271) 735222, 740777",
+
             };
             int headerLeftPosition = 820;
             foreach (var item in headerLeft)
             {
                 cb.ShowTextAligned(PdfContentByte.ALIGN_LEFT, item, margin, headerLeftPosition -= 10, 0);
             }
+            cb.SetFontAndSize(bf, 10);
+            cb.ShowTextAligned(PdfContentByte.ALIGN_RIGHT, "Sukoharjo, " + viewModel.DODate.ToString("dd MMMM yyyy", new CultureInfo("id-ID")), width - margin, 50, 0);
+            cb.ShowTextAligned(PdfContentByte.ALIGN_RIGHT, "Kepada :", margin, 700, 0);
+            cb.ShowTextAligned(PdfContentByte.ALIGN_RIGHT, "Yth. Kepala Gudang", margin, 700, 0);
+            cb.ShowTextAligned(PdfContentByte.ALIGN_RIGHT, viewModel.Supplier.name, margin + 45, 700, 0);
+            cb.ShowTextAligned(PdfContentByte.ALIGN_RIGHT, "Attn.", margin + 45, 685, 0);
+            cb.ShowTextAligned(PdfContentByte.ALIGN_RIGHT, "Telp.", margin + 45, 670, 0);
 
             cb.SetFontAndSize(bf_bold, 9);
-            cb.ShowTextAligned(PdfContentByte.ALIGN_RIGHT, "Nomor : " + viewModel.ETONo, width - margin, 800, 0);
+            cb.ShowTextAligned(PdfContentByte.ALIGN_LEFT, "Nomor : " + viewModel.DONo, width - margin, 200, 0);
 
-            cb.SetFontAndSize(bf_bold, 12);
-            cb.ShowTextAligned(PdfContentByte.ALIGN_CENTER, "TRANSFER ORDER", 300, 725, 0);
-
-            cb.SetFontAndSize(bf, 10);
-            cb.ShowTextAligned(PdfContentByte.ALIGN_RIGHT, "Sukoharjo, " + viewModel.OrderDate.ToString("dd MMMM yyyy", new CultureInfo("id-ID")), width - margin, 700, 0);
-            cb.ShowTextAligned(PdfContentByte.ALIGN_LEFT, "Kepada :", margin, 700, 0);
-            cb.ShowTextAligned(PdfContentByte.ALIGN_LEFT, viewModel.DeliveryDivision.name, margin + 45, 700, 0);
-            cb.ShowTextAligned(PdfContentByte.ALIGN_LEFT, "Attn.", margin + 45, 685, 0);
-            cb.ShowTextAligned(PdfContentByte.ALIGN_LEFT, "Telp.", margin + 45, 670, 0);
-
-            cb.SetFontAndSize(bf_bold, 10);
-            cb.ShowTextAligned(PdfContentByte.ALIGN_RIGHT, "DO Penjualan, ", width - margin, 700, 0);
-            cb.ShowTextAligned(PdfContentByte.ALIGN_LEFT, "Order dari :..................", margin, 700, 0);
-            cb.ShowTextAligned(PdfContentByte.ALIGN_LEFT, "           :..................", margin, 700, 0);
-            cb.ShowTextAligned(PdfContentByte.ALIGN_LEFT, viewModel.DeliveryDivision.name, margin + 45, 700, 0);
-            cb.ShowTextAligned(PdfContentByte.ALIGN_LEFT, "Attn.", margin + 45, 685, 0);
-            cb.ShowTextAligned(PdfContentByte.ALIGN_LEFT, "Telp.", margin + 45, 670, 0); 
 
             cb.EndText();
 
@@ -83,17 +68,17 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.PDFTemplates
             PdfPTable tableContent = new PdfPTable(4);
             tableContent.SetWidths(new float[] { 2f, 1f, 1f, 1f });
 
-            cellCenter.Phrase = new Phrase("NO", bold_font);
-            tableContent.AddCell(cellCenter);
-            cellCenter.Phrase = new Phrase("KODE BARANG", bold_font);
-            tableContent.AddCell(cellCenter);
-            cellCenter.Phrase = new Phrase("NAMA BARANG", bold_font);
+            cellCenter.Phrase = new Phrase("NAMA DAN JENIS BARANG", bold_font);
             tableContent.AddCell(cellCenter);
             cellCenter.Phrase = new Phrase("JUMLAH", bold_font);
             tableContent.AddCell(cellCenter);
+            cellCenter.Phrase = new Phrase("HARGA SATUAN", bold_font);
+            tableContent.AddCell(cellCenter);
+            cellCenter.Phrase = new Phrase("SUB TOTAL", bold_font);
+            tableContent.AddCell(cellCenter);
 
             double total = 0;
-            //for (int a = 0; a < 3; a++) // coba kalau banyak baris ^_^
+            for (int a = 0; a < 3; a++) coba kalau banyak baris ^ _ ^
             for (int indexItem = 0; indexItem < viewModel.ExternalTransferOrderItems.Count; indexItem++)
             {
                 ExternalTransferOrderItemViewModel externalTransferOrderItem = viewModel.ExternalTransferOrderItems[indexItem];
@@ -144,13 +129,13 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.PDFTemplates
             cellSignatureContent.Phrase = new Phrase("Pengirim\n\n\n\n\n\n\n" + viewModel.DeliveryDivision.name, bold_font);
             tableSignature.AddCell(cellSignatureContent);
 
-            // --------- kalo dihapus tabel malah jadi ada margin kanan dan kiri
-            PdfPCell cellContent = new PdfPCell(tableContent);
+            ---------kalo dihapus tabel malah jadi ada margin kanan dan kiri
+          PdfPCell cellContent = new PdfPCell(tableContent);
             PdfPCell cellFooter = new PdfPCell(tableFooter);
             PdfPCell cellSignature = new PdfPCell(tableSignature);
-            // --------- kalo dihapus tabel malah jadi ada margin kanan dan kiri
+            ---------kalo dihapus tabel malah jadi ada margin kanan dan kiri
 
-            LineSeparator lineSeparator = new LineSeparator(1f, 100f, BaseColor.White, Element.ALIGN_LEFT, 1);
+          LineSeparator lineSeparator = new LineSeparator(1f, 100f, BaseColor.White, Element.ALIGN_LEFT, 1);
             document.Add(lineSeparator);
 
             paragraph.SpacingBefore = 150f;
