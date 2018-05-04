@@ -92,11 +92,11 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.ViewModels.TransferDelivery
                            //)
                            //.ToList();
 
-                            if (Detail.DOQuantity > Detail.RemainingQuantity)
-                            {
-                                detailErrorCount++;
-                                transferDeliveryOrderDetailError += "DOQuantity: 'Jumlah DO tidak boleh lebih dari (Jumlah pada RemainingQuantity di tabel ExternalTransferOrderDetails)', ";
-                            }
+                            //if (Detail.DOQuantity > Detail.RemainingQuantity)
+                            //{
+                            //    detailErrorCount++;
+                            //    transferDeliveryOrderDetailError += "DOQuantity: 'Jumlah DO tidak boleh lebih dari (Jumlah pada RemainingQuantity di tabel ExternalTransferOrderDetails)', ";
+                            //}
 
                             transferDeliveryOrderDetailError += " }, ";
                         }
