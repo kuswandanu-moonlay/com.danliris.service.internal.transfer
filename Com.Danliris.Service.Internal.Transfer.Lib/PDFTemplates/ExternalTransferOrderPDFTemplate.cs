@@ -63,14 +63,6 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.PDFTemplates
             cb.ShowTextAligned(PdfContentByte.ALIGN_LEFT, "Attn.", margin + 45, 685, 0);
             cb.ShowTextAligned(PdfContentByte.ALIGN_LEFT, "Telp.", margin + 45, 670, 0);
 
-            cb.SetFontAndSize(bf_bold, 10);
-            cb.ShowTextAligned(PdfContentByte.ALIGN_RIGHT, "DO Penjualan, ", width - margin, 700, 0);
-            cb.ShowTextAligned(PdfContentByte.ALIGN_LEFT, "Order dari :..................", margin, 700, 0);
-            cb.ShowTextAligned(PdfContentByte.ALIGN_LEFT, "           :..................", margin, 700, 0);
-            cb.ShowTextAligned(PdfContentByte.ALIGN_LEFT, viewModel.DeliveryDivision.name, margin + 45, 700, 0);
-            cb.ShowTextAligned(PdfContentByte.ALIGN_LEFT, "Attn.", margin + 45, 685, 0);
-            cb.ShowTextAligned(PdfContentByte.ALIGN_LEFT, "Telp.", margin + 45, 670, 0); 
-
             cb.EndText();
 
             string paragraphContent = $"Dengan hormat, Yang bertanda tangan di bawah ini, Unit {unit.name} (selanjutnya disebut sebagai pihak Pemesan) dan Unit {viewModel.DeliveryDivision.name} (selanjutnya disebut sebagai pihak Pengirim) saling menyetujui untuk mengadakan transfer dengan ketentuan sebagai berikut:";
@@ -83,13 +75,13 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.PDFTemplates
             PdfPTable tableContent = new PdfPTable(4);
             tableContent.SetWidths(new float[] { 2f, 1f, 1f, 1f });
 
-            cellCenter.Phrase = new Phrase("NO", bold_font);
-            tableContent.AddCell(cellCenter);
-            cellCenter.Phrase = new Phrase("KODE BARANG", bold_font);
-            tableContent.AddCell(cellCenter);
-            cellCenter.Phrase = new Phrase("NAMA BARANG", bold_font);
+            cellCenter.Phrase = new Phrase("NAMA DAN JENIS BARANG", bold_font);
             tableContent.AddCell(cellCenter);
             cellCenter.Phrase = new Phrase("JUMLAH", bold_font);
+            tableContent.AddCell(cellCenter);
+            cellCenter.Phrase = new Phrase("HARGA SATUAN", bold_font);
+            tableContent.AddCell(cellCenter);
+            cellCenter.Phrase = new Phrase("SUB TOTAL", bold_font);
             tableContent.AddCell(cellCenter);
 
             double total = 0;

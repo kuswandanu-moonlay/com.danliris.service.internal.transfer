@@ -256,13 +256,13 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferDeliveryOr
                             if (externalTransferOrderDetail.RemainingQuantity > 0)
                             {
                                 TransferRequestDetail transferRequestDetail = this.DbContext.TransferRequestDetails.FirstOrDefault(s => s.Id == detail.TRDetailId);
-                                transferRequestDetail.Status = "Barang sudah datang sebagian";
+                                transferRequestDetail.Status = "Sudah diorder sebagian ke Unit Pengirim";
                                 transferRequestDetail._LastModifiedUtc = DateTime.UtcNow;
                                 transferRequestDetail._LastModifiedAgent = "Service";
                                 transferRequestDetail._LastModifiedBy = this.Username;
 
                                 InternalTransferOrderDetail internalTransferOrderDetail = this.DbContext.InternalTransferOrderDetails.FirstOrDefault(s => s.Id == detail.ITODetailId);
-                                internalTransferOrderDetail.Status = "Barang sudah datang sebagian";
+                                internalTransferOrderDetail.Status = "Sudah diorder sebagian ke Unit Pengirim";
                                 internalTransferOrderDetail._LastModifiedUtc = DateTime.UtcNow;
                                 internalTransferOrderDetail._LastModifiedAgent = "Service";
                                 internalTransferOrderDetail._LastModifiedBy = this.Username;
@@ -270,13 +270,13 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferDeliveryOr
                             else if(externalTransferOrderDetail.RemainingQuantity <= 0)
                             {
                                 TransferRequestDetail transferRequestDetail = this.DbContext.TransferRequestDetails.FirstOrDefault(s => s.Id == detail.TRDetailId);
-                                transferRequestDetail.Status = "Barang sudah datang semua";
+                                transferRequestDetail.Status = "Sudah diorder semua ke Unit Pengirim";
                                 transferRequestDetail._LastModifiedUtc = DateTime.UtcNow;
                                 transferRequestDetail._LastModifiedAgent = "Service";
                                 transferRequestDetail._LastModifiedBy = this.Username;
 
                                 InternalTransferOrderDetail internalTransferOrderDetail = this.DbContext.InternalTransferOrderDetails.FirstOrDefault(s => s.Id == detail.ITODetailId);
-                                internalTransferOrderDetail.Status = "Barang sudah datang semua";
+                                internalTransferOrderDetail.Status = "Sudah diorder semua ke Unit Pengirim";
                                 internalTransferOrderDetail._LastModifiedUtc = DateTime.UtcNow;
                                 internalTransferOrderDetail._LastModifiedAgent = "Service";
                                 internalTransferOrderDetail._LastModifiedBy = this.Username;
@@ -388,13 +388,13 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferDeliveryOr
                                     if (externalTransferOrderDetail.DealQuantity == detail.RemainingQuantity)
                                     {
                                         TransferRequestDetail transRequestDetail = this.DbContext.TransferRequestDetails.FirstOrDefault(s => s.Id == detail.TRDetailId);
-                                        transRequestDetail.Status = "Sudah diorder ke Divisi Pengirim";
+                                        transRequestDetail.Status = "Sudah diorder ke Penjualan";
                                         transRequestDetail._LastModifiedUtc = DateTime.UtcNow;
                                         transRequestDetail._LastModifiedAgent = "Service";
                                         transRequestDetail._LastModifiedBy = this.Username;
 
                                         InternalTransferOrderDetail internTransferOrderDetail = this.DbContext.InternalTransferOrderDetails.FirstOrDefault(s => s.Id == detail.ITODetailId);
-                                        transRequestDetail.Status = "Sudah diorder ke Divisi Pengirim";
+                                        transRequestDetail.Status = "Sudah diorder ke Penjualan";
                                         transRequestDetail._LastModifiedUtc = DateTime.UtcNow;
                                         transRequestDetail._LastModifiedAgent = "Service";
                                         transRequestDetail._LastModifiedBy = this.Username;
@@ -402,13 +402,13 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferDeliveryOr
                                     else if (externalTransferOrderDetail.RemainingQuantity <= 0)
                                     {
                                         TransferRequestDetail transRequestDetail = this.DbContext.TransferRequestDetails.FirstOrDefault(s => s.Id == detail.TRDetailId);
-                                        transRequestDetail.Status = "Barang sudah datang semua";
+                                        transRequestDetail.Status = "Sudah diorder semua ke Unit Pengirim";
                                         transRequestDetail._LastModifiedUtc = DateTime.UtcNow;
                                         transRequestDetail._LastModifiedAgent = "Service";
                                         transRequestDetail._LastModifiedBy = this.Username;
 
                                         InternalTransferOrderDetail internTransferOrderDetail = this.DbContext.InternalTransferOrderDetails.FirstOrDefault(s => s.Id == detail.ITODetailId);
-                                        transRequestDetail.Status = "Barang sudah datang semua";
+                                        transRequestDetail.Status = "Sudah diorder semua ke Unit Pengirim";
                                         transRequestDetail._LastModifiedUtc = DateTime.UtcNow;
                                         transRequestDetail._LastModifiedAgent = "Service";
                                         transRequestDetail._LastModifiedBy = this.Username;
@@ -416,13 +416,13 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferDeliveryOr
                                     else if (externalTransferOrderDetail.RemainingQuantity > 0)
                                     {
                                         TransferRequestDetail transRequestDetail = this.DbContext.TransferRequestDetails.FirstOrDefault(s => s.Id == detail.TRDetailId);
-                                        transRequestDetail.Status = "Barang sudah datang sebagian";
+                                        transRequestDetail.Status = "Sudah diorder sebagian ke Unit Pengirim";
                                         transRequestDetail._LastModifiedUtc = DateTime.UtcNow;
                                         transRequestDetail._LastModifiedAgent = "Service";
                                         transRequestDetail._LastModifiedBy = this.Username;
 
                                         InternalTransferOrderDetail internTransferOrderDetail = this.DbContext.InternalTransferOrderDetails.FirstOrDefault(s => s.Id == detail.ITODetailId);
-                                        transRequestDetail.Status = "Barang sudah datang sebagian";
+                                        transRequestDetail.Status = "Sudah diorder sebagian ke Unit Pengirim";
                                         transRequestDetail._LastModifiedUtc = DateTime.UtcNow;
                                         transRequestDetail._LastModifiedAgent = "Service";
                                         transRequestDetail._LastModifiedBy = this.Username;
@@ -527,13 +527,13 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferDeliveryOr
                                     if (externalTransferOrderDetail.DealQuantity == detail.RemainingQuantity)
                                     {
                                         TransferRequestDetail transRequestDetail = this.DbContext.TransferRequestDetails.FirstOrDefault(s => s.Id == detail.TRDetailId);
-                                        transRequestDetail.Status = "Sudah diorder ke Supplier";
+                                        transRequestDetail.Status = "Sudah diorder ke Penjualan";
                                         transRequestDetail._LastModifiedUtc = DateTime.UtcNow;
                                         transRequestDetail._LastModifiedAgent = "Service";
                                         transRequestDetail._LastModifiedBy = this.Username;
 
                                         InternalTransferOrderDetail internTransferOrderDetail = this.DbContext.InternalTransferOrderDetails.FirstOrDefault(s => s.Id == detail.ITODetailId);
-                                        transRequestDetail.Status = "Sudah diorder ke Supplier";
+                                        transRequestDetail.Status = "Sudah diorder ke Penjualan";
                                         transRequestDetail._LastModifiedUtc = DateTime.UtcNow;
                                         transRequestDetail._LastModifiedAgent = "Service";
                                         transRequestDetail._LastModifiedBy = this.Username;
@@ -541,13 +541,13 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferDeliveryOr
                                     else if (externalTransferOrderDetail.RemainingQuantity <= 0)
                                     {
                                         TransferRequestDetail transRequestDetail = this.DbContext.TransferRequestDetails.FirstOrDefault(s => s.Id == detail.TRDetailId);
-                                        transRequestDetail.Status = "Barang sudah datang semua";
+                                        transRequestDetail.Status = "Sudah diorder semua ke Unit Pengirim";
                                         transRequestDetail._LastModifiedUtc = DateTime.UtcNow;
                                         transRequestDetail._LastModifiedAgent = "Service";
                                         transRequestDetail._LastModifiedBy = this.Username;
 
                                         InternalTransferOrderDetail internTransferOrderDetail = this.DbContext.InternalTransferOrderDetails.FirstOrDefault(s => s.Id == detail.ITODetailId);
-                                        transRequestDetail.Status = "Barang sudah datang semua";
+                                        transRequestDetail.Status = "Sudah diorder semua ke Unit Pengirim";
                                         transRequestDetail._LastModifiedUtc = DateTime.UtcNow;
                                         transRequestDetail._LastModifiedAgent = "Service";
                                         transRequestDetail._LastModifiedBy = this.Username;
@@ -555,13 +555,13 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferDeliveryOr
                                     else if (externalTransferOrderDetail.RemainingQuantity > 0)
                                     {
                                         TransferRequestDetail transRequestDetail = this.DbContext.TransferRequestDetails.FirstOrDefault(s => s.Id == detail.TRDetailId);
-                                        transRequestDetail.Status = "Barang sudah datang sebagian";
+                                        transRequestDetail.Status = "Sudah diorder sebagian ke Unit Pengirim";
                                         transRequestDetail._LastModifiedUtc = DateTime.UtcNow;
                                         transRequestDetail._LastModifiedAgent = "Service";
                                         transRequestDetail._LastModifiedBy = this.Username;
 
                                         InternalTransferOrderDetail internTransferOrderDetail = this.DbContext.InternalTransferOrderDetails.FirstOrDefault(s => s.Id == detail.ITODetailId);
-                                        transRequestDetail.Status = "Barang sudah datang sebagian";
+                                        transRequestDetail.Status = "Sudah diorder sebagian ke Unit Pengirim";
                                         transRequestDetail._LastModifiedUtc = DateTime.UtcNow;
                                         transRequestDetail._LastModifiedAgent = "Service";
                                         transRequestDetail._LastModifiedBy = this.Username;
@@ -603,6 +603,8 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferDeliveryOr
             base.OnDeleting(model);
             model._LastModifiedAgent = "Service";
             model._LastModifiedBy = this.Username;
+            model._DeletedAgent = "Service";
+            model._DeletedBy = this.Username;
         }
 
         public bool ETOPost(List<int> Ids)
@@ -704,6 +706,17 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferDeliveryOr
         {
             List<int> ETOinDO = new List<int> { 1, 2, 3 };
             return ETOinDO.Contains(Id);
+        }
+
+        public UnitViewModel GetFromExternalTransferOrderByExternalTransferOrderId(int Id)
+        {
+            InternalTransferOrder internalTransferOrder = this.DbContext.InternalTransferOrders.FirstOrDefault(p => p.Id.Equals(Id));
+            return new UnitViewModel()
+            {
+                _id = internalTransferOrder.UnitId,
+                code = internalTransferOrder.UnitCode,
+                name = internalTransferOrder.UnitName,
+            };
         }
 
         // public async Task<TransferDeliveryOrder> ReadModelByQuery(string Supplier)
