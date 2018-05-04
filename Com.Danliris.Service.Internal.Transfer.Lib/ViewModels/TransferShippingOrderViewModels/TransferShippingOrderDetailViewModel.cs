@@ -12,6 +12,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.ViewModels.TransferShipping
         public int ETODetailId { get; set; }
         public int ITODetailId { get; set; }
         public int TRDetailId { get; set; }
+        public string TRNo { get; set; }
         public ProductViewModel Product { get; set; }
         public UomViewModel Uom { get; set; }
         public string Grade { get; set; }
