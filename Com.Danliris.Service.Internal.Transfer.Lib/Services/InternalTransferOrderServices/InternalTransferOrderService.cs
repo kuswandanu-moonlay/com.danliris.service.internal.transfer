@@ -361,21 +361,21 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.InternalTransferOr
             HashSet<int> externalTransferOrderItems = new HashSet<int>(externalTransferOrderItemService.DbSet.Select(p => p.ITOId));
 
             Query = Query
-                .Select(mdn => new InternalTransferOrder
+                .Select(result => new InternalTransferOrder
                 {
-                    Id = mdn.Id,
-                    ITONo = mdn.ITONo,
-                    TRDate = mdn.TRDate,
-                    RequestedArrivalDate = mdn.RequestedArrivalDate,
-                    CategoryName = mdn.CategoryName,
-                    UnitName = mdn.UnitName,
-                    DivisionId = mdn.DivisionId,
-                    DivisionName = mdn.DivisionName,
-                    TRId = mdn.TRId,
-                    TRNo = mdn.TRNo,
-                    _CreatedBy = mdn._CreatedBy,
-                    _CreatedUtc = mdn._CreatedUtc,
-                    _LastModifiedUtc = mdn._LastModifiedUtc
+                    Id = result.Id,
+                    ITONo = result.ITONo,
+                    TRDate = result.TRDate,
+                    RequestedArrivalDate = result.RequestedArrivalDate,
+                    CategoryName = result.CategoryName,
+                    UnitName = result.UnitName,
+                    DivisionId = result.DivisionId,
+                    DivisionName = result.DivisionName,
+                    TRId = result.TRId,
+                    TRNo = result.TRNo,
+                    _CreatedBy = result._CreatedBy,
+                    _CreatedUtc = result._CreatedUtc,
+                    _LastModifiedUtc = result._LastModifiedUtc
                 })
                 .Where(s => s._IsDeleted == false)
                 .Where(s => !externalTransferOrderItems.Contains(s.Id));

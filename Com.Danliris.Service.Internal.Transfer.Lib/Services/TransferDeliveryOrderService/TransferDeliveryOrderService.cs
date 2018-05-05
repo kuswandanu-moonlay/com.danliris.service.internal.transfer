@@ -18,6 +18,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Com.Danliris.Service.Internal.Transfer.Lib.Models.ExternalTransferOrderModel;
 using Com.Danliris.Service.Internal.Transfer.Lib.Models.TransferRequestModel;
 using Com.Danliris.Service.Internal.Transfer.Lib.Models.InternalTransferOrderModel;
+using Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferShippingOrderServices;
 
 namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferDeliveryOrderService
 {
@@ -731,5 +732,55 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferDeliveryOr
         //}
         //  return result;
         //}
+
+        public List<TransferDeliveryOrder> ReadModelUnused(string Order = "{}", List<string> Select = null, string Keyword = null, string Filter = "{}", List<int> CurrentUsed = null)
+        {
+            IQueryable<TransferDeliveryOrder> Query = this.DbContext.TransferDeliveryOrders;
+
+            List<string> SearchAttributes = new List<string>()
+            {
+                "DONo"
+            };
+
+            Query = ConfigureSearch(Query, SearchAttributes, Keyword);
+
+            HashSet<int> transferShippingOrderDetails = new HashSet<int>(this.DbContext.TransferShippingOrderDetails.Select(p => p.DODetailId));
+
+            Query = Query
+                .Select(result => new TransferDeliveryOrder
+                {
+                    Id = result.Id,
+                    DONo = result.DONo,
+                    SupplierId = result.SupplierId,
+                    TransferDeliveryOrderItem = result.TransferDeliveryOrderItem
+                        .Select(item => new TransferDeliveryOrderItem
+                        {
+                            transferDeliveryOrderDetail = item.transferDeliveryOrderDetail
+                                .Select(detail => new TransferDeliveryOrderDetail
+                                {
+                                    RemainingQuantity = detail.RemainingQuantity
+                                })
+                                .Where(s => !transferShippingOrderDetails.Contains(s.Id))
+                                .Where(s => s.RemainingQuantity > 0)
+                                .ToList()
+                        })
+                        .Where(s => s.transferDeliveryOrderDetail.Count > 0)
+                        .ToList(),
+
+                    _LastModifiedUtc = result._LastModifiedUtc
+                })
+                .Where(s => s.TransferDeliveryOrderItem.Count > 0);
+
+            Dictionary<string, string> FilterDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(Filter);
+            Query = ConfigureFilter(Query, FilterDictionary);
+
+            Dictionary<string, string> OrderDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(Order);
+            Query = ConfigureOrder(Query, OrderDictionary);
+
+            List<TransferDeliveryOrder> Data = Query.ToList<TransferDeliveryOrder>();
+
+            return Data;
+
+        }
     }
 }
