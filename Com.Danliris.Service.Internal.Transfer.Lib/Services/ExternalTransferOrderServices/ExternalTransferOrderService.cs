@@ -267,6 +267,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.ExternalTransferOr
                                             ITODetailId = q.ITODetailId,
                                             TRDetailId = q.TRDetailId,
                                             ProductId = q.ProductId,
+                                            ProductCode = q.ProductCode,
                                             ProductName = q.ProductName,
                                             RemainingQuantity = q.RemainingQuantity,
                                             DealQuantity = q.DealQuantity,
