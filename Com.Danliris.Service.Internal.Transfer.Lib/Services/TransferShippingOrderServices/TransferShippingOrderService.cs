@@ -14,6 +14,8 @@ using Microsoft.EntityFrameworkCore;
 using Com.Moonlay.NetCore.Lib.Service;
 using Com.Danliris.Service.Internal.Transfer.Lib.Models.TransferRequestModel;
 using Com.Danliris.Service.Internal.Transfer.Lib.Models.InternalTransferOrderModel;
+using Com.Danliris.Service.Internal.Transfer.Lib.Models.TransferDeliveryOrderModel;
+using Com.Danliris.Service.Internal.Transfer.Lib.Models.ExternalTransferOrderModel;
 
 namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferShippingOrderServices
 {
@@ -134,7 +136,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferShippingOr
             List<string> SearchAttributes = new List<string>()
                 {
                     // Model
-                    "SONo", "SupplierName"
+                    "SONo", "SupplierName", "TransferShippingOrderItems.DONo"
                 };
             Query = ConfigureSearch(Query, SearchAttributes, Keyword);
 
@@ -195,19 +197,22 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferShippingOr
         {
             DateTime Now = DateTime.Now;
             string Year = Now.ToString("yy");
+            string Month = Now.ToString("MM");
 
-            string soNO = "SO" + model.SupplierCode + Year;
+            string SONo = "SO" + model.SupplierCode + Year + Month;
 
-            var lastShippingOrderNo = await this.DbSet.Where(w => w.SONo.StartsWith(soNO)).OrderByDescending(o => o.SONo).FirstOrDefaultAsync();
+            var lastSONo = await this.DbSet.Where(w => w.SONo.StartsWith(SONo)).OrderByDescending(o => o.SONo).FirstOrDefaultAsync();
 
-            if (lastShippingOrderNo == null)
+            int Padding = 3;
+
+            if (lastSONo == null)
             {
-                return soNO + "00001";
+                return SONo + "1".PadLeft(Padding, '0');
             }
             else
             {
-                int lastNo = Int32.Parse(lastShippingOrderNo.SONo.Replace(soNO, "")) + 1;
-                return soNO + lastNo.ToString().PadLeft(5, '0');
+                int lastNo = Int32.Parse(lastSONo.SONo.Replace(SONo, "")) + 1;
+                return SONo + lastNo.ToString().PadLeft(Padding, '0');
             }
         }
 
@@ -221,29 +226,27 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferShippingOr
                     Model.SONo = await this.CustomCodeGenerator(Model);
                     Created = await this.CreateAsync(Model);
 
-                    //foreach (var item in Model.TransferShippingOrderItems)
-                    //{
-                    //    foreach (var detail in item.TransferShippingOrderDetails)
-                    //    {
-                    //        TransferRequestDetail transferRequestDetail = this.DbContext.TransferRequestDetails.FirstOrDefault(s => s.Id == detail.TRDetailId);
-                    //        transferRequestDetail.Status = "Sudah diorder ke Supplier";
-                    //        transferRequestDetail._LastModifiedUtc = DateTime.UtcNow;
-                    //        transferRequestDetail._LastModifiedAgent = "Service";
-                    //        transferRequestDetail._LastModifiedBy = this.Username;
+                    foreach (var item in Model.TransferShippingOrderItems)
+                    {
+                        foreach (var detail in item.TransferShippingOrderDetails)
+                        {
+                            TransferDeliveryOrderDetail transferDeliveryOrderDetail = this.DbContext.TransferDeliveryOrderDetails.FirstOrDefault(s => s.Id == detail.DODetailId);
+                            transferDeliveryOrderDetail.ShippingOrderQuantity += (int)detail.DeliveryQuantity;
+                            transferDeliveryOrderDetail.RemainingQuantity -= (int)detail.DeliveryQuantity;
 
-                    //        InternalTransferOrderDetail internalTransferOrderDetail = this.DbContext.InternalTransferOrderDetails.FirstOrDefault(s => s.Id == detail.ITODetailId);
-                    //        internalTransferOrderDetail.Status = "Sudah dibuat TO Eksternal";
-                    //        internalTransferOrderDetail._LastModifiedUtc = DateTime.UtcNow;
-                    //        internalTransferOrderDetail._LastModifiedAgent = "Service";
-                    //        internalTransferOrderDetail._LastModifiedBy = this.Username;
+                            TransferRequestDetail transferRequestDetail = this.DbContext.TransferRequestDetails.FirstOrDefault(s => s.Id == detail.TRDetailId);
+                            transferRequestDetail.Status = transferDeliveryOrderDetail.RemainingQuantity > 0 ? "Barang Sudah dikirim sebagian" : "Barang Sudah dikirim semua";
+                            transferRequestDetail._LastModifiedUtc = DateTime.UtcNow;
+                            transferRequestDetail._LastModifiedAgent = "Service";
+                            transferRequestDetail._LastModifiedBy = this.Username;
 
-                    //        ExternalTransferOrderDetail etoDetail = this.DbContext.ExternalTransferOrderDetails.FirstOrDefault(s => s.Id == detail.ETODetailId);
-                    //        //etoDetail.Status = "Sudah dibuat TO Eksternal";
-                    //        etoDetail._LastModifiedUtc = DateTime.UtcNow;
-                    //        etoDetail._LastModifiedAgent = "Service";
-                    //        etoDetail._LastModifiedBy = this.Username;
-                    //    }
-                    //}
+                            InternalTransferOrderDetail internalTransferOrderDetail = this.DbContext.InternalTransferOrderDetails.FirstOrDefault(s => s.Id == detail.ITODetailId);
+                            internalTransferOrderDetail.Status = transferDeliveryOrderDetail.RemainingQuantity > 0 ? "Barang Sudah dikirim sebagian" : "Barang Sudah dikirim semua";
+                            internalTransferOrderDetail._LastModifiedUtc = DateTime.UtcNow;
+                            internalTransferOrderDetail._LastModifiedAgent = "Service";
+                            internalTransferOrderDetail._LastModifiedBy = this.Username;
+                        }
+                    }
                     this.DbContext.SaveChanges();
 
                     Transaction.Commit();
@@ -306,30 +309,49 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferShippingOr
                                 .Select(p => p.Id)
                             );
 
-                        TransferShippingOrderItem shippingOrderItem = Model.TransferShippingOrderItems.FirstOrDefault(p => p.Id.Equals(itemId));
+                        TransferShippingOrderItem shippingOrderItemNew = Model.TransferShippingOrderItems.FirstOrDefault(p => p.Id.Equals(itemId));
 
-                        if (shippingOrderItem == null)
+                        if (shippingOrderItemNew == null)
                         {
                             TransferShippingOrderItem item = this.DbContext.TransferShippingOrderItems
                                 .Include(d => d.TransferShippingOrderDetails)
                                 .FirstOrDefault(p => p.Id.Equals(itemId));
 
-                            //if (item != null)
-                            //{
-                            //    foreach (var detail in item.TransferShippingOrderDetails)
-                            //    {
-                            //        //TransferRequestDetail transferRequestDetail = this.DbContext.TransferRequestDetails.FirstOrDefault(s => s.Id == detail.TransferRequestDetailId);
-                            //        //transferRequestDetail.Status = "Sudah diterima Pembelian";
+                            if (item != null)
+                            {
+                                foreach (var detail in item.TransferShippingOrderDetails)
+                                {
+                                    TransferDeliveryOrderDetail transferDeliveryOrderDetail = this.DbContext.TransferDeliveryOrderDetails.FirstOrDefault(s => s.Id == detail.DODetailId);
+                                    transferDeliveryOrderDetail.ShippingOrderQuantity -= (int)detail.DeliveryQuantity;
+                                    transferDeliveryOrderDetail.RemainingQuantity += (int)detail.DeliveryQuantity;
 
-                            //        //InternalTransferOrderDetail internalTransferOrderDetail = this.DbContext.InternalTransferOrderDetails.FirstOrDefault(s => s.Id == detail.InternalTransferOrderDetailId);
-                            //        //internalTransferOrderDetail.Status = "TO Internal belum diorder";
-                            //    }
-                            //}
+                                    TransferRequestDetail transferRequestDetail = this.DbContext.TransferRequestDetails.FirstOrDefault(s => s.Id == detail.TRDetailId);
+                                    transferRequestDetail._LastModifiedUtc = DateTime.UtcNow;
+                                    transferRequestDetail._LastModifiedAgent = "Service";
+                                    transferRequestDetail._LastModifiedBy = this.Username;
+
+                                    InternalTransferOrderDetail internalTransferOrderDetail = this.DbContext.InternalTransferOrderDetails.FirstOrDefault(s => s.Id == detail.ITODetailId);
+                                    internalTransferOrderDetail._LastModifiedUtc = DateTime.UtcNow;
+                                    internalTransferOrderDetail._LastModifiedAgent = "Service";
+                                    internalTransferOrderDetail._LastModifiedBy = this.Username;
+
+                                    if (transferDeliveryOrderDetail.RemainingQuantity == transferDeliveryOrderDetail.DOQuantity)
+                                    {
+                                        ExternalTransferOrderDetail externalTransferOrderDetail = this.DbContext.ExternalTransferOrderDetails.FirstOrDefault(s => s.Id == detail.ETODetailId);
+
+                                        transferRequestDetail.Status = externalTransferOrderDetail.RemainingQuantity > 0 ? "Barang Sudah dikirim sebagian ke Unit Pengirim" : "Barang Sudah dikirim semua ke Unit Pengirim";
+                                        internalTransferOrderDetail.Status = externalTransferOrderDetail.RemainingQuantity > 0 ? "Barang Sudah dikirim sebagian ke Unit Pengirim" : "Barang Sudah dikirim semua ke Unit Pengirim";
+                                    }
+                                    else
+                                    {
+                                        transferRequestDetail.Status = transferDeliveryOrderDetail.RemainingQuantity > 0 ? "Barang Sudah dikirim sebagian" : "Barang Sudah dikirim semua";
+                                        internalTransferOrderDetail.Status = transferDeliveryOrderDetail.RemainingQuantity > 0 ? "Barang Sudah dikirim sebagian" : "Barang Sudah dikirim semua";
+                                    }
+                                }
+                            }
 
                             foreach (int detailId in ShippingOrderDetailIds)
                             {
-                                TransferShippingOrderDetail shippingOrderDetail = this.DbContext.TransferShippingOrderDetails.FirstOrDefault(p => p.Id.Equals(detailId));
-
                                 await shippingOrderDetailService.DeleteModel(detailId);
                             }
 
@@ -337,13 +359,49 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferShippingOr
                         }
                         else
                         {
-                            await shippingOrderItemService.UpdateModel(itemId, shippingOrderItem);
+                            await shippingOrderItemService.UpdateModel(itemId, shippingOrderItemNew);
 
                             foreach (int detailId in ShippingOrderDetailIds)
                             {
-                                TransferShippingOrderDetail shippingOrderDetail = shippingOrderItem.TransferShippingOrderDetails.FirstOrDefault(p => p.Id.Equals(detailId));
+                                TransferShippingOrderDetail shippingOrderDetailNew = shippingOrderItemNew.TransferShippingOrderDetails.FirstOrDefault(p => p.Id.Equals(detailId));
 
-                                await shippingOrderDetailService.UpdateModel(detailId, shippingOrderDetail);
+                                if (shippingOrderDetailNew == null)
+                                {
+                                    await shippingOrderDetailService.DeleteModel(detailId);
+                                }
+                                else
+                                {
+                                    await shippingOrderDetailService.UpdateModel(detailId, shippingOrderDetailNew);
+
+                                    TransferShippingOrderDetail shippingOrderDetailOld = this.DbContext.TransferShippingOrderDetails.FirstOrDefault(p => p.Id.Equals(detailId));
+
+                                    TransferDeliveryOrderDetail transferDeliveryOrderDetail = this.DbContext.TransferDeliveryOrderDetails.FirstOrDefault(s => s.Id == shippingOrderDetailNew.DODetailId);
+                                    transferDeliveryOrderDetail.ShippingOrderQuantity = transferDeliveryOrderDetail.ShippingOrderQuantity - (int)shippingOrderDetailOld.DeliveryQuantity + (int)shippingOrderDetailNew.DeliveryQuantity;
+                                    transferDeliveryOrderDetail.RemainingQuantity = transferDeliveryOrderDetail.RemainingQuantity + (int)shippingOrderDetailOld.DeliveryQuantity - (int)shippingOrderDetailNew.DeliveryQuantity;
+
+                                    TransferRequestDetail transferRequestDetail = this.DbContext.TransferRequestDetails.FirstOrDefault(s => s.Id == shippingOrderDetailNew.TRDetailId);
+                                    transferRequestDetail._LastModifiedUtc = DateTime.UtcNow;
+                                    transferRequestDetail._LastModifiedAgent = "Service";
+                                    transferRequestDetail._LastModifiedBy = this.Username;
+
+                                    InternalTransferOrderDetail internalTransferOrderDetail = this.DbContext.InternalTransferOrderDetails.FirstOrDefault(s => s.Id == shippingOrderDetailNew.ITODetailId);
+                                    internalTransferOrderDetail._LastModifiedUtc = DateTime.UtcNow;
+                                    internalTransferOrderDetail._LastModifiedAgent = "Service";
+                                    internalTransferOrderDetail._LastModifiedBy = this.Username;
+
+                                    if (transferDeliveryOrderDetail.RemainingQuantity == transferDeliveryOrderDetail.DOQuantity)
+                                    {
+                                        ExternalTransferOrderDetail externalTransferOrderDetail = this.DbContext.ExternalTransferOrderDetails.FirstOrDefault(s => s.Id == shippingOrderDetailNew.ETODetailId);
+
+                                        transferRequestDetail.Status = externalTransferOrderDetail.RemainingQuantity > 0 ? "Barang Sudah dikirim sebagian ke Unit Pengirim" : "Barang Sudah dikirim semua ke Unit Pengirim";
+                                        internalTransferOrderDetail.Status = externalTransferOrderDetail.RemainingQuantity > 0 ? "Barang Sudah dikirim sebagian ke Unit Pengirim" : "Barang Sudah dikirim semua ke Unit Pengirim";
+                                    }
+                                    else
+                                    {
+                                        transferRequestDetail.Status = transferDeliveryOrderDetail.RemainingQuantity > 0 ? "Barang Sudah dikirim sebagian" : "Barang Sudah dikirim semua";
+                                        internalTransferOrderDetail.Status = transferDeliveryOrderDetail.RemainingQuantity > 0 ? "Barang Sudah dikirim sebagian" : "Barang Sudah dikirim semua";
+                                    }
+                                }
                             }
                         }
                     }
@@ -358,11 +416,32 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferShippingOr
 
                             foreach (var detail in item.TransferShippingOrderDetails)
                             {
+                                TransferDeliveryOrderDetail transferDeliveryOrderDetail = this.DbContext.TransferDeliveryOrderDetails.FirstOrDefault(s => s.Id == detail.DODetailId);
+                                transferDeliveryOrderDetail.ShippingOrderQuantity += (int)detail.DeliveryQuantity;
+                                transferDeliveryOrderDetail.RemainingQuantity -= (int)detail.DeliveryQuantity;
+
                                 TransferRequestDetail transferRequestDetail = this.DbContext.TransferRequestDetails.FirstOrDefault(s => s.Id == detail.TRDetailId);
-                                transferRequestDetail.Status = "Sudah diorder ke Supplier";
+                                transferRequestDetail._LastModifiedUtc = DateTime.UtcNow;
+                                transferRequestDetail._LastModifiedAgent = "Service";
+                                transferRequestDetail._LastModifiedBy = this.Username;
 
                                 InternalTransferOrderDetail internalTransferOrderDetail = this.DbContext.InternalTransferOrderDetails.FirstOrDefault(s => s.Id == detail.ITODetailId);
-                                internalTransferOrderDetail.Status = "Sudah dibuat Surat Jalan";
+                                internalTransferOrderDetail._LastModifiedUtc = DateTime.UtcNow;
+                                internalTransferOrderDetail._LastModifiedAgent = "Service";
+                                internalTransferOrderDetail._LastModifiedBy = this.Username;
+
+                                if (transferDeliveryOrderDetail.RemainingQuantity == transferDeliveryOrderDetail.DOQuantity)
+                                {
+                                    ExternalTransferOrderDetail externalTransferOrderDetail = this.DbContext.ExternalTransferOrderDetails.FirstOrDefault(s => s.Id == detail.ETODetailId);
+
+                                    transferRequestDetail.Status = externalTransferOrderDetail.RemainingQuantity > 0 ? "Barang Sudah dikirim sebagian ke Unit Pengirim" : "Barang Sudah dikirim semua ke Unit Pengirim";
+                                    internalTransferOrderDetail.Status = externalTransferOrderDetail.RemainingQuantity > 0 ? "Barang Sudah dikirim sebagian ke Unit Pengirim" : "Barang Sudah dikirim semua ke Unit Pengirim";
+                                }
+                                else
+                                {
+                                    transferRequestDetail.Status = transferDeliveryOrderDetail.RemainingQuantity > 0 ? "Barang Sudah dikirim sebagian" : "Barang Sudah dikirim semua";
+                                    internalTransferOrderDetail.Status = transferDeliveryOrderDetail.RemainingQuantity > 0 ? "Barang Sudah dikirim sebagian" : "Barang Sudah dikirim semua";
+                                }
                             }
                         }
                     }
@@ -378,6 +457,110 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferShippingOr
             }
 
             return Updated;
+        }
+
+        public override void OnUpdating(int id, TransferShippingOrder model)
+        {
+            base.OnUpdating(id, model);
+
+            model._LastModifiedAgent = "Service";
+            model._LastModifiedBy = this.Username;
+        }
+
+        public override async Task<int> DeleteModel(int Id)
+        {
+            int Deleted = 0;
+
+            using (var Transaction = this.DbContext.Database.BeginTransaction())
+            {
+                try
+                {
+                    TransferShippingOrderItemService transferShippingOrderItemService = ServiceProvider.GetService<TransferShippingOrderItemService>();
+                    transferShippingOrderItemService.Username = this.Username;
+                    TransferShippingOrderDetailService transferShippingOrderDetailService = ServiceProvider.GetService<TransferShippingOrderDetailService>();
+                    transferShippingOrderDetailService.Username = this.Username;
+
+                    HashSet<int> TransferShippingOrderItemIds = new HashSet<int>(
+                        this.DbContext.TransferShippingOrderItems
+                            .Where(p => p.SOId.Equals(Id))
+                            .Select(p => p.Id)
+                        );
+
+                    foreach (int itemId in TransferShippingOrderItemIds)
+                    {
+                        HashSet<int> TransferShippingOrderDetailIds = new HashSet<int>(
+                            this.DbContext.TransferShippingOrderDetails
+                                .Where(p => p.SOItemId.Equals(itemId))
+                                .Select(p => p.Id)
+                            );
+
+                        foreach (int detailId in TransferShippingOrderDetailIds)
+                        {
+                            await transferShippingOrderDetailService.DeleteModel(detailId);
+
+                            TransferShippingOrderItem item = this.DbContext.TransferShippingOrderItems
+                                .Include(d => d.TransferShippingOrderDetails)
+                                .FirstOrDefault(p => p.Id.Equals(itemId));
+
+                            if (item != null)
+                            {
+                                foreach (var detail in item.TransferShippingOrderDetails)
+                                {
+                                    TransferDeliveryOrderDetail transferDeliveryOrderDetail = this.DbContext.TransferDeliveryOrderDetails.FirstOrDefault(s => s.Id == detail.DODetailId);
+                                    transferDeliveryOrderDetail.ShippingOrderQuantity -= (int)detail.DeliveryQuantity;
+                                    transferDeliveryOrderDetail.RemainingQuantity += (int)detail.DeliveryQuantity;
+
+                                    TransferRequestDetail transferRequestDetail = this.DbContext.TransferRequestDetails.FirstOrDefault(s => s.Id == detail.TRDetailId);
+                                    transferRequestDetail._LastModifiedUtc = DateTime.UtcNow;
+                                    transferRequestDetail._LastModifiedAgent = "Service";
+                                    transferRequestDetail._LastModifiedBy = this.Username;
+
+                                    InternalTransferOrderDetail internalTransferOrderDetail = this.DbContext.InternalTransferOrderDetails.FirstOrDefault(s => s.Id == detail.ITODetailId);
+                                    internalTransferOrderDetail._LastModifiedUtc = DateTime.UtcNow;
+                                    internalTransferOrderDetail._LastModifiedAgent = "Service";
+                                    internalTransferOrderDetail._LastModifiedBy = this.Username;
+
+                                    if (transferDeliveryOrderDetail.RemainingQuantity == transferDeliveryOrderDetail.DOQuantity)
+                                    {
+                                        ExternalTransferOrderDetail externalTransferOrderDetail = this.DbContext.ExternalTransferOrderDetails.FirstOrDefault(s => s.Id == detail.ETODetailId);
+
+                                        transferRequestDetail.Status = externalTransferOrderDetail.RemainingQuantity > 0 ? "Barang Sudah dikirim sebagian ke Unit Pengirim" : "Barang Sudah dikirim semua ke Unit Pengirim";
+                                        internalTransferOrderDetail.Status = externalTransferOrderDetail.RemainingQuantity > 0 ? "Barang Sudah dikirim sebagian ke Unit Pengirim" : "Barang Sudah dikirim semua ke Unit Pengirim";
+                                    }
+                                    else
+                                    {
+                                        transferRequestDetail.Status = transferDeliveryOrderDetail.RemainingQuantity > 0 ? "Barang Sudah dikirim sebagian" : "Barang Sudah dikirim semua";
+                                        internalTransferOrderDetail.Status = transferDeliveryOrderDetail.RemainingQuantity > 0 ? "Barang Sudah dikirim sebagian" : "Barang Sudah dikirim semua";
+                                    }
+                                }
+                            }
+                        }
+
+                        await transferShippingOrderItemService.DeleteModel(itemId);
+                    }
+
+                    Deleted = await this.DeleteAsync(Id);
+
+                    this.DbContext.SaveChanges();
+                    Transaction.Commit();
+                }
+                catch (Exception)
+                {
+                    Transaction.Rollback();
+                }
+            }
+
+            return Deleted;
+        }
+
+        public override void OnDeleting(TransferShippingOrder model)
+        {
+            base.OnDeleting(model);
+
+            model._LastModifiedAgent = "Service";
+            model._LastModifiedBy = this.Username;
+            model._DeletedAgent = "Service";
+            model._DeletedBy = this.Username;
         }
 
         public bool SOPost(List<int> Ids)
@@ -401,21 +584,14 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferShippingOr
 
                         foreach (var item in data.TransferShippingOrderItems)
                         {
-                            TransferShippingOrderItem SOItem = this.DbContext.TransferShippingOrderItems.FirstOrDefault(s => s.Id == item.Id);
-                            SOItem._LastModifiedUtc = DateTime.UtcNow;
-                            SOItem._LastModifiedAgent = "Service";
-                            SOItem._LastModifiedBy = this.Username;
+                            item._LastModifiedUtc = DateTime.UtcNow;
+                            item._LastModifiedAgent = "Service";
+                            item._LastModifiedBy = this.Username;
                             foreach (var detail in item.TransferShippingOrderDetails)
                             {
-                                TransferShippingOrderDetail SODetail = this.DbContext.TransferShippingOrderDetails.FirstOrDefault(s => s.Id == detail.Id);
-                                SODetail._LastModifiedUtc = DateTime.UtcNow;
-                                SODetail._LastModifiedAgent = "Service";
-                                SODetail._LastModifiedBy = this.Username;
-                                //InternalTransferOrderDetail internalTransferOrderDetail = this.DbContext.InternalTransferOrderDetails.FirstOrDefault(s => s.Id == detail.InternalTransferOrderDetailId);
-                                //internalTransferOrderDetail.Status = "Sudah diorder ke Supplier";
-                                //internalTransferOrderDetail._LastModifiedUtc = DateTime.UtcNow;
-                                //internalTransferOrderDetail._LastModifiedAgent = "Service";
-                                //internalTransferOrderDetail._LastModifiedBy = this.Username;
+                                detail._LastModifiedUtc = DateTime.UtcNow;
+                                detail._LastModifiedAgent = "Service";
+                                detail._LastModifiedBy = this.Username;
                             }
                         }
                     });
@@ -454,13 +630,15 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferShippingOr
 
                     foreach (var item in data.TransferShippingOrderItems)
                     {
+                        item._LastModifiedUtc = DateTime.UtcNow;
+                        item._LastModifiedAgent = "Service";
+                        item._LastModifiedBy = this.Username;
+
                         foreach (var detail in item.TransferShippingOrderDetails)
                         {
-                            InternalTransferOrderDetail internalTransferOrderDetail = this.DbContext.InternalTransferOrderDetails.FirstOrDefault(s => s.Id == detail.ITODetailId);
-                            internalTransferOrderDetail.Status = "Sudah dibuat Surat Jalan";
-                            internalTransferOrderDetail._LastModifiedUtc = DateTime.UtcNow;
-                            internalTransferOrderDetail._LastModifiedAgent = "Service";
-                            internalTransferOrderDetail._LastModifiedBy = this.Username;
+                            detail._LastModifiedUtc = DateTime.UtcNow;
+                            detail._LastModifiedAgent = "Service";
+                            detail._LastModifiedBy = this.Username;
                         }
                     }
 
