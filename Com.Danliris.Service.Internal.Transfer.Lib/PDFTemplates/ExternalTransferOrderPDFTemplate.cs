@@ -14,7 +14,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.PDFTemplates
     {
         public MemoryStream GeneratePdfTemplate(ExternalTransferOrderViewModel viewModel, ExternalTransferOrderService externalTransferOrderService)
         {
-            UnitViewModel unit = externalTransferOrderService.GetUnitFromInternalTransferOrderByInternalTransferOrderId(viewModel.ExternalTransferOrderItems[0].ITOId);
+            UnitViewModel unit = viewModel.ExternalTransferOrderItems[0].Unit;
 
             BaseFont bf = BaseFont.CreateFont(BaseFont.HELVETICA, BaseFont.CP1250, BaseFont.NOT_EMBEDDED);
             BaseFont bf_bold = BaseFont.CreateFont(BaseFont.HELVETICA_BOLD, BaseFont.CP1250, BaseFont.NOT_EMBEDDED);
