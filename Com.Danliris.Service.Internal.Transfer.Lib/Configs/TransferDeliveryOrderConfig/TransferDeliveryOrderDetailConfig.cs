@@ -10,6 +10,8 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Configs.TransferDeliveryOrd
         {
             builder.Property(p => p.Grade).HasMaxLength(100);
             builder.Property(p => p.ShippingOrderQuantity).HasDefaultValue(0);
+            builder.Property(p => p.TRId).HasMaxLength(100);
+            builder.Property(p => p.TRNo).HasMaxLength(255);
         }
     }
 }

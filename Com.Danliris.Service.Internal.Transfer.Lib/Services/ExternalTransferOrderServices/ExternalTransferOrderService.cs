@@ -242,6 +242,8 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.ExternalTransferOr
                     ETONo = result.ETONo,
                     OrderDate = result.OrderDate,
                     IsPosted = result.IsPosted,
+                    IsCanceled = result.IsCanceled,
+                    IsClosed = result.IsClosed,
                     Remark = result.Remark,
                     _LastModifiedUtc = result._LastModifiedUtc,
                     OrderDivisionName = result.OrderDivisionName,

@@ -11,9 +11,10 @@ using System;
 namespace Com.Danliris.Service.Internal.Transfer.Lib.Migrations
 {
     [DbContext(typeof(InternalTransferDbContext))]
-    partial class InternalTransferDbContextModelSnapshot : ModelSnapshot
+    [Migration("20180507011533_change_column_table_transferdeliveryorderitems&transferdeliveryorderdetails")]
+    partial class change_column_table_transferdeliveryorderitemstransferdeliveryorderdetails
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
