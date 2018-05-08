@@ -11,8 +11,6 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Configs.TransferDeliveryOrd
             builder.Property(p => p.DOId).HasMaxLength(100);
             builder.Property(p => p.ETOId).HasMaxLength(100);
             builder.Property(p => p.ETONo).HasMaxLength(255);
-            builder.Property(p => p.TRId).HasMaxLength(100);
-            builder.Property(p => p.TRNo).HasMaxLength(255);
             builder.Property(p => p.ITOId).HasMaxLength(100);
             builder.Property(p => p.ITONo).HasMaxLength(255);
 
