@@ -57,7 +57,7 @@ namespace Com.Danliris.Service.Internal.Transfer.WebApi.Controllers.v1
         //}
 
         [HttpGet("unused")]
-        public IActionResult GetPostedTransferRequest(string Order = "{}", [Bind(Prefix = "Select[]")]List<string> Select = null, string Keyword = null, string Filter = "{}", [Bind(Prefix = "CurrentUsed[]")]List<int> CurrentUsed = null)
+        public IActionResult Unused(string Order = "{}", [Bind(Prefix = "Select[]")]List<string> Select = null, string Keyword = null, string Filter = "{}", [Bind(Prefix = "CurrentUsed[]")]List<int> CurrentUsed = null)
         {
             try
             {

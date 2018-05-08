@@ -93,5 +93,28 @@ namespace Com.Danliris.Service.Internal.Transfer.WebApi.Controllers.v1
                 return StatusCode(General.INTERNAL_ERROR_STATUS_CODE);
             }
         }
+
+        [HttpGet("unused")]
+        public IActionResult Unused(string Order = "{}", [Bind(Prefix = "Select[]")]List<string> Select = null, string Keyword = null, string Filter = "{}", [Bind(Prefix = "CurrentUsed[]")]List<int> CurrentUsed = null)
+        {
+            try
+            {
+                Service.Username = User.Claims.Single(p => p.Type.Equals("username")).Value;
+                List<TransferDeliveryOrder> Data = Service.ReadModelUnused(Order, Select, Keyword, Filter, CurrentUsed);
+
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.OK_STATUS_CODE, General.OK_MESSAGE)
+                    .Ok(Data, Service.MapToViewModel);
+
+                return Ok(Result);
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
     }
 }
