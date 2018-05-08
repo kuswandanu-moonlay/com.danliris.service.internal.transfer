@@ -13,6 +13,8 @@ using Com.Moonlay.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Com.Danliris.Service.Internal.Transfer.Lib.Configs.TransferShippingOrderConfigs;
 using Com.Danliris.Service.Internal.Transfer.Lib.Models.TransferShippingOrderModel;
+using Com.Danliris.Service.Internal.Transfer.Lib.Models.TransferReceiptNoteModel;
+using Com.Danliris.Service.Internal.Transfer.Lib.Configs.TransferReceiptNoteConfigs;
 
 namespace Com.Danliris.Service.Internal.Transfer.Lib
 {
@@ -40,6 +42,10 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib
         public DbSet<TransferShippingOrderItem> TransferShippingOrderItems { get; set; }
         public DbSet<TransferShippingOrderDetail> TransferShippingOrderDetails { get; set; }
 
+        public DbSet<TransferReceiptNote> TransferReceiptNotes { get; set; }
+        public DbSet<TransferReceiptNoteDetail> TransferReceiptNoteDetails { get; set; }
+
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -61,6 +67,9 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib
             modelBuilder.ApplyConfiguration(new TransferShippingOrderConfig());
             modelBuilder.ApplyConfiguration(new TransferShippingOrderDetailConfig());
             modelBuilder.ApplyConfiguration(new TransferShippingOrderItemConfig());
+
+            modelBuilder.ApplyConfiguration(new TransferReceiptNoteConfig());
+            modelBuilder.ApplyConfiguration(new TransferReceiptNoteDetailConfig());
         }
     }
 }
