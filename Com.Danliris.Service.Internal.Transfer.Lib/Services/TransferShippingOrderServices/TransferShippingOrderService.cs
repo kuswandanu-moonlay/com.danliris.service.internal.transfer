@@ -657,6 +657,13 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferShippingOr
             return IsSuccessful;
         }
 
-        
+        public bool CheckIdIsUsedByUnitReceiptNotes(int Id)
+        {
+            //HashSet<int> TransferDeliveryOrderItemIds = new HashSet<int>(this.DbContext.UnitReceiptNotesService.Select(p => p.SOId));
+            HashSet<int> TransferDeliveryOrderItemIds = new HashSet<int>();
+
+            return TransferDeliveryOrderItemIds.Contains(Id);
+        }
+
     }
 }

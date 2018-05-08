@@ -94,5 +94,25 @@ namespace Com.Danliris.Service.Internal.Transfer.WebApi.Controllers.v1
             }
         }
 
+        [HttpGet("isused/{id}")]
+        public IActionResult CheckIsUsedByDeliveryOrder([FromRoute]int Id)
+        {
+            try
+            {
+                var data = Service.CheckIdIsUsedByUnitReceiptNotes(Id);
+
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.OK_STATUS_CODE, General.OK_MESSAGE)
+                    .Ok<bool>(data);
+                return Ok(Result);
+            }
+            catch (Exception e)
+            {
+                Dictionary<string, object> Result =
+                    new ResultFormatter(ApiVersion, General.INTERNAL_ERROR_STATUS_CODE, e.Message)
+                    .Fail();
+                return StatusCode(General.INTERNAL_ERROR_STATUS_CODE, Result);
+            }
+        }
     }
 }

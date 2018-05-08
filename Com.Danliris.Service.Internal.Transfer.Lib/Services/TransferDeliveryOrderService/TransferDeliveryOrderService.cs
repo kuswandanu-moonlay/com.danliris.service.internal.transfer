@@ -787,6 +787,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.TransferDeliveryOr
                     Id = result.Id,
                     DONo = result.DONo,
                     SupplierId = result.SupplierId,
+                    IsPosted = result.IsPosted,
                     TransferDeliveryOrderItem = result.TransferDeliveryOrderItem
                         .Select(item => new TransferDeliveryOrderItem
                         {
