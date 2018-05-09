@@ -11,7 +11,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.ViewModels.TransferShipping
         public int DOId { get; set; }
         public string DONo { get; set; }
         public int ETOId { get; set; }
-        public string ETOIdNo { get; set; }
+        public string ETONo { get; set; }
         public int ITOId { get; set; }
         public string ITONo { get; set; }
         public int TRId { get; set; }

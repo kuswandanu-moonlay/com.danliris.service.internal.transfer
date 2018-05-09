@@ -242,6 +242,8 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.ExternalTransferOr
                     ETONo = result.ETONo,
                     OrderDate = result.OrderDate,
                     IsPosted = result.IsPosted,
+                    IsCanceled = result.IsCanceled,
+                    IsClosed = result.IsClosed,
                     Remark = result.Remark,
                     _LastModifiedUtc = result._LastModifiedUtc,
                     OrderDivisionName = result.OrderDivisionName,
@@ -267,6 +269,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.ExternalTransferOr
                                             ITODetailId = q.ITODetailId,
                                             TRDetailId = q.TRDetailId,
                                             ProductId = q.ProductId,
+                                            ProductCode = q.ProductCode,
                                             ProductName = q.ProductName,
                                             RemainingQuantity = q.RemainingQuantity,
                                             DealQuantity = q.DealQuantity,
@@ -787,17 +790,6 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.ExternalTransferOr
             }
 
             return IsSuccessful;
-        }
-
-        public UnitViewModel GetUnitFromInternalTransferOrderByInternalTransferOrderId(int Id)
-        {
-            InternalTransferOrder internalTransferOrder = this.DbContext.InternalTransferOrders.FirstOrDefault(p => p.Id.Equals(Id));
-            return new UnitViewModel()
-            {
-                _id = internalTransferOrder.UnitId,
-                code = internalTransferOrder.UnitCode,
-                name = internalTransferOrder.UnitName,
-            };
         }
 
         public bool CheckIdIsUsedByDeliveryOrder(int Id)

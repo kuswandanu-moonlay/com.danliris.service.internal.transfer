@@ -89,7 +89,8 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.PDFTemplates
 
             double total = 0;
             int index = 1;
-
+            string unitname = "";
+            string unitnameTemp = "";
             for (int indexItem = 0; indexItem < viewModel.items.Count; indexItem++)
             {
                 TransferDeliveryOrderItemViewModel transferDeliveryOrderItem = viewModel.items[indexItem];
@@ -112,6 +113,17 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.PDFTemplates
                     cellRight.Phrase = new Phrase($"{transferDeliveryOrderDetail.DOQuantity.ToString("N", new CultureInfo("id-ID"))}  {transferDeliveryOrderDetail.UomUnit}", normal_font);
                     tableContent.AddCell(cellRight);
                     total += transferDeliveryOrderDetail.DOQuantity;
+                    
+                    if(unitname == "")
+                    {
+                        unitname = transferDeliveryOrderDetail.UnitName;
+                        unitnameTemp = unitname;
+                    } else if (unitnameTemp != transferDeliveryOrderDetail.UnitName)
+                    {
+                        unitnameTemp = transferDeliveryOrderDetail.UnitName;
+                        unitname = $"{unitname}, {transferDeliveryOrderDetail.UnitName}";
+                    }
+
                 }
                 index++;
             }
@@ -135,7 +147,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.PDFTemplates
             cellFooterContent.Phrase = new Phrase("Sc : ....................", normal_font);
             tableFooter.AddCell(cellFooterContent);
             cellFooterContent.Colspan = 3;
-            cellFooterContent.Phrase = new Phrase($"Untuk bagian dikirim kepada : {viewModel.Division.name}", normal_font);
+            cellFooterContent.Phrase = new Phrase($"Untuk bagian dikirim kepada : {unitname}", normal_font);
             tableFooter.AddCell(cellFooterContent);
             cellFooterContent.Colspan = 3;
             cellFooterContent.Phrase = new Phrase("Keterangan : ............................................................................................................................................", normal_font);
