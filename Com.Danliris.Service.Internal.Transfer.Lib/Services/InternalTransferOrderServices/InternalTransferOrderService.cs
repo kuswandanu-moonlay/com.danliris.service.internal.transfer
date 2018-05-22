@@ -33,7 +33,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.InternalTransferOr
 
             DateTime Now = DateTime.Now;
             string Year = Now.ToString("yy");
-           
+
 
             if (lastData == null)
             {
@@ -75,7 +75,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.InternalTransferOr
             {
                 try
                 {
-                    
+
                     Model = await this.CustomCodeGenerator(Model);
                     Created = await this.CreateAsync(Model);
                     foreach (var detail in Model.InternalTransferOrderDetails)
@@ -144,7 +144,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.InternalTransferOr
             IQueryable<InternalTransferOrder> Query = this.DbContext.InternalTransferOrders;
 
             List<string> SearchAttributes = new List<string>()
-            { 
+            {
                 "TRNo","UnitName","DivisionName","CategoryName","_CreatedBy", "ITONo"
             };
 
@@ -152,25 +152,26 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.InternalTransferOr
 
             List<string> SelectedFields = new List<string>()
             {
-                "Id", "ITONo","TRDate","Active", "_CreatedBy", "TRId", "TRNo" ,"RequestedArrivalDate","CategoryName","DivisionName","UnitName","IsPost"};
+                "Id", "ITONo","TRDate","Active", "_CreatedBy", "TRId", "TRNo" ,"RequestedArrivalDate","CategoryName","DivisionName","UnitName","IsPost", "IsCanceled"};
 
             Query = Query
                 .Select(mdn => new InternalTransferOrder
                 {
                     Id = mdn.Id,
                     ITONo = mdn.ITONo,
-                    TRDate=mdn.TRDate,
-                    RequestedArrivalDate=mdn.RequestedArrivalDate,
-                    CategoryName=mdn.CategoryName,
-                    UnitName=mdn.UnitName,
-                    DivisionName=mdn.DivisionName,
-                    _CreatedBy =mdn._CreatedBy,
+                    TRDate = mdn.TRDate,
+                    RequestedArrivalDate = mdn.RequestedArrivalDate,
+                    CategoryName = mdn.CategoryName,
+                    UnitName = mdn.UnitName,
+                    DivisionName = mdn.DivisionName,
+                    _CreatedBy = mdn._CreatedBy,
                     TRId = mdn.TRId,
                     TRNo = mdn.TRNo,
                     _CreatedUtc = mdn._CreatedUtc,
                     _LastModifiedUtc = mdn._LastModifiedUtc,
-                    IsPost=mdn.IsPost
-                }).Where(s=>s._IsDeleted == false);
+                    IsPost = mdn.IsPost,
+                    IsCanceled = mdn.IsCanceled
+                }).Where(s => s._IsDeleted == false);
 
             Dictionary<string, string> FilterDictionary = JsonConvert.DeserializeObject<Dictionary<string, string>>(Filter);
             Query = ConfigureFilter(Query, FilterDictionary);
@@ -246,7 +247,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.InternalTransferOr
                 internalTransferOrderDetail.Quantity = (double)detail.Quantity;
                 internalTransferOrderDetail.Status = "TO Internal belum diorder";
                 model.InternalTransferOrderDetails.Add(internalTransferOrderDetail);
-                
+
             }
 
             return model;
@@ -288,7 +289,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.InternalTransferOr
             return viewModel;
         }
 
- 
+
         //public async Task<int> SplitUpdate(int Id,InternalTransferOrderViewModel viewModel, InternalTransferOrder Model)
         //{
         //    InternalTransferOrderDetailService internalTransferOrderDetailService = this.ServiceProvider.GetService<InternalTransferOrderDetailService>();
@@ -338,8 +339,8 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.InternalTransferOr
 
         //    return Updated;
         //}
- 
-       
+
+
         public List<InternalTransferOrder> ReadModelUnused(string Order = "{}", List<string> Select = null, string Keyword = null, string Filter = "{}", List<int> CurrentUsed = null)
         {
             IQueryable<InternalTransferOrder> Query = this.DbContext.InternalTransferOrders;
@@ -360,20 +361,21 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.InternalTransferOr
             HashSet<int> externalTransferOrderItems = new HashSet<int>(externalTransferOrderItemService.DbSet.Select(p => p.ITOId));
 
             Query = Query
-                .Select(mdn => new InternalTransferOrder
+                .Select(result => new InternalTransferOrder
                 {
-                    Id = mdn.Id,
-                    ITONo = mdn.ITONo,
-                    TRDate = mdn.TRDate,
-                    RequestedArrivalDate = mdn.RequestedArrivalDate,
-                    CategoryName = mdn.CategoryName,
-                    UnitName = mdn.UnitName,
-                    DivisionName = mdn.DivisionName,
-                    TRId = mdn.TRId,
-                    TRNo = mdn.TRNo,
-                    _CreatedBy = mdn._CreatedBy,
-                    _CreatedUtc = mdn._CreatedUtc,
-                    _LastModifiedUtc = mdn._LastModifiedUtc
+                    Id = result.Id,
+                    ITONo = result.ITONo,
+                    TRDate = result.TRDate,
+                    RequestedArrivalDate = result.RequestedArrivalDate,
+                    CategoryName = result.CategoryName,
+                    UnitName = result.UnitName,
+                    DivisionId = result.DivisionId,
+                    DivisionName = result.DivisionName,
+                    TRId = result.TRId,
+                    TRNo = result.TRNo,
+                    _CreatedBy = result._CreatedBy,
+                    _CreatedUtc = result._CreatedUtc,
+                    _LastModifiedUtc = result._LastModifiedUtc
                 })
                 .Where(s => s._IsDeleted == false)
                 .Where(s => !externalTransferOrderItems.Contains(s.Id));
@@ -387,7 +389,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.InternalTransferOr
             List<InternalTransferOrder> Data = Query.ToList<InternalTransferOrder>();
 
             return Data;
- 
+
         }
     }
 }

@@ -38,6 +38,8 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.Services.ExternalTransferOr
             base.OnDeleting(model);
             model._LastModifiedAgent = "Service";
             model._LastModifiedBy = this.Username;
+            model._DeletedAgent = "Service";
+            model._DeletedBy = this.Username;
         }
     }
 }

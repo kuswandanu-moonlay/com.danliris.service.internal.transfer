@@ -11,7 +11,8 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.ViewModels.ExternalTransfer
     public class ExternalTransferOrderViewModel : BasicViewModel, IValidatableObject
     {
         public string ETONo { get; set; }
-        public DivisionViewModel Division { get; set; }
+        public DivisionViewModel OrderDivision { get; set; }
+        public DivisionViewModel DeliveryDivision { get; set; }
         public DateTime OrderDate { get; set; }
         public DateTime DeliveryDate { get; set; }
         public CurrencyViewModel Currency { get; set; }
@@ -24,8 +25,11 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.ViewModels.ExternalTransfer
 
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
-            if (this.Division == null || string.IsNullOrWhiteSpace(this.Division._id))
-                yield return new ValidationResult("Division is required", new List<string> { "Division" });
+            if (this.DeliveryDivision == null || string.IsNullOrWhiteSpace(this.DeliveryDivision._id))
+                yield return new ValidationResult("DeliveryDivision is required", new List<string> { "DeliveryDivision" });
+
+            if (this.OrderDivision == null || string.IsNullOrWhiteSpace(this.OrderDivision._id))
+                yield return new ValidationResult("OrderDivision is required", new List<string> { "OrderDivision" });
 
             if (this.OrderDate == null || this.OrderDate == DateTime.MinValue)
                 yield return new ValidationResult("OrderDate is required", new List<string> { "OrderDate" });
@@ -38,7 +42,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.ViewModels.ExternalTransfer
             int itemErrorCount = 0;
             int detailErrorCount = 0;
 
-            if (ExternalTransferOrderItems != null && ExternalTransferOrderItems.Count.Equals(0))
+            if (ExternalTransferOrderItems == null || ExternalTransferOrderItems.Count.Equals(0))
             {
                 yield return new ValidationResult("External Transfer Order Item is required", new List<string> { "ExternalTransferOrderItemsCount" });
             }
@@ -57,7 +61,7 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.ViewModels.ExternalTransfer
                     }
                     else
                     {
-                        ExternalTransferOrderItemService externalTransferOrderItemService = (ExternalTransferOrderItemService) validationContext.GetService(typeof (ExternalTransferOrderItemService));
+                        ExternalTransferOrderItemService externalTransferOrderItemService = (ExternalTransferOrderItemService)validationContext.GetService(typeof(ExternalTransferOrderItemService));
                         //List<ExternalTransferOrderItem> itemsData = externalTransferOrderItemService.ReadModel(Filter: "{ InternalTransferOrderNo : '" + Item.InternalTransferOrderNo + "' }").Item1;
                         //itemsData = itemsData.Where(w => w.ExternalTransferOrderId != this.Id).ToList();
                         List<ExternalTransferOrderItem> itemsData = externalTransferOrderItemService.DbSet.Where(
@@ -78,7 +82,8 @@ namespace Com.Danliris.Service.Internal.Transfer.Lib.ViewModels.ExternalTransfer
                     {
                         externalTransferOrderDetailError += "{ ";
 
-                        if (Detail.DefaultUom.unit.Equals(Detail.DealUom.unit) && Detail.DefaultQuantity == Detail.DealQuantity && Detail.Convertion != 1)
+                        //if (Detail.DefaultUom.unit.Equals(Detail.DealUom.unit) && Detail.DefaultQuantity == Detail.DealQuantity && Detail.Convertion != 1)
+                        if (Detail.DefaultUom.unit.Equals(Detail.DealUom.unit) && Detail.Convertion != 1)
                         {
                             detailErrorCount++;
                             externalTransferOrderDetailError += "Convertion: 'Convertion should be 1', ";
